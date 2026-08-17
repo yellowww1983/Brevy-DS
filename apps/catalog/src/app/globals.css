@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@import "@brevy/tokens/globals.css";
+
+@source "../../../../packages/ui/src";
+
+@theme inline {
+  --font-sans: var(--font-rethink-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+@custom-variant hover (&:hover, &[data-force~="hover"]);
+@custom-variant focus-visible (&:focus-visible, &[data-force~="focus-visible"]);
+@custom-variant active (&:active, &[data-force~="active"]);
