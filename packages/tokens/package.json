@@ -1,0 +1,15 @@
+{
+  "name": "@brevy/tokens",
+  "version": "0.0.0",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    "./globals.css": "./globals.css"
+  },
+  "files": [
+    "globals.css"
+  ],
+  "publishConfig": {
+    "access": "restricted"
+  }
+}
