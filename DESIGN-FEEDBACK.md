@@ -1,156 +1,160 @@
-# Uwagi do plików Figmy
+# Figma findings
 
-Lista zebrana podczas budowy `brevy-ds`. Każda pozycja ma node-id, żeby dało się ją odnaleźć.
-Nic z tego nie zostało poprawione w kodzie — kod odwzorowuje to, co jest narysowane.
+Collected while building `brevy-ds`. Every entry carries a node id so it can be
+located directly. None of it has been worked around in code — the components
+mirror what is drawn.
 
-Pliki:
+Files:
 
 - **app** — `Brevy_app_shadcn`, fileKey `6NGEMJh4TItgcDPi2KzQG7`
 - **website** — `Brevy Website`, fileKey `2n63p266wr49k1FNXjT1uw`
 
 ---
 
-## Blokujące
+## Blocking
 
-### 1. Button website nie ma stanu Focus
+### 1. The website Button has no Focus state
 
-**website**, frame `22912:1932` „Buttons States"
+**website**, frame `22912:1932` "Buttons States"
 
-Kolumny to Default / Hover / Disabled / Active. Brak Focus oznacza brak wskaźnika
-fokusu klawiaturowego, czyli przyciski nieużywalne bez myszy.
+The columns are Default / Hover / Disabled / Active. Without Focus there is no
+keyboard focus indicator, which makes the buttons unusable without a mouse.
 
-Decyzja po stronie kodu: wariant website dostanie ten sam pierścień co app
-(3 px, `ring/50`), niezależnie od Figmy. Prosimy o dorysowanie, żeby pliki się zgadzały.
+Decided on the code side: the website variant will carry the same ring as the app
+variant (3 px, `ring/50`) regardless of Figma. Please add it so the two sides
+agree.
 
-### 2. Button website wiąże się z surową paletą zamiast z warstwą semantyczną
+### 2. The website Button binds to the raw palette instead of the semantic layer
 
 **website**, frame `22912:1932`
 
-Przyciski są podpięte pod `tailwind colors/emerald/500`, `tailwind colors/olive/500`,
-`tailwind colors/beige/600` — czyli pod kolekcję o **jednym trybie**. Plik app używa
-w tych samych miejscach `base/primary`, `base/accent`, `base/input` z kolekcji
-`3. Mode`, która ma tryby Light i Dark.
+The buttons resolve to `tailwind colors/emerald/500`, `tailwind colors/olive/500`
+and `tailwind colors/beige/600` — a collection with a **single mode**. In the same
+places, the app file uses `base/primary`, `base/accent` and `base/input` from the
+`3. Mode` collection, which carries Light and Dark.
 
-Skutek: przyciski website nie zmienią się w trybie ciemnym. Prosimy o przepięcie
-na warstwę semantyczną.
+Consequence: the website buttons will not change in dark mode. Please rebind them
+to the semantic layer.
 
-### 3. Badge: `default` i `destructive` też wiszą na surowej palecie
+### 3. Badge `default` and `destructive` also hang off the raw palette
 
 **app**, component set `26:169`
 
 - `default` → `tailwind colors/olive/500` + `tailwind colors/brand/500`
 - `destructive` → `tailwind colors/red/200` + `tailwind colors/red/800`
 
-Oba warianty nie reagują na tryb ciemny. W pliku istnieją gotowe pary, których
-nikt tu nie użył: `custom/olive-500 dark:neutral-700`, `custom/red-200 dark:red-950`,
+Neither variant responds to dark mode. The file already contains the pairs nobody
+used here: `custom/olive-500 dark:neutral-700`, `custom/red-200 dark:red-950`,
 `custom/red-800 dark:red-300`.
 
-Że to przeoczenie, a nie decyzja, sugeruje wariant `Verified` — on **jest**
-podpięty pod mode-aware `custom/blue-500 dark:blue-600`.
+That this is an oversight rather than a decision is suggested by the `Verified`
+variant — it **is** bound to the mode-aware `custom/blue-500 dark:blue-600`.
 
 ---
 
-## Sprzeczności w pliku
+## Contradictions inside the files
 
-### 4. `base/primary` omija własną indirekcję
+### 4. `base/primary` bypasses its own indirection
 
-**app**, kolekcja `3. Mode`
+**app**, collection `3. Mode`
 
-Wszystkie 32 tokeny `base/*` wskazują na `colors/*-light`. Jedynym wyjątkiem jest
-`base/primary`, który w trybie Light wskazuje bezpośrednio na
-`tailwind colors/emerald/500`. Przez to `colors/primary-light` (= `neutral/900`)
-jest martwy — nic go nie używa.
+All 32 `base/*` tokens point at `colors/*-light`. The single exception is
+`base/primary`, which in Light points straight at `tailwind colors/emerald/500`.
+That leaves `colors/primary-light` (= `neutral/900`) dead — nothing uses it.
 
-Do usunięcia albo do przepięcia, zależnie od tego, co było zamierzone.
-Kod idzie za `base/primary`, czyli `emerald/500`.
+Either delete it or rebind, depending on what was intended. The code follows
+`base/primary`, so `emerald/500`.
 
-### 5. Rampa `olive` łamie monotoniczność
+### 5. The `olive` ramp breaks monotonicity
 
-**app**, kolekcja `1. TailwindCSS`
+**app**, collection `1. TailwindCSS`
 
-`olive/400` = `#d4e2c6` jest **ciemniejszy** niż `olive/500` = `#d7e4c9`.
-Sprawdzone luminancją na wszystkich dziesięciu rampach Brevy — to jedyna z inwersją.
+`olive/400` = `#d4e2c6` is **darker** than `olive/500` = `#d7e4c9`. Checked by
+luminance across all ten Brevy ramps — this is the only inversion.
 
-### 6. `border-width/border-7` ma wartość 6
+### 6. `border-width/border-7` holds the value 6
 
-**app**, kolekcja `1. TailwindCSS`
+**app**, collection `1. TailwindCSS`
 
-Identyczna jak `border-6`. Wygląda na literówkę.
+Identical to `border-6`. Looks like a typo.
 
 ---
 
-## Braki i niejasności
+## Gaps and open questions
 
-### 7. Badge: brak `Secondary/Hover` i `Outline/Hover`
+### 7. Badge is missing `Secondary/Hover` and `Outline/Hover`
 
-**app**, component set `26:169` — 13 wariantów zamiast 15.
+**app**, component set `26:169` — 13 variants instead of 15.
 
-### 8. Badge: `Destructive/Hover` i `Verified/Hover` są identyczne z `Default`
+### 8. Badge `Destructive/Hover` and `Verified/Hover` are identical to `Default`
 
 **app**, component set `26:169`
 
-Warianty istnieją, ale nie różnią się niczym mierzalnym. Celowe czy niedokończone?
-W kodzie pominięte.
+The variants exist but differ in nothing measurable. Deliberate or unfinished?
+Omitted in code.
 
-### 9. Button: 11 brakujących kombinacji
+### 9. Button is missing 11 combinations
 
-**app**, component set `37:931` — 133 ze 144.
+**app**, component set `37:931` — 133 out of 144.
 
-Brakuje całego `Link/icon/*` (6 stanów) oraz `{Default, Secondary, Destructive,
-Outline, Ghost}/icon/Loading` (5). Kod odwzorowuje to 1:1, ale warto potwierdzić,
-że to celowe zawężenie, a nie luka.
+The whole of `Link/icon/*` (6 states) is absent, as is
+`{Default, Secondary, Destructive, Outline, Ghost}/icon/Loading` (5). The code
+mirrors this exactly, but please confirm it is a deliberate narrowing rather than
+a gap.
 
-### 10. Active zmieniające rozmiar
+### 10. Active changes size
 
-**website**, okrągły przycisk `22912:1918`
+**website**, circular button `22912:1918`
 
-W stanie Active przycisk rośnie z 48×48 na **50×50**, przy zmianie promienia
-z `9999` na `45.5`. Pozostałe przyciski w tym frame nie zmieniają rozmiaru.
-Celowe czy przypadkowe rozciągnięcie?
+In the Active state the button grows from 48×48 to **50×50**, and its radius
+changes from `9999` to `45.5`. No other button in the frame changes size.
+Deliberate, or an accidental stretch?
 
-### 11. Paleta to Tailwind v3
+### 11. The palette is Tailwind v3
 
-**app**, kolekcja `1. TailwindCSS`
+**app**, collection `1. TailwindCSS`
 
-49 sprawdzonych stopni zgadza się co do hexa z `tailwindcss@3.4.17`. Projekt stoi
-na Tailwindzie v4, który przeliczył paletę na oklch — stąd rozjazdy do Δ38
-(np. `red/600` `#dc2626` w Figmie vs `#e7000b` w v4).
+49 sampled steps match `tailwindcss@3.4.17` byte for byte. The project runs on
+Tailwind v4, which recomputed the palette in oklch — hence deltas up to Δ38
+(for example `red/600` `#dc2626` in Figma versus `#e7000b` in v4).
 
-Rodziny przebrandowane przez Brevy (`emerald`, `green`, `orange`, `stone`, `violet`,
-`yellow`) i własne (`brand`, `olive`, `beige`, `taupe`) tego nie dotyczą.
+The families Brevy rebranded (`emerald`, `green`, `orange`, `stone`, `violet`,
+`yellow`) and the Brevy-only ones (`brand`, `olive`, `beige`, `taupe`) are not
+affected.
 
-Kod trzyma wartości z Figmy. Migracja do v4 to osobna decyzja.
+The code keeps the Figma values. Migrating to v4 is a separate decision.
 
-### 12. Logo nie ma dedykowanej wersji na ciemne tło
+### 12. The logo has no dedicated dark-background version
 
 **website**
 
-Podstawowy lockup `20919:10347` jest w `brand/500`. Jedyne wystąpienie wordmarku
-w jasnym kolorze to `25187:629` — wyciągnięte z grafiki Open Graph, w `olive/500`.
+The primary lockup `20919:10347` is in `brand/500`. The only occurrence of the
+wordmark in a light colour is `25187:629` — lifted from an Open Graph image, in
+`olive/500`.
 
-Oba lockupy mają **niekompatybilne proporcje**: przy tej samej wysokości wordmark
-w wersji jasnej jest o 56% mniejszy (15,9 px vs 24,8 px), a znak większy
-(28 px vs 24,1 px).
+The two lockups have **incompatible proportions**: at the same height the wordmark
+in the light version is 56% smaller (15.9 px versus 24.8 px) while its mark is
+larger (28 px versus 24.1 px).
 
-Katalog używa geometrii z `25187:629` w obu motywach, przemalowanej tokenem.
-Prosimy o jedną parę o zgodnych proporcjach.
+The catalog uses the geometry of `25187:629` in both themes, tinted through a
+token. Please supply one pair with matching proportions.
 
 ---
 
-## Do przeniesienia, nie do poprawy
+## To relocate, not to fix
 
-### 13. Materiał na `packages/blocks`
+### 13. Material for `packages/blocks`
 
-- **website** `22912:1932` — okrągły przycisk 48 px z gradientowym obrysem,
-  wewnętrznym cieniem i poświatą `#aee177` przy 30%
-- **website** `22912:1932` — „Chips" 132×32
-- **app** `15003:160044` i dalsze — `Pro Blocks / Card / 1.–8.`
+- **website** `22912:1932` — the circular 48 px button with a gradient stroke,
+  inner shadow and an `#aee177` glow at 30%
+- **website** `22912:1932` — "Chips" 132×32
+- **app** `15003:160044` and following — `Pro Blocks / Card / 1.–8.`
 - **app** `297:2355` — `Input + Button`
 
-To kompozycje, nie prymitywy. Nie wchodzą do `@brevy/ui`.
+These are compositions, not primitives. They do not belong in `@brevy/ui`.
 
-### 14. Pełny zestaw stanów dla Buttona website
+### 14. A complete set of states for the website Button
 
-Zanim wariant website wejdzie do `@brevy/ui` jako drugi zestaw wariantów,
-potrzebny jest komplet: Default, Hover, Focus, Active, Disabled, Loading —
-dla każdego typu przycisku w `22912:1932`.
+Before the website variant enters `@brevy/ui` as a second set of variants, we need
+the full matrix — Default, Hover, Focus, Active, Disabled, Loading — for every
+button type in `22912:1932`.

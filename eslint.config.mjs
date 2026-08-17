@@ -61,9 +61,9 @@ const TOKEN_UTILITIES = [
 const ARBITRARY = String.raw`(?:^|[\s:])(?:${TOKEN_UTILITIES})-\[`
 
 const hexMessage =
-  "Zero hexów. Kolory wyłącznie przez tokeny z @brevy/tokens (np. bg-primary, text-brand-500)."
+  "No hex colours. Use tokens from @brevy/tokens instead (bg-primary, text-brand-500)."
 const arbitraryMessage =
-  "Zero arbitrary values dla kolorów, odstępów, rozmiarów i promieni — omijają warstwę tokenów. Użyj skali Tailwinda albo dodaj token."
+  "No arbitrary values for colours, spacing, sizing or radii — they bypass the token layer. Use the Tailwind scale or add a token."
 
 const restricted = [
   { selector: `Literal[value=/${HEX}/]`, message: hexMessage },
