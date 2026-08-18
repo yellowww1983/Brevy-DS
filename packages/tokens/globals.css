@@ -216,9 +216,19 @@
   --radius-3xl: 1.5rem;
   --radius-4xl: 2rem;
 
+  --icon-stroke-width: 1.5;
+
   --font-sans: "Rethink Sans", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Hedvig Letters Serif", ui-serif, Georgia, serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* lucide ships stroke-width 2 as a presentation attribute; the website board
+   draws its 24 px icons at 1.5. Named away from the `stroke-*` namespace — a
+   token called `--stroke-icon` also registers as a stroke colour, and the
+   built-in utility then paints `stroke: 1.5`, which resolves to none. */
+@utility icon-stroke {
+  stroke-width: var(--icon-stroke-width);
 }
 
 :root {
@@ -236,6 +246,8 @@
   --muted-foreground: var(--color-zinc-500);
   --accent: var(--color-beige-200);
   --accent-foreground: var(--color-neutral-900);
+  --surface-hover: var(--color-beige-600);
+  --surface-active: var(--color-beige-700);
   --destructive: var(--color-red-600);
   --destructive-foreground: var(--color-red-50);
   --border: var(--color-neutral-300);
@@ -272,6 +284,8 @@
   --muted-foreground: var(--color-neutral-400);
   --accent: var(--color-neutral-700);
   --accent-foreground: var(--color-beige-300);
+  --surface-hover: var(--accent);
+  --surface-active: var(--accent);
   --destructive: var(--color-red-400);
   --destructive-foreground: var(--color-red-50);
   --border: rgb(255 255 255 / 0.1);
@@ -308,6 +322,8 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-active: var(--surface-active);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
