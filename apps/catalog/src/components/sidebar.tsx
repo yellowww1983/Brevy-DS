@@ -6,31 +6,42 @@ import { usePathname } from "next/navigation"
 
 import { components } from "@/registry"
 import { BrevyLogo } from "./brevy-logo"
-import { ThemeToggle } from "./theme-toggle"
+import { useSearch } from "./search-provider"
+import { SectionTabs } from "./section-tabs"
 
 export function Sidebar() {
   const pathname = usePathname()
+  const { query } = useSearch()
+
+  const term = query.trim().toLowerCase()
+  const matches = term
+    ? components.filter((entry) => entry.name.toLowerCase().includes(term))
+    : components
 
   return (
     <aside className="flex w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
-      <div className="flex items-start justify-between gap-4 border-b border-sidebar-border px-6 py-5">
+      <div className="flex h-14 shrink-0 items-center border-b border-sidebar-border px-6">
         <Link
           href="/components"
-          className="rounded-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          className="block rounded-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         >
           <BrevyLogo />
-          <span className="mt-1.5 block text-xs text-muted-foreground">
+          <span className="mt-0.5 block text-xs leading-none text-muted-foreground">
             Design System
           </span>
         </Link>
-        <ThemeToggle />
+      </div>
+
+      <div className="px-4 pt-4">
+        <SectionTabs />
       </div>
 
       <nav aria-label="Components" className="flex flex-col gap-1 p-4">
         <p className="px-3 pb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
           Primitives
         </p>
-        {components.map((entry) => {
+
+        {matches.map((entry) => {
           const href = `/components/${entry.slug}`
           const active = pathname === href
 
@@ -50,6 +61,12 @@ export function Sidebar() {
             </Link>
           )
         })}
+
+        {matches.length === 0 && (
+          <p className="px-3 py-2 text-sm text-muted-foreground">
+            No components match “{query}”.
+          </p>
+        )}
       </nav>
     </aside>
   )

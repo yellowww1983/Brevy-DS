@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation"
 
+import { Breadcrumbs } from "@/components/breadcrumbs"
+
 import type { Axis, ComponentEntry } from "@/registry"
 import {
   combinationKey,
@@ -52,6 +54,10 @@ export default async function ComponentPage({
 
   return (
     <div className="mx-auto max-w-6xl">
+      <div className="mb-5">
+        <Breadcrumbs />
+      </div>
+
       <header className="mb-12 border-b border-border pb-8">
         <h1 className="text-4xl font-bold tracking-tight">{entry.name}</h1>
         <p className="mt-3 text-sm text-muted-foreground">
