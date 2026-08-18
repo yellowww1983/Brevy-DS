@@ -38,9 +38,11 @@ export function Sidebar() {
       </div>
 
       <nav aria-label="Components" className="flex flex-col gap-1 p-4">
-        <p className="px-3 pb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-          Primitives
-        </p>
+        {matches.length > 0 && (
+          <p className="px-3 pb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+            Primitives
+          </p>
+        )}
 
         {matches.map((entry) => {
           const href = `/components/${entry.slug}`
