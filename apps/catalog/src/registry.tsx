@@ -13,7 +13,7 @@ import {
   type BadgeProps,
   type ButtonProps,
 } from "@brevy/ui"
-import { Check } from "lucide-react"
+import { Check, Plus } from "lucide-react"
 import type { ReactNode } from "react"
 
 import { EmailField } from "./components/email-field"
@@ -31,8 +31,6 @@ export type Omission = {
 export type ComponentEntry = {
   slug: string
   name: string
-  origin: "figma" | "shadcn"
-  figmaNodeId?: string
   axes: readonly Axis[]
   omitted: readonly Omission[]
   render: (combination: Record<string, string>) => ReactNode
@@ -43,24 +41,35 @@ type Force = "hover" | "focus-visible" | "active" | undefined
 const forceOf = (state: string | undefined): Force => {
   if (state === "Hover") return "hover"
   if (state === "Focus") return "focus-visible"
-  if (state === "Pressed") return "active"
+  if (state === "Active") return "active"
   return undefined
 }
 
-const buttonVariants: Record<string, NonNullable<ButtonProps["variant"]>> = {
-  Default: "default",
-  Secondary: "secondary",
-  Destructive: "destructive",
-  Outline: "outline",
-  Ghost: "ghost",
-  Link: "link",
+/** Variant and form are not perpendicular on the board: primary is never drawn
+ *  icon-only, ghost is never drawn with an icon beside a label. */
+type ButtonForm = {
+  variant: NonNullable<ButtonProps["variant"]>
+  children: ReactNode
+  label?: string
 }
 
-const buttonSizes: Record<string, NonNullable<ButtonProps["size"]>> = {
-  default: "default",
-  sm: "sm",
-  lg: "lg",
-  icon: "icon",
+const buttonForms: Record<string, ButtonForm> = {
+  "Primary · label": { variant: "primary", children: "Button" },
+  "Primary · icon + label": {
+    variant: "primary",
+    children: (
+      <>
+        <Plus />
+        New chat
+      </>
+    ),
+  },
+  "Ghost · label": { variant: "ghost", children: "Button" },
+  "Ghost · icon only": {
+    variant: "ghost",
+    children: <Plus />,
+    label: "New chat",
+  },
 }
 
 const badgeVariants: Record<string, NonNullable<BadgeProps["variant"]>> = {
@@ -75,52 +84,31 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "button",
     name: "Button",
-    origin: "figma",
-    figmaNodeId: "37:931",
+    // Drawn from Brevy Website · frame 22912:1932
     axes: [
-      {
-        label: "Variant",
-        values: [
-          "Default",
-          "Secondary",
-          "Destructive",
-          "Outline",
-          "Ghost",
-          "Link",
-        ],
-      },
-      { label: "Size", values: ["default", "sm", "lg", "icon"] },
+      { label: "Form", values: Object.keys(buttonForms) },
       {
         label: "State",
-        values: ["Default", "Hover", "Focus", "Loading", "Disabled", "Pressed"],
+        values: ["Default", "Hover", "Focus", "Active", "Disabled"],
       },
     ],
-    omitted: [
-      { key: "Default/icon/Loading", note: "missing in Figma" },
-      { key: "Secondary/icon/Loading", note: "missing in Figma" },
-      { key: "Destructive/icon/Loading", note: "missing in Figma" },
-      { key: "Outline/icon/Loading", note: "missing in Figma" },
-      { key: "Ghost/icon/Loading", note: "missing in Figma" },
-      { key: "Link/icon/Default", note: "missing in Figma" },
-      { key: "Link/icon/Hover", note: "missing in Figma" },
-      { key: "Link/icon/Focus", note: "missing in Figma" },
-      { key: "Link/icon/Loading", note: "missing in Figma" },
-      { key: "Link/icon/Disabled", note: "missing in Figma" },
-      { key: "Link/icon/Pressed", note: "missing in Figma" },
-    ],
+    omitted: [{ key: "Primary · label/Active", note: "missing in Figma" }],
     render: (combination) => {
-      const size = combination.Size ?? "default"
       const state = combination.State
+      const form = buttonForms[combination.Form ?? ""]
+
+      if (!form) {
+        return null
+      }
 
       return (
         <Button
-          variant={buttonVariants[combination.Variant ?? ""] ?? "default"}
-          size={buttonSizes[size] ?? "default"}
+          variant={form.variant}
+          aria-label={form.label}
           disabled={state === "Disabled"}
-          loading={state === "Loading"}
           data-force={forceOf(state)}
         >
-          {size === "icon" ? <Check aria-label="Confirm" /> : "Button"}
+          {form.children}
         </Button>
       )
     },
@@ -128,8 +116,7 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "input",
     name: "Input",
-    origin: "figma",
-    figmaNodeId: "65:533",
+    // Drawn from Brevy app · component set 65:533
     axes: [
       { label: "Type", values: ["Text", "File"] },
       {
@@ -170,8 +157,7 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "badge",
     name: "Badge",
-    origin: "figma",
-    figmaNodeId: "26:169",
+    // Drawn from Brevy app · component set 26:169
     axes: [
       {
         label: "Variant",
@@ -200,7 +186,6 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "card",
     name: "Card",
-    origin: "shadcn",
     axes: [],
     omitted: [],
     render: () => (
@@ -221,7 +206,7 @@ export const components: readonly ComponentEntry[] = [
           </p>
         </CardContent>
         <CardFooter>
-          <Button size="sm">Open</Button>
+          <Button variant="ghost">Open</Button>
         </CardFooter>
       </Card>
     ),
@@ -229,7 +214,6 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "form",
     name: "Form",
-    origin: "shadcn",
     axes: [],
     omitted: [],
     render: () => <EmailField />,
@@ -237,7 +221,6 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "label",
     name: "Label",
-    origin: "shadcn",
     axes: [],
     omitted: [],
     render: () => (

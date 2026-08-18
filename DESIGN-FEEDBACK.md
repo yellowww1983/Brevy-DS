@@ -20,9 +20,9 @@ Files:
 The columns are Default / Hover / Disabled / Active. Without Focus there is no
 keyboard focus indicator, which makes the buttons unusable without a mouse.
 
-Decided on the code side: the website variant will carry the same ring as the app
-variant (3 px, `ring/50`) regardless of Figma. Please add it so the two sides
-agree.
+`@brevy/ui` now ships the website Button only, and it carries a 3 px `ring/50`
+focus ring taken from the app language regardless of Figma. Please add the state
+so the two sides agree.
 
 ### 2. The website Button binds to the raw palette instead of the semantic layer
 
@@ -98,9 +98,9 @@ Omitted in code.
 **app**, component set `37:931` — 133 out of 144.
 
 The whole of `Link/icon/*` (6 states) is absent, as is
-`{Default, Secondary, Destructive, Outline, Ghost}/icon/Loading` (5). The code
-mirrors this exactly, but please confirm it is a deliberate narrowing rather than
-a gap.
+`{Default, Secondary, Destructive, Outline, Ghost}/icon/Loading` (5). `@brevy/ui`
+no longer ships this Button — it follows the website board instead — so the gap
+blocks nothing today. Recorded in case the set is ever used as a source again.
 
 ### 10. Active changes size
 
@@ -147,14 +147,60 @@ token. Please supply one pair with matching proportions.
 
 - **website** `22912:1932` — the circular 48 px button with a gradient stroke,
   inner shadow and an `#aee177` glow at 30%
+- **website** `22912:1214` — the 36 px icon button on white with a drop shadow
+  and a `neutral/200 → neutral/300` gradient stroke
 - **website** `22912:1932` — "Chips" 132×32
 - **app** `15003:160044` and following — `Pro Blocks / Card / 1.–8.`
 - **app** `297:2355` — `Input + Button`
 
 These are compositions, not primitives. They do not belong in `@brevy/ui`.
 
-### 14. A complete set of states for the website Button
+---
 
-Before the website variant enters `@brevy/ui` as a second set of variants, we need
-the full matrix — Default, Hover, Focus, Active, Disabled, Loading — for every
-button type in `22912:1932`.
+## The website Button board
+
+### 14. The board is a hand-drawn board, not a component set
+
+`22912:1932` draws four Button rows across four state columns: primary 48 px with
+a label, primary 48 px with an icon and a label, ghost 36 px with a label, ghost
+36 px with an icon alone. `@brevy/ui` now ships exactly those four forms and
+nothing else.
+
+Because the rows are loose frames rather than variants of a component set, the
+matrix cannot be verified mechanically — every cell was read one at a time. A
+proper component set would let us diff the build against the design.
+
+### 15. `Primary · label` has no Active, but `Primary · icon + label` does
+
+Row `22912:1924 / 1941 / 1967` stops after Default, Hover and Disabled. The row
+directly below it, `22912:1956 / 1962 / 1969 / 2589`, adds Active. The two rows
+are the same button with and without an icon, so the missing cell reads as an
+omission rather than a decision.
+
+The catalog marks that one combination as `missing in Figma` and draws 19 cells
+instead of 20.
+
+Also worth noting: the Active cell that does exist is **identical to Hover** —
+white fill, `emerald/500` stroke, `emerald/500` label, the same hexes. If a press
+is meant to look different from a hover, it is not drawn anywhere.
+
+---
+
+## Missing dark values for the web Button
+
+The web Button needs two interaction colours the Figma board only defines for
+light. Each ships with an explicit fallback rather than a guessed colour, so dark
+mode stays legible — but the interaction it should express is currently absent.
+
+### 16. `--surface-hover` has no dark value
+
+Light is `beige/600`, the hover fill drawn for the ghost rows. Dark falls back to
+`accent` (`neutral/700`).
+
+### 17. `--surface-active` has no dark value
+
+Light is `beige/700`. Dark also falls back to `accent`, so **hover and active are
+indistinguishable in dark mode** for ghost.
+
+Together these need one pair of neutral interaction surfaces for dark, a step
+apart from each other.
