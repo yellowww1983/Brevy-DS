@@ -53,7 +53,7 @@ export function ComponentView({ slug }: { slug: string }) {
 
   return (
     <>
-      <header className="mb-12 border-b border-border pb-8">
+      <header className="mb-20">
         <h1 className="text-4xl font-bold tracking-tight">{entry.name}</h1>
         <p className="mt-3 text-base text-muted-foreground">
           {entry.figmaNodeId
