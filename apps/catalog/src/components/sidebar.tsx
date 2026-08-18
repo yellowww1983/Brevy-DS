@@ -48,6 +48,11 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 const ITEM = "flex items-center gap-2 px-3 py-2 text-sm"
 
+/** Keyboard focus has to stay visible, so the ring stays — tinted to the active
+ *  colour rather than the default grey, which read as a box around the item. */
+const FOCUS =
+  "rounded-md focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+
 /** An entry without an href has no page yet — a link would lead to a 404, so it
  *  renders as visibly inert until the page lands. */
 function NavEntry({
@@ -74,10 +79,10 @@ function NavEntry({
       aria-current={active ? "page" : undefined}
       className={cn(
         ITEM,
-        "rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+        FOCUS,
         active
           ? "font-medium text-sidebar-primary"
-          : "text-sidebar-foreground hover:text-foreground",
+          : "text-muted-foreground hover:text-foreground",
       )}
     >
       <Icon className="size-4" />
@@ -136,10 +141,11 @@ export function Sidebar() {
                     href={href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "block py-2 pr-3 pl-5 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+                      "block py-2 pr-3 pl-5 text-sm",
+                      FOCUS,
                       active
                         ? "font-medium text-sidebar-primary before:absolute before:inset-y-0 before:-left-px before:w-0.5 before:bg-primary"
-                        : "text-sidebar-foreground hover:text-foreground",
+                        : "text-muted-foreground hover:text-foreground",
                     )}
                   >
                     {entry.name}
