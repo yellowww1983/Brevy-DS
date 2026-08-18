@@ -2,22 +2,8 @@
 
 import Link from "next/link"
 
-import type { ComponentEntry } from "@/registry"
-import {
-  filterComponents,
-  matchingCombinations,
-  variantCount,
-} from "@/registry"
+import { filterComponents, variantLabel } from "@/registry"
 import { useSearch } from "./search-provider"
-
-function countLabel(entry: ComponentEntry, query: string) {
-  const total = variantCount(entry)
-  const matching = matchingCombinations(entry, query).length
-
-  return matching === total
-    ? String(total)
-    : `${String(matching)} of ${String(total)}`
-}
 
 export function ComponentGrid() {
   const { query } = useSearch()
@@ -44,9 +30,7 @@ export function ComponentGrid() {
           >
             <span className="block text-lg font-semibold">{entry.name}</span>
             <span className="mt-1 block text-sm text-muted-foreground">
-              {entry.axes.length > 0
-                ? `${countLabel(entry, query)} variants · ${entry.axes.map((axis) => axis.label).join(" · ")}`
-                : "No variants"}
+              {variantLabel(entry, query)}
             </span>
           </Link>
         </li>
