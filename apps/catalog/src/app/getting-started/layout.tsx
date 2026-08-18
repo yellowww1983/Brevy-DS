@@ -2,7 +2,7 @@ import type { ReactNode } from "react"
 
 import { CatalogShell } from "@/components/catalog-shell"
 
-export default function ComponentsLayout({
+export default function GettingStartedLayout({
   children,
 }: {
   children: ReactNode

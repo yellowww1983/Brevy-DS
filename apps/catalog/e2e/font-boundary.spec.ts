@@ -108,7 +108,7 @@ test("client-side navigation keeps the app alive", async ({ page }) => {
 
   for (let index = 0; index < count; index++) {
     await links.nth(index).click()
-    await expect(page.locator("[data-slot]").first()).toBeVisible()
+    await expect(page.locator("main h1")).toBeVisible()
   }
 
   expect(
