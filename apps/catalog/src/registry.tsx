@@ -155,7 +155,11 @@ export const components: readonly ComponentEntry[] = [
           type={combination.Type === "File" ? "file" : "text"}
           aria-label="Email"
           placeholder="hello@brevy.com"
-          defaultValue={state === "Filled" ? "hello@brevy.com" : undefined}
+          defaultValue={
+            state === "Filled" && combination.Type !== "File"
+              ? "hello@brevy.com"
+              : undefined
+          }
           disabled={state === "Disabled"}
           aria-invalid={invalid}
           data-force={focused ? "focus-visible" : undefined}
@@ -294,6 +298,42 @@ export function matchingCombinations(entry: ComponentEntry, query: string) {
   return combinations(entry.axes)
     .filter((row) => !isOmitted(entry, row))
     .filter((row) => combinationMatches(entry, row, query))
+}
+
+/** Ranks the other components for a query the current one cannot satisfy:
+ *  a name hit outranks a value hit, a tighter name hit outranks a looser one,
+ *  and among value-only hits the component with more matching variants wins. */
+function nameRank(entry: ComponentEntry, query: string) {
+  const name = entry.name.toLowerCase()
+  const terms = termsOf(query)
+
+  if (terms.some((term) => term === name)) return 0
+  if (terms.some((term) => name.startsWith(term))) return 1
+  if (terms.some((term) => name.includes(term))) return 2
+
+  return 3
+}
+
+export function bestMatch(query: string, excludeSlug: string) {
+  if (termsOf(query).length === 0) {
+    return undefined
+  }
+
+  return components
+    .filter(
+      (entry) => entry.slug !== excludeSlug && componentMatches(entry, query),
+    )
+    .sort((a, b) => {
+      const byName = nameRank(a, query) - nameRank(b, query)
+      if (byName !== 0) return byName
+
+      const byCount =
+        matchingCombinations(b, query).length -
+        matchingCombinations(a, query).length
+      if (byCount !== 0) return byCount
+
+      return components.indexOf(a) - components.indexOf(b)
+    })[0]
 }
 
 export function filterComponents(query: string) {

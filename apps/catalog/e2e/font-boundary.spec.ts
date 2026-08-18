@@ -93,3 +93,26 @@ test("components carry no font family of their own", async ({ page }) => {
   expect(declared).not.toMatch(FONT_FAMILY_CLASS)
   await expect(button).toHaveCSS("font-family", new RegExp(SYSTEM_FACE))
 })
+
+test("client-side navigation keeps the app alive", async ({ page }) => {
+  const failures: string[] = []
+  page.on("pageerror", (error) =>
+    failures.push(error.message.split("\n")[0] ?? error.message),
+  )
+
+  await page.goto("/components")
+
+  const links = page.locator("aside nav a")
+  const count = await links.count()
+  expect(count).toBeGreaterThan(1)
+
+  for (let index = 0; index < count; index++) {
+    await links.nth(index).click()
+    await expect(page.locator("[data-slot]").first()).toBeVisible()
+  }
+
+  expect(
+    failures,
+    "a soft navigation threw — hard page loads hide errors that only fire when React renders on the client",
+  ).toEqual([])
+})
