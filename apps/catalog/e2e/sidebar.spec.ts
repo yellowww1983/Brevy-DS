@@ -4,7 +4,7 @@ test("nothing inert is reachable as a link", async ({ page }) => {
   await page.goto("/components/button")
 
   const pending = page.locator('aside [aria-disabled="true"]')
-  await expect(pending).toHaveCount(4)
+  await expect(pending).toHaveCount(3)
 
   const tags = await pending.evaluateAll((nodes) =>
     nodes.map((node) => node.tagName),
@@ -13,10 +13,19 @@ test("nothing inert is reachable as a link", async ({ page }) => {
 
   const links = await page
     .locator("aside nav a")
-    .evaluateAll((nodes) => nodes.map((node) => node.getAttribute("href")))
+    .evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute("href") ?? ""),
+    )
+
+  const responses = await Promise.all(
+    [...new Set(links)].map(async (href) => ({
+      href,
+      status: (await page.request.get(href)).status(),
+    })),
+  )
 
   expect(
-    links.filter((href) => !href?.startsWith("/components/")),
+    responses.filter((entry) => entry.status !== 200),
     "every link inside the sidebar nav must point at a route that exists",
   ).toEqual([])
 })

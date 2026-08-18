@@ -13,10 +13,15 @@ import { useSearch } from "./search-provider"
 type Entry = {
   label: string
   icon: ComponentType<{ className?: string }>
+  href?: string
 }
 
 const GETTING_STARTED: readonly Entry[] = [
-  { label: "Introduction", icon: Zap },
+  {
+    label: "Introduction",
+    icon: Zap,
+    href: "/getting-started/introduction",
+  },
   { label: "Installation", icon: Wrench },
 ]
 
@@ -41,17 +46,43 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   )
 }
 
-/** The routes behind these do not exist yet — a link would lead to a 404, so
- *  they render as visibly inert until the pages land. */
-function PendingEntry({ label, icon: Icon }: Entry) {
+const ITEM = "flex items-center gap-2 px-3 py-2 text-sm"
+
+/** An entry without an href has no page yet — a link would lead to a 404, so it
+ *  renders as visibly inert until the page lands. */
+function NavEntry({
+  label,
+  icon: Icon,
+  href,
+  active,
+}: Entry & { active: boolean }) {
+  if (!href) {
+    return (
+      <span
+        aria-disabled="true"
+        className={cn(ITEM, "cursor-not-allowed text-muted-foreground/60")}
+      >
+        <Icon className="size-4" />
+        {label}
+      </span>
+    )
+  }
+
   return (
-    <span
-      aria-disabled="true"
-      className="flex cursor-not-allowed items-center gap-2 px-3 py-2 text-sm text-muted-foreground/60"
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        ITEM,
+        "rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+        active
+          ? "font-medium text-sidebar-primary"
+          : "text-sidebar-foreground hover:text-foreground",
+      )}
     >
       <Icon className="size-4" />
       {label}
-    </span>
+    </Link>
   )
 }
 
@@ -82,7 +113,11 @@ export function Sidebar() {
       <nav aria-label="Catalog" className="flex-1 overflow-y-auto">
         <Section title="Getting Started">
           {GETTING_STARTED.map((entry) => (
-            <PendingEntry key={entry.label} {...entry} />
+            <NavEntry
+              key={entry.label}
+              {...entry}
+              active={pathname === entry.href}
+            />
           ))}
         </Section>
 
@@ -120,7 +155,11 @@ export function Sidebar() {
 
         <Section title="Foundations">
           {FOUNDATIONS.map((entry) => (
-            <PendingEntry key={entry.label} {...entry} />
+            <NavEntry
+              key={entry.label}
+              {...entry}
+              active={pathname === entry.href}
+            />
           ))}
         </Section>
       </nav>
