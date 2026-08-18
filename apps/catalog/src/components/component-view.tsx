@@ -11,8 +11,8 @@ import {
   combinations,
   getComponent,
   isOmitted,
-  matchingCombinations,
   variantCount,
+  variantLabel,
 } from "@/registry"
 import { useSearch } from "./search-provider"
 
@@ -88,7 +88,6 @@ export function ComponentView({ slug }: { slug: string }) {
 
   const groups = groupsOf(entry, query)
   const total = variantCount(entry)
-  const matching = matchingCombinations(entry, query).length
   const suggestion = bestMatch(query, entry.slug)
 
   return (
@@ -96,10 +95,7 @@ export function ComponentView({ slug }: { slug: string }) {
       <header className="mb-20">
         <h1 className="text-4xl font-bold tracking-tight">{entry.name}</h1>
         <p className="mt-3 text-base text-muted-foreground">
-          {matching === total
-            ? String(total)
-            : `${String(matching)} of ${String(total)}`}{" "}
-          {total === 1 ? "variant" : "variants"}
+          {variantLabel(entry, query)}
         </p>
       </header>
 

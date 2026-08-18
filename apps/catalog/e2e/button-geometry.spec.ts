@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test"
+import { expect, test } from "./catalog-test"
 
 /** The board draws ghost as a square when it holds nothing but an icon and as a
  *  text-hugging pill when it holds a label. The component tells the two apart

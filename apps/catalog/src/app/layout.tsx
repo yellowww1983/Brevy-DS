@@ -2,6 +2,9 @@ import type { Metadata } from "next"
 import { Inter, Rethink_Sans } from "next/font/google"
 import type { ReactNode } from "react"
 
+import { Preloader } from "@/components/preloader"
+import { PreloaderScript } from "@/components/preloader-script"
+import { SearchProvider } from "@/components/search-provider"
 import { ThemeScript } from "@/components/theme-script"
 
 import "./globals.css"
@@ -27,9 +30,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <head>
         <ThemeScript />
+        <PreloaderScript />
       </head>
       <body className="bg-background font-catalog text-foreground antialiased">
-        {children}
+        <Preloader />
+        <SearchProvider>{children}</SearchProvider>
       </body>
     </html>
   )

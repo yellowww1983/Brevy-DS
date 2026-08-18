@@ -1,5 +1,6 @@
 "use client"
 
+import { usePathname } from "next/navigation"
 import {
   createContext,
   useContext,
@@ -22,6 +23,13 @@ export function SearchProvider({ children }: { children: ReactNode }) {
   return (
     <SearchContext.Provider value={value}>{children}</SearchContext.Provider>
   )
+}
+
+/** Search narrows lists of components. A content page has no list, so the field
+ *  is absent there and a query typed earlier stops applying until you return —
+ *  otherwise the sidebar would stay filtered with no way to clear it. */
+export function useSearchable() {
+  return usePathname().startsWith("/components")
 }
 
 export function useSearch() {
