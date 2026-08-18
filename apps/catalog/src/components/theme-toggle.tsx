@@ -1,5 +1,7 @@
 "use client"
 
+import { Moon, Sun } from "lucide-react"
+
 export function ThemeToggle() {
   function toggle() {
     const root = document.documentElement
@@ -14,8 +16,10 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label="Toggle color theme"
-      className="rounded-md border border-sidebar-border px-2 py-1 text-xs font-medium text-sidebar-foreground hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-medium text-foreground hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
     >
+      <Moon className="size-3.5 dark:hidden" aria-hidden />
+      <Sun className="hidden size-3.5 dark:block" aria-hidden />
       <span className="dark:hidden">Dark</span>
       <span className="hidden dark:inline">Light</span>
     </button>

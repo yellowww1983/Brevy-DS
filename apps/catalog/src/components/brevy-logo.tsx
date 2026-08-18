@@ -1,7 +1,7 @@
 export function BrevyLogo() {
   return (
     <svg
-      className="h-7 w-auto text-brand-500 dark:text-olive-500"
+      className="h-6 w-auto text-brand-500 dark:text-olive-500"
       aria-hidden
       viewBox="0 0 304 82"
       fill="none"

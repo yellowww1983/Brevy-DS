@@ -7,3 +7,6 @@ dist
 .env*.local
 .screenshots
 .vercel
+test-results
+playwright-report
+.playwright

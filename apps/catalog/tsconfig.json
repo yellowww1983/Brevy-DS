@@ -13,6 +13,14 @@
     },
     "allowJs": true
   },
-  "include": ["next-env.d.ts", "src", "*.ts", "*.mjs", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "src",
+    "*.ts",
+    "*.mjs",
+    ".next/types/**/*.ts",
+    "e2e",
+    "playwright.config.ts"
+  ],
   "exclude": ["node_modules"]
 }
