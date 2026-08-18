@@ -1,13 +1,59 @@
 "use client"
 
 import { cn } from "@brevy/ui"
+import { ChevronDown, Palette, Type, Wrench, Zap } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import type { ComponentType, ReactNode } from "react"
 
 import { components, filterComponents } from "@/registry"
 import { BrevyLogo } from "./brevy-logo"
 import { useSearch } from "./search-provider"
-import { SectionTabs } from "./section-tabs"
+
+type Entry = {
+  label: string
+  icon: ComponentType<{ className?: string }>
+}
+
+const GETTING_STARTED: readonly Entry[] = [
+  { label: "Introduction", icon: Zap },
+  { label: "Installation", icon: Wrench },
+]
+
+const FOUNDATIONS: readonly Entry[] = [
+  { label: "Color", icon: Palette },
+  { label: "Typography", icon: Type },
+]
+
+function Section({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <details
+      open
+      className="group border-b border-sidebar-border px-4 py-4 last:border-b-0"
+    >
+      <summary className="flex cursor-pointer list-none items-center rounded-md px-3 py-1.5 text-sm font-medium focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none [&::-webkit-details-marker]:hidden">
+        {title}
+        <ChevronDown className="ml-auto size-4 text-muted-foreground transition-transform group-open:rotate-180" />
+      </summary>
+
+      <div className="mt-2">{children}</div>
+    </details>
+  )
+}
+
+/** The routes behind these do not exist yet — a link would lead to a 404, so
+ *  they render as visibly inert until the pages land. */
+function PendingEntry({ label, icon: Icon }: Entry) {
+  return (
+    <span
+      aria-disabled="true"
+      className="flex cursor-not-allowed items-center gap-2 px-3 py-2 text-sm text-muted-foreground/60"
+    >
+      <Icon className="size-4" />
+      {label}
+    </span>
+  )
+}
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -33,37 +79,50 @@ export function Sidebar() {
         </Link>
       </div>
 
-      <div className="px-4 pt-4">
-        <SectionTabs />
-      </div>
+      <nav aria-label="Catalog" className="flex-1 overflow-y-auto">
+        <Section title="Getting Started">
+          {GETTING_STARTED.map((entry) => (
+            <PendingEntry key={entry.label} {...entry} />
+          ))}
+        </Section>
 
-      <nav aria-label="Components" className="flex flex-col gap-1 p-4">
-        {matches.length > 0 && (
-          <p className="px-3 pb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            Primitives
+        <Section title="Components">
+          <ul className="border-l border-sidebar-border">
+            {matches.map((entry) => {
+              const href = `/components/${entry.slug}`
+              const active = pathname === href
+
+              return (
+                <li key={entry.slug} className="relative">
+                  <Link
+                    href={href}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "block py-2 pr-3 pl-5 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+                      active
+                        ? "font-medium text-sidebar-primary before:absolute before:inset-y-0 before:-left-px before:w-0.5 before:bg-primary"
+                        : "text-sidebar-foreground hover:text-foreground",
+                    )}
+                  >
+                    {entry.name}
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </Section>
+
+        <Section title="Blocks">
+          <p className="px-3 py-2 text-sm text-muted-foreground/60">
+            Coming soon
           </p>
-        )}
+        </Section>
 
-        {matches.map((entry) => {
-          const href = `/components/${entry.slug}`
-          const active = pathname === href
-
-          return (
-            <Link
-              key={entry.slug}
-              href={href}
-              aria-current={active ? "page" : undefined}
-              className={cn(
-                "rounded-md px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
-                active
-                  ? "bg-sidebar-accent font-medium text-sidebar-primary"
-                  : "text-sidebar-foreground hover:bg-sidebar-accent",
-              )}
-            >
-              {entry.name}
-            </Link>
-          )
-        })}
+        <Section title="Foundations">
+          {FOUNDATIONS.map((entry) => (
+            <PendingEntry key={entry.label} {...entry} />
+          ))}
+        </Section>
       </nav>
     </aside>
   )
