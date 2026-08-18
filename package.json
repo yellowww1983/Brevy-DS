@@ -16,8 +16,9 @@
     "format:check": "prettier --check .",
     "release": "turbo run build --filter=\"./packages/*\" && changeset publish",
     "test": "turbo run test",
-    "changeset": "changeset",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:e2e": "turbo run test:e2e",
+    "changeset": "changeset"
   },
   "devDependencies": {
     "@changesets/cli": "2.31.1",
