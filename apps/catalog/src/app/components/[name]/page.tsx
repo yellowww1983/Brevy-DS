@@ -89,7 +89,10 @@ export default async function ComponentPage({
             <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {group.rows.map((row) => (
                 <li key={combinationKey(entry, row)}>
-                  <div className="flex min-h-24 items-center justify-center rounded-lg border border-border bg-background p-6">
+                  <div
+                    data-preview
+                    className="flex min-h-24 items-center justify-center rounded-lg border border-border bg-background p-6 font-sans"
+                  >
                     {entry.render(row)}
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground">

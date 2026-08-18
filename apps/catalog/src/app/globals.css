@@ -3,8 +3,11 @@
 
 @source "../../../../packages/ui/src";
 
+/* --font-sans stays the design system face and is applied only inside preview
+   frames; --font-catalog dresses the catalog's own interface. */
 @theme inline {
   --font-sans: var(--font-rethink-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-catalog: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 @custom-variant hover (&:hover, &[data-force~="hover"]);
