@@ -347,3 +347,16 @@ export function combinationKey(
 export function variantCount(entry: ComponentEntry) {
   return combinations(entry.axes).length - entry.omitted.length
 }
+
+/** One source for the card and the page header — they used to disagree, the
+ *  card saying "No variants" where the header said "1 variant". */
+export function variantLabel(entry: ComponentEntry, query: string) {
+  const total = variantCount(entry)
+  const matching = matchingCombinations(entry, query).length
+  const count =
+    matching === total
+      ? String(total)
+      : `${String(matching)} of ${String(total)}`
+
+  return `${count} ${total === 1 ? "variant" : "variants"}`
+}
