@@ -10,6 +10,12 @@
   --font-catalog: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Stamped by PreloaderScript before the first paint, so a reader who has
+   already seen the animation never catches a frame of it. */
+[data-preloader="skip"] [data-preloader-overlay] {
+  display: none;
+}
+
 /* Contents links jump within the page; animate the jump unless the reader has
    asked the system not to. */
 @media (prefers-reduced-motion: no-preference) {

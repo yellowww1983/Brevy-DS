@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test"
+import { expect, test } from "./catalog-test"
 
 test("nothing inert is reachable as a link", async ({ page }) => {
   await page.goto("/components/button")
