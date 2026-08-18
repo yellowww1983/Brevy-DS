@@ -1,7 +1,10 @@
 "use client"
 
+import Link from "next/link"
+
 import type { Axis, ComponentEntry } from "@/registry"
 import {
+  bestMatch,
   combinationKey,
   combinationMatches,
   combinations,
@@ -50,6 +53,7 @@ export function ComponentView({ slug }: { slug: string }) {
   const groups = groupsOf(entry, query)
   const total = variantCount(entry)
   const matching = matchingCombinations(entry, query).length
+  const suggestion = bestMatch(query, entry.slug)
 
   return (
     <>
@@ -65,7 +69,19 @@ export function ComponentView({ slug }: { slug: string }) {
       {groups.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
           <p className="font-medium">
-            No {entry.name} variants match “{query}”.
+            No {entry.name} variants match “{query}”
+            {suggestion ? (
+              <>
+                {" — "}
+                <Link
+                  href={`/components/${suggestion.slug}`}
+                  className="rounded-sm text-primary underline underline-offset-4 hover:decoration-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                >
+                  see {suggestion.name} instead
+                </Link>
+              </>
+            ) : null}
+            .
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
             Clear the search to see all {String(total)} variants.

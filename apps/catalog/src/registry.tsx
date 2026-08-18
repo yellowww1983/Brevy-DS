@@ -300,6 +300,42 @@ export function matchingCombinations(entry: ComponentEntry, query: string) {
     .filter((row) => combinationMatches(entry, row, query))
 }
 
+/** Ranks the other components for a query the current one cannot satisfy:
+ *  a name hit outranks a value hit, a tighter name hit outranks a looser one,
+ *  and among value-only hits the component with more matching variants wins. */
+function nameRank(entry: ComponentEntry, query: string) {
+  const name = entry.name.toLowerCase()
+  const terms = termsOf(query)
+
+  if (terms.some((term) => term === name)) return 0
+  if (terms.some((term) => name.startsWith(term))) return 1
+  if (terms.some((term) => name.includes(term))) return 2
+
+  return 3
+}
+
+export function bestMatch(query: string, excludeSlug: string) {
+  if (termsOf(query).length === 0) {
+    return undefined
+  }
+
+  return components
+    .filter(
+      (entry) => entry.slug !== excludeSlug && componentMatches(entry, query),
+    )
+    .sort((a, b) => {
+      const byName = nameRank(a, query) - nameRank(b, query)
+      if (byName !== 0) return byName
+
+      const byCount =
+        matchingCombinations(b, query).length -
+        matchingCombinations(a, query).length
+      if (byCount !== 0) return byCount
+
+      return components.indexOf(a) - components.indexOf(b)
+    })[0]
+}
+
 export function filterComponents(query: string) {
   return components.filter((entry) => componentMatches(entry, query))
 }
