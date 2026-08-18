@@ -8,7 +8,7 @@ import type { ComponentType, ReactNode } from "react"
 
 import { components, filterComponents } from "@/registry"
 import { BrevyLogo } from "./brevy-logo"
-import { useSearch } from "./search-provider"
+import { useSearch, useSearchable } from "./search-provider"
 
 type Entry = {
   label: string
@@ -89,9 +89,12 @@ function NavEntry({
 export function Sidebar() {
   const pathname = usePathname()
   const { query } = useSearch()
+  const searchable = useSearchable()
 
   const activeSlug = pathname.split("/")[2]
-  const matched = new Set(filterComponents(query).map((entry) => entry.slug))
+  const matched = new Set(
+    filterComponents(searchable ? query : "").map((entry) => entry.slug),
+  )
   const matches = components.filter(
     (entry) => matched.has(entry.slug) || entry.slug === activeSlug,
   )
