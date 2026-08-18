@@ -1,6 +1,4 @@
-import Link from "next/link"
-
-import { components, variantCount } from "@/registry"
+import { ComponentGrid } from "@/components/component-grid"
 
 export default function ComponentsPage() {
   return (
@@ -13,23 +11,7 @@ export default function ComponentsPage() {
         </p>
       </header>
 
-      <ul className="grid gap-5 sm:grid-cols-2">
-        {components.map((entry) => (
-          <li key={entry.slug}>
-            <Link
-              href={`/components/${entry.slug}`}
-              className="block rounded-xl border border-border bg-card p-6 hover:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-            >
-              <span className="block text-lg font-semibold">{entry.name}</span>
-              <span className="mt-1 block text-sm text-muted-foreground">
-                {entry.axes.length > 0
-                  ? `${String(variantCount(entry))} variants · ${entry.axes.map((axis) => axis.label).join(" · ")}`
-                  : "No variants"}
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <ComponentGrid />
     </div>
   )
 }

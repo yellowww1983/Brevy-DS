@@ -26,7 +26,7 @@ export function TopBar() {
               setQuery("")
             }
           }}
-          placeholder="Search components…"
+          placeholder="Search components and states…"
           aria-label="Search components"
           className="h-8 w-full appearance-none rounded-md border border-input bg-background pr-3 pl-8 text-sm placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none [&::-webkit-search-cancel-button]:hidden"
         />

@@ -4,7 +4,7 @@ import { cn } from "@brevy/ui"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-import { components } from "@/registry"
+import { components, filterComponents } from "@/registry"
 import { BrevyLogo } from "./brevy-logo"
 import { useSearch } from "./search-provider"
 import { SectionTabs } from "./section-tabs"
@@ -13,10 +13,11 @@ export function Sidebar() {
   const pathname = usePathname()
   const { query } = useSearch()
 
-  const term = query.trim().toLowerCase()
-  const matches = term
-    ? components.filter((entry) => entry.name.toLowerCase().includes(term))
-    : components
+  const activeSlug = pathname.split("/")[2]
+  const matched = new Set(filterComponents(query).map((entry) => entry.slug))
+  const matches = components.filter(
+    (entry) => matched.has(entry.slug) || entry.slug === activeSlug,
+  )
 
   return (
     <aside className="flex w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
@@ -61,12 +62,6 @@ export function Sidebar() {
             </Link>
           )
         })}
-
-        {matches.length === 0 && (
-          <p className="px-3 py-2 text-sm text-muted-foreground">
-            No components match “{query}”.
-          </p>
-        )}
       </nav>
     </aside>
   )
