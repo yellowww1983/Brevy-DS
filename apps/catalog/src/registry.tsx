@@ -155,7 +155,11 @@ export const components: readonly ComponentEntry[] = [
           type={combination.Type === "File" ? "file" : "text"}
           aria-label="Email"
           placeholder="hello@brevy.com"
-          defaultValue={state === "Filled" ? "hello@brevy.com" : undefined}
+          defaultValue={
+            state === "Filled" && combination.Type !== "File"
+              ? "hello@brevy.com"
+              : undefined
+          }
           disabled={state === "Disabled"}
           aria-invalid={invalid}
           data-force={focused ? "focus-visible" : undefined}
