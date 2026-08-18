@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test"
+import { expect, test, type Page } from "./catalog-test"
 
 const CATALOG_FACE = "Inter"
 const SYSTEM_FACE = "Rethink Sans"
