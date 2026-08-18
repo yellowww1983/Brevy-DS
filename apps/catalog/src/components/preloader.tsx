@@ -159,7 +159,7 @@ export function Preloader() {
     >
       <div
         ref={stage}
-        className="aspect-video w-full max-w-3xl text-brand-500 dark:text-olive-500"
+        className="aspect-video w-full max-w-3xl scale-60 text-brand-500 dark:text-olive-500"
       />
       {phase === "static" && (
         <div className="absolute">
