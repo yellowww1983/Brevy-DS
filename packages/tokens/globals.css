@@ -248,6 +248,8 @@
   --accent-foreground: var(--color-neutral-900);
   --surface-hover: var(--color-beige-600);
   --surface-active: var(--color-beige-700);
+  --surface-olive: var(--color-olive-500);
+  --surface-olive-foreground: var(--color-emerald-500);
   --destructive: var(--color-red-600);
   --destructive-foreground: var(--color-red-50);
   --border: var(--color-neutral-300);
@@ -286,6 +288,8 @@
   --accent-foreground: var(--color-beige-300);
   --surface-hover: var(--accent);
   --surface-active: var(--accent);
+  --surface-olive: var(--accent);
+  --surface-olive-foreground: var(--accent-foreground);
   --destructive: var(--color-red-400);
   --destructive-foreground: var(--color-red-50);
   --border: rgb(255 255 255 / 0.1);
@@ -324,6 +328,8 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-surface-hover: var(--surface-hover);
   --color-surface-active: var(--surface-active);
+  --color-surface-olive: var(--surface-olive);
+  --color-surface-olive-foreground: var(--surface-olive-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);

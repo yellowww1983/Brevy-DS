@@ -186,6 +186,52 @@ is meant to look different from a hover, it is not drawn anywhere.
 
 ---
 
+## The outline and secondary variants
+
+Both were found outside the states board and are now part of `@brevy/ui`.
+`outline` is drawn as white with an `emerald/500` stroke — `24977:629` with a
+label, `24936:9004` and `24936:9010` with an icon before it, `24977:616` and
+`24977:620` as a square icon button. `secondary` is drawn as an `olive/500`
+fill with no stroke — `25109:1705`, `25297:4541`, `25318:12356`, `25109:1672`.
+
+### 18. Horizontal padding: the file says 24, production ships 28
+
+Every leaf button in Figma declares `12/24`. Every leaf button on
+`brevy-mobile-lp.vercel.app` computes to `0px/28px`, read from live CSS rather
+than inferred. The code follows the file at 24 so the four variants stay
+internally consistent, but one of the two sources is wrong and they should be
+brought together.
+
+### 19. `outline` renders at font-weight 500 in production
+
+Primary, secondary and ghost all compute to 400, and Figma specifies Regular
+for all four. Only `outline` on the live site is 500 — production disagreeing
+with itself rather than with the file, so the code stays at 400 for every
+variant. Worth correcting on the Brevy side.
+
+### 20. Neither `outline` nor `secondary` has an Active state
+
+Nothing is drawn in Figma and nothing is defined in the production CSS beyond
+hover and disabled. Primary carries Active only in its icon-and-label form. The
+catalog marks four combinations as `missing in Figma` and draws 31 cells rather
+than 35.
+
+### 21. `secondary` has no dark value
+
+`olive/500` as a surface exists only for light. The naive mapping onto `accent`
+puts `brand-vivid` text on `neutral/700` at **2.36:1**, well under the 4.5:1
+needed for text, so the token ships as a pair — surface and foreground both fall
+back to the `accent` pair, which at least keeps the label readable. A drawn dark
+value would replace the guess.
+
+### 22. Primary carries a stroke in its own fill colour in production
+
+The board draws primary with no stroke at all. Production gives it
+`1px solid #023620` on a `#023620` fill — invisible, and there to keep the box
+from shifting when hover inverts it. The code does the same.
+
+---
+
 ## Missing dark values for the web Button
 
 The web Button needs two interaction colours the Figma board only defines for

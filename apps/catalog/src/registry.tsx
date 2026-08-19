@@ -13,7 +13,7 @@ import {
   type BadgeProps,
   type ButtonProps,
 } from "@brevy/ui"
-import { Check, Plus } from "lucide-react"
+import { Check, Download, Plus } from "lucide-react"
 import type { ReactNode } from "react"
 
 import { EmailField } from "./components/email-field"
@@ -67,6 +67,17 @@ const buttonForms: Record<string, ButtonForm> = {
       </>
     ),
   },
+  "Outline · label": { variant: "outline", children: "Button" },
+  "Outline · icon + label": {
+    variant: "outline",
+    children: (
+      <>
+        <Download />
+        Download app
+      </>
+    ),
+  },
+  "Secondary · label": { variant: "secondary", children: "Get started" },
   "Ghost · label": { variant: "ghost", children: "Button" },
   "Ghost · icon only": {
     variant: "ghost",
@@ -104,7 +115,12 @@ export const components: readonly ComponentEntry[] = [
         values: ["Default", "Hover", "Focus", "Active", "Disabled"],
       },
     ],
-    omitted: [{ key: "Primary · label/Active", note: "missing in Figma" }],
+    omitted: [
+      { key: "Primary · label/Active", note: "missing in Figma" },
+      { key: "Outline · label/Active", note: "missing in Figma" },
+      { key: "Outline · icon + label/Active", note: "missing in Figma" },
+      { key: "Secondary · label/Active", note: "missing in Figma" },
+    ],
     render: (combination) => {
       const state = combination.State
       const form = buttonForms[combination.Form ?? ""]

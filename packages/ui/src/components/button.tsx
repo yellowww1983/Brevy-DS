@@ -19,7 +19,9 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: `${LEAF} h-12 border border-transparent bg-primary px-6 text-primary-foreground hover:border-primary hover:bg-background hover:text-primary active:border-primary active:bg-background active:text-primary`,
+        primary: `${LEAF} h-12 border border-primary bg-primary px-6 text-primary-foreground hover:bg-background hover:text-primary active:bg-background active:text-primary`,
+        outline: `${LEAF} h-12 border border-primary bg-background px-6 text-primary hover:bg-primary hover:text-primary-foreground`,
+        secondary: `${LEAF} h-12 bg-surface-olive px-6 text-surface-olive-foreground hover:bg-background`,
         ghost: `h-9 rounded-lg px-4 text-foreground hover:bg-surface-hover active:bg-surface-active ${GHOST_ICON_ONLY}`,
       },
     },
