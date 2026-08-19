@@ -3,6 +3,18 @@
 
 @source "../../../../packages/ui/src";
 
+/* The borrowed ramps belong to Tailwind, not to the token file, and Tailwind
+   emits a colour variable only when some utility asks for it. The colours page
+   paints its swatches straight through `var(--color-…)`, which is not a utility
+   and does not count — so a shade nothing else happens to reference resolves to
+   nothing and the swatch comes out empty rather than wrong. Naming the shades
+   that page shows is what keeps them real, and it is deliberately not the same
+   as writing values down: pinning these ramps is an open question for the
+   designer, not a decision to make here. */
+@source inline("bg-zinc-{300,400,500,600,700,800}");
+@source inline("bg-neutral-{50,200,300,400,500,600,700,800,900,950}");
+@source inline("bg-red-{50,400,500,600}");
+
 /* --font-sans stays the design system face and is applied only inside preview
    frames; --font-catalog dresses the catalog's own interface. */
 @theme inline {

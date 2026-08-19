@@ -26,7 +26,7 @@ const GETTING_STARTED: readonly Entry[] = [
 ]
 
 const FOUNDATIONS: readonly Entry[] = [
-  { label: "Color", icon: Palette },
+  { label: "Colors", icon: Palette, href: "/getting-started/colors" },
   { label: "Typography", icon: Type, href: "/getting-started/typography" },
 ]
 

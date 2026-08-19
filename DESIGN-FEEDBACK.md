@@ -286,18 +286,28 @@ apart from each other.
 
 ---
 
-### 24. `neutral` is missing from the palette, so dark falls back to Tailwind v4
+### 24. `neutral` and `zinc` are missing from the palette, so both fall back to Tailwind v4
 
 The `@theme` block defines seventeen families — brand, olive, beige, taupe,
-emerald and the rest — but not `neutral`. Every `--color-neutral-*` reference
-therefore resolves against Tailwind v4's built-in ramp in oklch rather than
-the Figma values pinned to v3.
+emerald and the rest — but neither `neutral` nor `zinc`. Every
+`--color-neutral-*` and `--color-zinc-*` reference therefore resolves against
+Tailwind v4's built-in ramps in oklch rather than the Figma values pinned to v3.
 
-In dark that reaches `--background`, `--secondary`, `--muted`, `--accent`,
-`--popover`, `--ring-offset` and `--sidebar-accent`. The differences are small
-because v4 recomputed the same colours, but it is a hole in the decision that
-the palette comes from Figma. Either emit the neutral family alongside the
-others or state that neutral is intentionally Tailwind's.
+Counted across the website design page, these are not marginal families — they
+are the two most-used in the file:
+
+| family    | uses in the design               | semantic tokens that resolve to it |
+| --------- | -------------------------------- | ---------------------------------- |
+| `zinc`    | 2182, more than any other family | 6 in light — all body text         |
+| `neutral` | 750                              | 8 in light, **19 in dark**         |
+
+Nineteen of the thirty-three semantic tokens resolve to `neutral` in dark mode,
+including `--background`, `--card`, `--popover`, `--muted`, `--accent` and every
+foreground. In light, `--foreground`, `--border`, `--input` and `--ring` are the
+same story. The differences are small because v4 recomputed the same colours,
+but the whole skeleton of the system currently hangs off two ramps nobody wrote
+down. Either emit both families alongside the others or state that they are
+intentionally Tailwind's.
 
 ---
 
@@ -364,3 +374,41 @@ Two smaller divergences carried knowingly:
 
 Production also authors two values nothing in the file uses — an `h3` that runs
 24→30 and a 13px `label`. We ignore both.
+
+---
+
+## Colour
+
+### 29. Two fifths of the colour in the design is a raw hex
+
+Of 13,396 colour applications on the website design page, **5,662 carry no
+variable** — they are hexes typed onto a layer. The rest resolve to a named
+token.
+
+Spot-checking the largest of them (`#1c3c6e`, `#cc7c5e`, `#2b2e34`, `#ffc709`,
+`#008bcc`, `#009fab`, `#da2d5b`) they look like illustration art, partner
+logotypes and stock imagery rather than interface colour, which would make this
+expected rather than wrong. Two things are worth confirming:
+
+1. **Is all of it artwork?** If any interface surface is painted with a raw hex,
+   it will not follow a theme and will not appear in the system at all.
+2. **`#066e3d` appears 62 times as a raw hex** while also existing as
+   `brand/500`. That one is certainly the brand green typed in by hand rather
+   than picked, and it is the pattern most likely to drift.
+
+### 30. Six ramps exist only to feed five chart colours nothing renders
+
+`amber`, `blue`, `cyan`, `purple`, `rose` and `teal` are defined in full — 66
+tokens. Nothing in the design draws any of them, and the only thing in code that
+names them is `--chart-1` through `--chart-5`, which no component uses. The
+chain ends in nothing:
+
+```
+6 families  →  10 references  →  --chart-1..5  →  (unused)
+```
+
+Charts are not on the roadmap, so this is not urgent. It is recorded because the
+ramps read as "available palette" when they are closer to leftovers from the
+shadcn starter. Either a charting component is coming and they should stay, or
+they and the chart tokens can go together. The colours page omits all six and
+says so rather than showing sixty-six swatches nobody can use.

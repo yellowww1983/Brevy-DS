@@ -1,6 +1,11 @@
 @custom-variant dark (&:is(.dark *));
 
-@theme {
+/* `static` because a design system ships its palette whether or not this build
+   happens to use it. Left to itself Tailwind emits only the variables some
+   generated utility references, so a ramp nothing has reached for yet resolves
+   to nothing at all — which makes `var(--color-violet-500)` transparent rather
+   than violet, and would quietly hollow out the palette page. */
+@theme static {
   --color-brand-50: #e9f7f1;
   --color-brand-100: #d2efe3;
   --color-brand-200: #a6dfc7;
@@ -278,7 +283,13 @@
   stroke-width: var(--icon-stroke-width);
 }
 
-:root {
+/* `.light` is the same set under a class, so a subtree can be pinned to one
+   theme while the page is in the other. Custom properties inherit, so the
+   nearest ancestor carrying a theme class wins and `.dark` nested inside
+   `.light` still resolves to dark. Nothing but the colours page needs this,
+   and it costs no duplication. */
+:root,
+.light {
   --background: var(--color-white);
   --foreground: var(--color-zinc-800);
   --card: var(--color-white);

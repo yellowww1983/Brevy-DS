@@ -14,7 +14,8 @@ export function TableOfContents({
 }: {
   sections: readonly Section[]
 }) {
-  const [active, setActive] = useState(sections[0]?.id ?? "")
+  const [spied, setSpied] = useState(sections[0]?.id ?? "")
+  const [atEnd, setAtEnd] = useState(false)
 
   useEffect(() => {
     const headings = sections
@@ -33,7 +34,7 @@ export function TableOfContents({
         const topmost = visible.reduce((a, b) =>
           a.boundingClientRect.top <= b.boundingClientRect.top ? a : b,
         )
-        setActive(topmost.target.id)
+        setSpied(topmost.target.id)
       },
       { rootMargin: "-80px 0px -65% 0px" },
     )
@@ -46,6 +47,35 @@ export function TableOfContents({
       observer.disconnect()
     }
   }, [sections])
+
+  /** The band above sits in the top third of the screen, so a heading only
+   *  becomes current once there is a screenful of content below it to scroll
+   *  through. The last section rarely has that much, and its heading comes to
+   *  rest below the band with the page already at its end — leaving the final
+   *  item unreachable, and on a page whose sections are all short, leaving the
+   *  highlight wherever it happened to be. Running out of document says the
+   *  same thing the band does: there is nothing after this left to read. */
+  useEffect(() => {
+    const check = () => {
+      const room = document.documentElement.scrollHeight - window.innerHeight
+      setAtEnd(room > 0 && window.scrollY >= room - 2)
+    }
+
+    check()
+
+    /** Content that settles late — a frame that measures itself, an image
+     *  arriving — moves the end of the document without a scroll event. */
+    const observer = new ResizeObserver(check)
+    observer.observe(document.documentElement)
+    window.addEventListener("scroll", check, { passive: true })
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener("scroll", check)
+    }
+  }, [])
+
+  const active = (atEnd ? sections.at(-1)?.id : spied) ?? spied
 
   return (
     <nav
