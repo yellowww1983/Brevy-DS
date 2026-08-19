@@ -106,5 +106,22 @@ export default defineConfig(
       "@next/next/no-html-link-for-pages": "off",
     },
   },
+  {
+    /* The catalog measures rather than declares, so its numbers arrive after an
+       effect and a spec that sleeps instead of waiting is a race with a machine
+       we do not own. Three red builds came from exactly that. A rule outlives
+       the memory of the person who wrote it down. */
+    files: ["apps/catalog/e2e/**/*.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "CallExpression[callee.property.name='waitForTimeout']",
+          message:
+            "A duration is a guess about how fast the machine is. Wait on a condition instead: measured() or atFoot() from e2e/settled.ts, or expect.poll for anything else. See CLAUDE.md.",
+        },
+      ],
+    },
+  },
   prettier,
 )
