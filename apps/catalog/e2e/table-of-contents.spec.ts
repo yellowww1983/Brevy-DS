@@ -79,6 +79,51 @@ test("scrolling marks the section being read", async ({ page }) => {
   ).toHaveText("Two things worth knowing")
 })
 
+/** Introduction happens to end on a section long enough to reach the band on
+ *  its own, which is why watching only this page hid the problem on the other
+ *  two. Every page that carries a contents list is checked, one test each:
+ *  waiting for a page to settle takes long enough that three of them in a row
+ *  ran past a single test's budget. */
+const WITH_CONTENTS = [
+  "/getting-started/introduction",
+  "/getting-started/how-to-use",
+  "/getting-started/typography",
+] as const
+
+/** The typography page measures its frames once they load, so the document goes
+ *  on growing for a moment after it is ready. Scrolling to the foot before that
+ *  settles lands on a foot that is about to move, which is not the state a
+ *  reader ever sees. */
+async function scrollToFoot(page: Page) {
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const room = document.documentElement.scrollHeight - window.innerHeight
+        window.scrollTo({ top: room, behavior: "instant" })
+        return window.scrollY >= room - 2
+      }),
+    )
+    .toBe(true)
+}
+
+for (const path of WITH_CONTENTS) {
+  test(`the last entry is reachable at the foot of ${path}`, async ({
+    page,
+  }) => {
+    await page.goto(path)
+
+    const links = page.locator('nav[aria-label="On this page"] a')
+    const last = await links.last().textContent()
+
+    await scrollToFoot(page)
+
+    await expect(
+      page.locator('nav[aria-label="On this page"] a[aria-current]'),
+      "a short last section never lifts its heading into the band",
+    ).toHaveText(last ?? "")
+  })
+}
+
 test("the text keeps the same left edge as a component page", async ({
   page,
 }) => {
