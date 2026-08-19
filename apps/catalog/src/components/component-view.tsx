@@ -101,17 +101,18 @@ export function ComponentView({ slug }: { slug: string }) {
   const phrases = new Map(
     copyChoices(entry).map((choice) => [choice.value, choice.phrase]),
   )
+  const copyFor = (title: string | null) => {
+    const phrase = title === null ? undefined : phrases.get(title)
+    return phrase ? <CopyIntent name={subject} choice={phrase} /> : undefined
+  }
 
   return (
     <>
-      <header className="mb-20 flex items-start justify-between gap-6">
-        <div>
-          <h1 className="text-4xl font-bold tracking-tight">{entry.name}</h1>
-          <p className="mt-3 text-base text-muted-foreground">
-            {variantLabel(entry, query)}
-          </p>
-        </div>
-        <CopyIntent name={subject} />
+      <header className="mb-20">
+        <h1 className="text-4xl font-bold tracking-tight">{entry.name}</h1>
+        <p className="mt-3 text-base text-muted-foreground">
+          {variantLabel(entry, query)}
+        </p>
       </header>
 
       {groups.length === 0 ? (
@@ -141,14 +142,7 @@ export function ComponentView({ slug }: { slug: string }) {
             <Section
               key={group.title ?? String(index)}
               title={group.title}
-              action={
-                group.title && phrases.has(group.title) ? (
-                  <CopyIntent
-                    name={subject}
-                    choice={phrases.get(group.title)}
-                  />
-                ) : undefined
-              }
+              action={copyFor(group.title)}
             >
               {group.rows.map((row) => (
                 <Preview

@@ -22,7 +22,6 @@ test("a component offers one prompt per real choice, not per state", async ({
     sentences,
     "the State axis describes how a component looks, so it is never a prompt",
   ).toEqual([
-    "Use the Brevy Button.",
     "Use the Brevy Button — primary, with a text label.",
     "Use the Brevy Button — primary, with an icon before the label.",
     "Use the Brevy Button — ghost, with a text label.",
@@ -30,16 +29,13 @@ test("a component offers one prompt per real choice, not per state", async ({
   ])
 })
 
-test("a component with no axes offers only the page prompt", async ({
-  page,
-}) => {
+test("a component with no axes offers nothing to copy", async ({ page }) => {
   await page.goto("/components/card")
 
-  await expect(page.locator(COPY)).toHaveCount(1)
-  await expect(page.locator(COPY)).toHaveAttribute(
-    "aria-label",
-    "Copy the prompt: Use the Brevy Card.",
-  )
+  await expect(
+    page.locator(COPY),
+    "no axis means no choice, and a prompt without a choice is the vagueness this avoids",
+  ).toHaveCount(0)
 })
 
 test("the prompt reaches the clipboard and the button says so", async ({
