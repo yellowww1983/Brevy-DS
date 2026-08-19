@@ -69,7 +69,11 @@ export default function IntroductionPage() {
         <strong className="font-semibold">1. Browse.</strong> Look through the
         Components and Blocks in this catalog. Components are the small pieces —
         buttons, inputs, badges. Blocks are whole sections — a hero, a pricing
-        table, a FAQ.
+        table, a FAQ. Both exist for the same reason: consistency across the
+        whole journey. Someone who lands on a campaign page, clicks through to
+        pricing and ends up on a FAQ should feel one brand the entire way — and
+        they do, because every page is built from the same pieces, even when the
+        person putting them together isn&rsquo;t a designer.
       </p>
 
       <ImageSlot>Browsing the blocks gallery</ImageSlot>
