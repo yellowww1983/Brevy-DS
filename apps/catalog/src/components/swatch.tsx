@@ -102,7 +102,7 @@ export function PaletteSwatch({
       onClick={() => {
         copy(name)
       }}
-      className="flex w-full items-center gap-3 rounded-md p-1 text-left hover:bg-surface-hover focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+      className="flex w-full items-center gap-3 rounded-md p-1 text-left hover:bg-catalog-hover focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
     >
       <span
         ref={ref}

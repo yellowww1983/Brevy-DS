@@ -58,7 +58,7 @@ export function ViewportProvider({ children }: { children: ReactNode }) {
               className={cn(
                 "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
                 active
-                  ? "bg-surface-hover text-foreground"
+                  ? "bg-catalog-active text-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
