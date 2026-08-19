@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "./catalog-test"
+import { atFoot } from "./settled"
 
 test.use({ viewport: { width: 1440, height: 900 } })
 
@@ -91,22 +92,6 @@ const WITH_CONTENTS = [
   "/getting-started/colors",
 ] as const
 
-/** The typography page measures its frames once they load, so the document goes
- *  on growing for a moment after it is ready. Scrolling to the foot before that
- *  settles lands on a foot that is about to move, which is not the state a
- *  reader ever sees. */
-async function scrollToFoot(page: Page) {
-  await expect
-    .poll(() =>
-      page.evaluate(() => {
-        const room = document.documentElement.scrollHeight - window.innerHeight
-        window.scrollTo({ top: room, behavior: "instant" })
-        return window.scrollY >= room - 2
-      }),
-    )
-    .toBe(true)
-}
-
 for (const path of WITH_CONTENTS) {
   test(`the last entry is reachable at the foot of ${path}`, async ({
     page,
@@ -116,7 +101,7 @@ for (const path of WITH_CONTENTS) {
     const links = page.locator('nav[aria-label="On this page"] a')
     const last = await links.last().textContent()
 
-    await scrollToFoot(page)
+    await atFoot(page)
 
     await expect(
       page.locator('nav[aria-label="On this page"] a[aria-current]'),
