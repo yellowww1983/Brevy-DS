@@ -77,6 +77,11 @@ const buttonForms: Record<string, ButtonForm> = {
       </>
     ),
   },
+  "Outline · icon only": {
+    variant: "outline",
+    children: <Download />,
+    label: "Download app",
+  },
   "Secondary · label": { variant: "secondary", children: "Get started" },
   "Ghost · label": { variant: "ghost", children: "Button" },
   "Ghost · icon only": {
@@ -119,6 +124,7 @@ export const components: readonly ComponentEntry[] = [
       { key: "Primary · label/Active", note: "missing in Figma" },
       { key: "Outline · label/Active", note: "missing in Figma" },
       { key: "Outline · icon + label/Active", note: "missing in Figma" },
+      { key: "Outline · icon only/Active", note: "missing in Figma" },
       { key: "Secondary · label/Active", note: "missing in Figma" },
     ],
     render: (combination) => {

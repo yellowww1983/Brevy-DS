@@ -224,7 +224,21 @@ needed for text, so the token ships as a pair — surface and foreground both fa
 back to the `accent` pair, which at least keeps the label readable. A drawn dark
 value would replace the guess.
 
-### 22. Primary carries a stroke in its own fill colour in production
+### 22. `secondary` hover: production drops the outline, the code adds one
+
+Both sources agree that hovering `secondary` turns the `olive/500` fill white
+and leaves no border: Figma draws no hover at all, and production computes
+`#d7e4c9 → #ffffff` with `border-width: 0` throughout. The code deliberately
+departs from that and adds a green outline on hover, matching what `primary`
+does, so the button keeps a visible edge in every context.
+
+Worth knowing why the sources look thinner than they are: `secondary` sits on a
+`#023620` surface in production, where turning white is the strongest contrast
+available rather than a disappearance. On a light surface — which is where the
+catalog previews it — the same hover has no edge at all. The added outline
+covers both cases; production should pick one and match it.
+
+### 23. Primary carries a stroke in its own fill colour in production
 
 The board draws primary with no stroke at all. Production gives it
 `1px solid #023620` on a `#023620` fill — invisible, and there to keep the box
