@@ -1,10 +1,15 @@
 import { expect, test } from "./catalog-test"
 
-test("nothing inert is reachable as a link", async ({ page }) => {
+test("every sidebar entry is either a working link or plainly inert", async ({
+  page,
+}) => {
   await page.goto("/components/button")
 
+  /** Entries graduate from inert to linked as pages land — Colors was the last
+   *  one — so the count is deliberately not pinned. What has to hold either way
+   *  is that an inert entry is never an anchor, because an anchor with nowhere
+   *  to go is a link that silently does nothing. */
   const pending = page.locator('aside [aria-disabled="true"]')
-  await expect(pending).toHaveCount(1)
 
   const tags = await pending.evaluateAll((nodes) =>
     nodes.map((node) => node.tagName),
@@ -16,6 +21,11 @@ test("nothing inert is reachable as a link", async ({ page }) => {
     .evaluateAll((nodes) =>
       nodes.map((node) => node.getAttribute("href") ?? ""),
     )
+
+  expect(
+    links.length,
+    "with nothing inert left to check, an empty sidebar would otherwise pass",
+  ).toBeGreaterThan(0)
 
   const responses = await Promise.all(
     [...new Set(links)].map(async (href) => ({

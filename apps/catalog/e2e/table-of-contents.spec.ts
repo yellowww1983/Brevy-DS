@@ -81,13 +81,14 @@ test("scrolling marks the section being read", async ({ page }) => {
 
 /** Introduction happens to end on a section long enough to reach the band on
  *  its own, which is why watching only this page hid the problem on the other
- *  two. Every page that carries a contents list is checked, one test each:
+ *  three. Every page that carries a contents list is checked, one test each:
  *  waiting for a page to settle takes long enough that three of them in a row
  *  ran past a single test's budget. */
 const WITH_CONTENTS = [
   "/getting-started/introduction",
   "/getting-started/how-to-use",
   "/getting-started/typography",
+  "/getting-started/colors",
 ] as const
 
 /** The typography page measures its frames once they load, so the document goes
