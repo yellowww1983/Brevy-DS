@@ -21,6 +21,9 @@ import { EmailField } from "./components/email-field"
 export type Axis = {
   label: string
   values: readonly string[]
+  /** How each value reads inside a sentence. Axis values are written for a
+   *  grid heading; only an axis that carries prose can be copied as intent. */
+  phrasing?: Readonly<Record<string, string>>
 }
 
 export type Omission = {
@@ -86,7 +89,16 @@ export const components: readonly ComponentEntry[] = [
     name: "Button",
     // Drawn from Brevy Website · frame 22912:1932
     axes: [
-      { label: "Form", values: Object.keys(buttonForms) },
+      {
+        label: "Form",
+        values: Object.keys(buttonForms),
+        phrasing: {
+          "Primary · label": "primary, with a text label",
+          "Primary · icon + label": "primary, with an icon before the label",
+          "Ghost · label": "ghost, with a text label",
+          "Ghost · icon only": "ghost, with an icon and no label",
+        },
+      },
       {
         label: "State",
         values: ["Default", "Hover", "Focus", "Active", "Disabled"],
@@ -118,7 +130,14 @@ export const components: readonly ComponentEntry[] = [
     name: "Input",
     // Drawn from Brevy app · component set 65:533
     axes: [
-      { label: "Type", values: ["Text", "File"] },
+      {
+        label: "Type",
+        values: ["Text", "File"],
+        phrasing: {
+          Text: "for typed text",
+          File: "for choosing a file",
+        },
+      },
       {
         label: "State",
         values: [
@@ -162,6 +181,13 @@ export const components: readonly ComponentEntry[] = [
       {
         label: "Variant",
         values: ["Default", "Secondary", "Outline", "Destructive", "Verified"],
+        phrasing: {
+          Default: "the default style",
+          Secondary: "the secondary style",
+          Outline: "the outline style",
+          Destructive: "the destructive style",
+          Verified: "the verified style, with a check mark",
+        },
       },
       { label: "State", values: ["Default", "Hover", "Focus"] },
     ],
@@ -346,6 +372,29 @@ export function combinationKey(
 
 export function variantCount(entry: ComponentEntry) {
   return combinations(entry.axes).length - entry.omitted.length
+}
+
+/** The catalog's own name for the component, which anchors a copied prompt to
+ *  this system rather than to buttons in general. */
+export function subjectOf(entry: ComponentEntry) {
+  return `Brevy ${entry.name}`
+}
+
+/** Only the first axis is a choice someone makes while assembling a page. The
+ *  State axis describes how a component looks, not which one to reach for, so
+ *  it is never offered for copying. */
+export function copyChoices(entry: ComponentEntry) {
+  const [first] = entry.axes
+  const phrasing = first?.phrasing
+
+  if (!phrasing) {
+    return []
+  }
+
+  return first.values.flatMap((value) => {
+    const phrase = phrasing[value]
+    return phrase ? [{ value, phrase }] : []
+  })
 }
 
 /** One source for the card and the page header — they used to disagree, the

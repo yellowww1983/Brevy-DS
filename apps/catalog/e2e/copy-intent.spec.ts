@@ -1,0 +1,62 @@
+import { expect, test } from "./catalog-test"
+
+const COPY = 'main button[aria-label^="Copy the prompt"]'
+
+test("a component offers one prompt per real choice, not per state", async ({
+  page,
+}) => {
+  await page.goto("/components/button")
+
+  const sentences = await page
+    .locator(COPY)
+    .evaluateAll((nodes) =>
+      nodes.map((node) =>
+        (node.getAttribute("aria-label") ?? "").replace(
+          "Copy the prompt: ",
+          "",
+        ),
+      ),
+    )
+
+  expect(
+    sentences,
+    "the State axis describes how a component looks, so it is never a prompt",
+  ).toEqual([
+    "Use the Brevy Button.",
+    "Use the Brevy Button — primary, with a text label.",
+    "Use the Brevy Button — primary, with an icon before the label.",
+    "Use the Brevy Button — ghost, with a text label.",
+    "Use the Brevy Button — ghost, with an icon and no label.",
+  ])
+})
+
+test("a component with no axes offers only the page prompt", async ({
+  page,
+}) => {
+  await page.goto("/components/card")
+
+  await expect(page.locator(COPY)).toHaveCount(1)
+  await expect(page.locator(COPY)).toHaveAttribute(
+    "aria-label",
+    "Copy the prompt: Use the Brevy Card.",
+  )
+})
+
+test("the prompt reaches the clipboard and the button says so", async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"])
+  await page.goto("/components/badge")
+
+  const button = page.locator(COPY).last()
+  await expect(button).toHaveText("Copy")
+
+  await button.click()
+
+  await expect(button).toHaveText("Copied")
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    "Use the Brevy Badge — the verified style, with a check mark.",
+  )
+  await expect(button).toHaveText("Copy", { timeout: 4000 })
+})
