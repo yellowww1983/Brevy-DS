@@ -4,7 +4,7 @@ test("nothing inert is reachable as a link", async ({ page }) => {
   await page.goto("/components/button")
 
   const pending = page.locator('aside [aria-disabled="true"]')
-  await expect(pending).toHaveCount(3)
+  await expect(pending).toHaveCount(1)
 
   const tags = await pending.evaluateAll((nodes) =>
     nodes.map((node) => node.tagName),

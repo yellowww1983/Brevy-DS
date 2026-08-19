@@ -298,3 +298,69 @@ In dark that reaches `--background`, `--secondary`, `--muted`, `--accent`,
 because v4 recomputed the same colours, but it is a hole in the decision that
 the palette comes from Figma. Either emit the neutral family alongside the
 others or state that neutral is intentionally Tailwind's.
+
+---
+
+## Typography
+
+### 25. The hero is drawn at two sizes, and the larger one is the exception
+
+Across the website page, every top-level page frame opens with a Hedvig hero.
+Seven of them are drawn at **42/36/30** for desktop, tablet and mobile — the four
+seasonal Home Pages, Caregiving, For Organizations and the partner page, plus the
+Open Graph card. One page, **Mobile App**, opens at **60** and is the only frame
+in the file drawn that way; it also has no tablet or mobile variant, so 60 has no
+smaller counterpart anywhere.
+
+The two are not distinguished in the file. Both are local text with no shared
+style and no name, so the distinction between "a page opens" and "this page opens
+louder" exists only as a size. We have named them: **`h1` is 42**, the opening
+seven pages share, and **`display` is 60**, the Mobile App exception.
+
+Two things to confirm:
+
+1. **Is `display` a role or a one-off?** If the louder hero belongs only to the
+   Mobile App landing, it is a page-level exception rather than a system role and
+   should be called that. If other pages are meant to reach for it, it needs a
+   rule for when.
+2. **Mobile App has no tablet or mobile frame.** `display` is drawn at exactly one
+   width. Its behaviour below 1440 is inferred, not designed.
+
+### 26. Our sizes deliberately differ from production
+
+Production ships `display` at up to **72** and `h1` at up to **60**, both sized
+around the Mobile App landing — the only page built so far — and neither matches
+the 42 hero the other seven pages share. That hero has no size in the code at all
+today.
+
+We have overridden production: **`display` 60, `h1` 42**. The system serves seven
+pages, not one, so the size seven of them share is the one that gets the primary
+name. Production's 72 is not drawn anywhere in the file and has been dropped.
+
+### 27. The h1 steps are not on a straight line — resolved, no action needed
+
+Recorded so nobody re-derives it later. The drawn sizes are 30 at 390, 36 at 810
+and 42 at 1440. The first step gains 6px over 420px of width; the second gains the
+same 6px over 630px, so the three points are not collinear and no single fluid
+size — which is a straight line — can pass through all of them.
+
+Two lines can, one per segment, meeting at 36. Because the first is the lower of
+the two below 810 and the second is lower above it, `min()` selects the right
+segment at every width with no breakpoint involved. **h1 now renders 30 / 36 / 42
+at 390 / 810 / 1440 exactly**, and stays fluid in between.
+
+This is a technique, not a divergence. It costs one thing worth knowing: the curve
+bends at tablet rather than running straight, so h1 grows faster below 810 than
+above it. If the intent was a constant rate of growth instead, the drawn tablet
+value is the one to revisit.
+
+### 28. Body leading and letter-spacing differ from the file
+
+Two smaller divergences carried knowingly:
+
+- **Body leading.** Production authors 1.6; the file draws 1.5. We ship 1.5.
+- **Letter-spacing.** The file applies **−0.9%** tracking to the headings. We ship
+  0, because production does, and the difference is invisible below 42px.
+
+Production also authors two values nothing in the file uses — an `h3` that runs
+24→30 and a 13px `label`. We ignore both.

@@ -7,6 +7,7 @@
    frames; --font-catalog dresses the catalog's own interface. */
 @theme inline {
   --font-sans: var(--font-rethink-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-hedvig), ui-serif, Georgia, serif;
   --font-catalog: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 

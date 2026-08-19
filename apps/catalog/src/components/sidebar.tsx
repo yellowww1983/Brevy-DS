@@ -22,12 +22,12 @@ const GETTING_STARTED: readonly Entry[] = [
     icon: Zap,
     href: "/getting-started/introduction",
   },
-  { label: "Installation", icon: Wrench },
+  { label: "How to use", icon: Wrench, href: "/getting-started/how-to-use" },
 ]
 
 const FOUNDATIONS: readonly Entry[] = [
   { label: "Color", icon: Palette },
-  { label: "Typography", icon: Type },
+  { label: "Typography", icon: Type, href: "/getting-started/typography" },
 ]
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
