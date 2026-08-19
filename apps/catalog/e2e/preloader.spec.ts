@@ -49,9 +49,13 @@ test("a reload in the same session never shows a frame of it", async ({
   await page.clock.install()
   await page.goto("/components")
 
-  expect(await page.evaluate(() => sessionStorage.getItem("preloader"))).toBe(
-    "seen",
-  )
+  /** The flag is written by an effect, so it lands some time after the
+   *  navigation resolves rather than with it. Reading it once raced hydration
+   *  and failed roughly one run in three under load; this is the setup for the
+   *  reload below, not the assertion the test is about. */
+  await expect
+    .poll(() => page.evaluate(() => sessionStorage.getItem("preloader")))
+    .toBe("seen")
 
   await page.reload()
 
