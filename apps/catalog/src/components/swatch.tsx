@@ -2,32 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 
-const FEEDBACK_MS = 2000
-
-function useCopy() {
-  const [copied, setCopied] = useState(false)
-  const timer = useRef<number | undefined>(undefined)
-
-  useEffect(
-    () => () => {
-      window.clearTimeout(timer.current)
-    },
-    [],
-  )
-
-  return {
-    copied,
-    copy: (text: string) => {
-      void navigator.clipboard.writeText(text).then(() => {
-        setCopied(true)
-        window.clearTimeout(timer.current)
-        timer.current = window.setTimeout(() => {
-          setCopied(false)
-        }, FEEDBACK_MS)
-      })
-    },
-  }
-}
+import { useCopy } from "./use-copy"
 
 /** A colour is read back from the swatch rather than written beside it, so the
  *  page cannot print a hex the system does not paint. Going through a canvas
