@@ -296,10 +296,10 @@ Tailwind v4's built-in ramps in oklch rather than the Figma values pinned to v3.
 Counted across the website design page, these are not marginal families — they
 are the two most-used in the file:
 
-| family | uses in the design | semantic tokens that resolve to it |
-| --- | --- | --- |
-| `zinc` | 2182, more than any other family | 6 in light — all body text |
-| `neutral` | 750 | 8 in light, **19 in dark** |
+| family    | uses in the design               | semantic tokens that resolve to it |
+| --------- | -------------------------------- | ---------------------------------- |
+| `zinc`    | 2182, more than any other family | 6 in light — all body text         |
+| `neutral` | 750                              | 8 in light, **19 in dark**         |
 
 Nineteen of the thirty-three semantic tokens resolve to `neutral` in dark mode,
 including `--background`, `--card`, `--popover`, `--muted`, `--accent` and every
