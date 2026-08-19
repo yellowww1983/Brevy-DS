@@ -9,11 +9,14 @@ import {
   combinationKey,
   combinationMatches,
   combinations,
+  copyChoices,
   getComponent,
   isOmitted,
+  subjectOf,
   variantCount,
   variantLabel,
 } from "@/registry"
+import { CopyIntent } from "./copy-intent"
 import { useSearch } from "./search-provider"
 
 function caption(axes: readonly Axis[], combination: Record<string, string>) {
@@ -36,17 +39,22 @@ function Preview({ label, children }: { label: string; children: ReactNode }) {
 
 function Section({
   title,
+  action,
   children,
 }: {
   title: string | null
+  action?: ReactNode
   children: ReactNode
 }) {
   return (
     <section>
       {title && (
-        <h2 className="mb-5 text-sm font-semibold tracking-wide uppercase">
-          {title}
-        </h2>
+        <div className="mb-5 flex items-center justify-between gap-4">
+          <h2 className="text-sm font-semibold tracking-wide uppercase">
+            {title}
+          </h2>
+          {action}
+        </div>
       )}
       <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {children}
@@ -89,6 +97,14 @@ export function ComponentView({ slug }: { slug: string }) {
   const groups = groupsOf(entry, query)
   const total = variantCount(entry)
   const suggestion = bestMatch(query, entry.slug)
+  const subject = subjectOf(entry)
+  const phrases = new Map(
+    copyChoices(entry).map((choice) => [choice.value, choice.phrase]),
+  )
+  const copyFor = (title: string | null) => {
+    const phrase = title === null ? undefined : phrases.get(title)
+    return phrase ? <CopyIntent name={subject} choice={phrase} /> : undefined
+  }
 
   return (
     <>
@@ -123,7 +139,11 @@ export function ComponentView({ slug }: { slug: string }) {
       ) : (
         <div className="flex flex-col gap-14">
           {groups.map((group, index) => (
-            <Section key={group.title ?? String(index)} title={group.title}>
+            <Section
+              key={group.title ?? String(index)}
+              title={group.title}
+              action={copyFor(group.title)}
+            >
               {group.rows.map((row) => (
                 <Preview
                   key={combinationKey(entry, row)}
