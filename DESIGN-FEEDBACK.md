@@ -216,13 +216,32 @@ hover and disabled. Primary carries Active only in its icon-and-label form. The
 catalog marks four combinations as `missing in Figma` and draws 31 cells rather
 than 35.
 
-### 21. `secondary` has no dark value
+### 21. The app drains olive out of dark, and the code overrides that
 
-`olive/500` as a surface exists only for light. The naive mapping onto `accent`
-puts `brand-vivid` text on `neutral/700` at **2.36:1**, well under the 4.5:1
-needed for text, so the token ships as a pair — surface and foreground both fall
-back to the `accent` pair, which at least keeps the label readable. A drawn dark
-value would replace the guess.
+Read through `valuesByMode` rather than a raw fill, the app file answers the
+question explicitly and the answer is grey. A whole family exists in
+`3. Mode`:
+
+| variable                            | Light     | Dark      |
+| ----------------------------------- | --------- | --------- |
+| `custom/olive-200 dark:neutral-800` | `#e6eedc` | `#262626` |
+| `custom/olive-300 dark:neutral-900` | `#dce7cf` | `#171717` |
+| `custom/olive-400 dark:neutral-800` | `#d4e2c6` | `#262626` |
+| `custom/olive-500 dark:neutral-700` | `#d7e4c9` | `#404040` |
+| `custom/olive-600 dark:neutral-600` | `#b8c7aa` | `#525252` |
+
+The names say it outright: the entire olive ramp becomes a neutral grey in
+dark, and `base/secondary` does the same — `beige/500` in light,
+`neutral/800` in dark. The `tailwind colors/olive/*` ramp itself carries one
+mode only, so there is no olive value for dark to read.
+
+`@brevy/ui` deliberately departs from that and keeps `olive/500` in both
+modes, so the brand stays in the variant instead of turning into a grey
+block. Only the outline colour flips between modes, because `emerald/500`
+reads on white and `olive/500` reads on near-black.
+
+This is a decision, not a gap. It is recorded so the two sides can agree on
+one answer rather than discovering the difference later.
 
 ### 22. `secondary` hover: production drops the outline, the code adds one
 
@@ -264,3 +283,18 @@ indistinguishable in dark mode** for ghost.
 
 Together these need one pair of neutral interaction surfaces for dark, a step
 apart from each other.
+
+---
+
+### 24. `neutral` is missing from the palette, so dark falls back to Tailwind v4
+
+The `@theme` block defines seventeen families — brand, olive, beige, taupe,
+emerald and the rest — but not `neutral`. Every `--color-neutral-*` reference
+therefore resolves against Tailwind v4's built-in ramp in oklch rather than
+the Figma values pinned to v3.
+
+In dark that reaches `--background`, `--secondary`, `--muted`, `--accent`,
+`--popover`, `--ring-offset` and `--sidebar-accent`. The differences are small
+because v4 recomputed the same colours, but it is a hole in the decision that
+the palette comes from Figma. Either emit the neutral family alongside the
+others or state that neutral is intentionally Tailwind's.

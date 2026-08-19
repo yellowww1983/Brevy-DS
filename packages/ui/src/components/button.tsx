@@ -32,7 +32,7 @@ const buttonVariants = cva(
       variant: {
         primary: `${LEAF} h-12 border border-primary bg-primary px-6 text-primary-foreground hover:bg-background hover:text-primary active:bg-background active:text-primary`,
         outline: `${LEAF} h-12 border border-primary bg-background px-6 text-primary hover:bg-primary hover:text-primary-foreground ${OUTLINE_ICON_ONLY}`,
-        secondary: `${LEAF} h-12 border border-transparent bg-surface-olive px-6 text-surface-olive-foreground hover:border-primary hover:bg-background hover:text-primary`,
+        secondary: `${LEAF} h-12 border border-transparent bg-surface-olive px-6 text-surface-olive-foreground hover:border-surface-olive-outline hover:bg-background hover:text-surface-olive-outline`,
         ghost: `h-9 rounded-lg px-4 text-foreground hover:bg-surface-hover active:bg-surface-active ${GHOST_ICON_ONLY}`,
       },
     },

@@ -250,6 +250,7 @@
   --surface-active: var(--color-beige-700);
   --surface-olive: var(--color-olive-500);
   --surface-olive-foreground: var(--color-emerald-500);
+  --surface-olive-outline: var(--color-emerald-500);
   --destructive: var(--color-red-600);
   --destructive-foreground: var(--color-red-50);
   --border: var(--color-neutral-300);
@@ -288,8 +289,14 @@
   --accent-foreground: var(--color-beige-300);
   --surface-hover: var(--accent);
   --surface-active: var(--accent);
-  --surface-olive: var(--accent);
-  --surface-olive-foreground: var(--accent-foreground);
+  /* Deliberately the same olive as light. The app maps its whole olive ramp
+     onto neutral greys in dark — custom/olive-500 dark:neutral-700 — which
+     drains the brand out of this variant, so the mapping is overridden here.
+     Only the outline colour flips, because emerald reads on white and olive
+     reads on near-black. */
+  --surface-olive: var(--color-olive-500);
+  --surface-olive-foreground: var(--color-emerald-500);
+  --surface-olive-outline: var(--color-olive-500);
   --destructive: var(--color-red-400);
   --destructive-foreground: var(--color-red-50);
   --border: rgb(255 255 255 / 0.1);
@@ -330,6 +337,7 @@
   --color-surface-active: var(--surface-active);
   --color-surface-olive: var(--surface-olive);
   --color-surface-olive-foreground: var(--surface-olive-foreground);
+  --color-surface-olive-outline: var(--surface-olive-outline);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
