@@ -1,11 +1,35 @@
-import { expect, test } from "./catalog-test"
+import { expect, test, type Page } from "./catalog-test"
 
 test.use({ viewport: { width: 1440, height: 900 } })
 
 const PAGE = "/getting-started/colors"
 
+/** Every label is filled by an effect, so navigation resolving is not the same
+ *  as the page being ready — read a moment too early and all of them are empty,
+ *  which is a slower machine away from any assertion here. Their arrival is
+ *  also what says hydration is done and a button will answer a click. */
+async function settled(page: Page) {
+  const labels = page.locator("[data-hex]")
+
+  await expect(
+    labels,
+    "a page with no swatches would pass every check",
+  ).not.toHaveCount(0)
+
+  await expect
+    .poll(() =>
+      labels.evaluateAll(
+        (nodes) =>
+          nodes.filter((node) => (node.getAttribute("data-hex") ?? "") === "")
+            .length,
+      ),
+    )
+    .toBe(0)
+}
+
 test("every swatch reports the colour it is painted", async ({ page }) => {
   await page.goto(PAGE)
+  await settled(page)
 
   /** Zero opacity is the failure worth naming. A ramp nothing else in the build
    *  uses gets its variables dropped, and every swatch of it then measures a
@@ -108,11 +132,19 @@ test("the two themes are shown at once, whichever one the reader is in", async (
 
   await page.getByRole("button", { name: "Toggle color theme" }).click()
 
+  /** Checked before the columns are, because a click that lands before the page
+   *  is interactive changes nothing — and "nothing changed" is exactly what the
+   *  assertion below wants to see. Without this it would pass either way. */
   await expect
-    .poll(backgrounds, {
-      message: "a column pinned to a theme must ignore the page's own theme",
-    })
-    .toEqual(inLight)
+    .poll(() =>
+      page.evaluate(() => document.documentElement.classList.contains("dark")),
+    )
+    .toBe(true)
+
+  expect(
+    await backgrounds(),
+    "a column pinned to a theme must ignore the page's own theme",
+  ).toEqual(inLight)
 })
 
 test("a swatch copies its name rather than its hex", async ({
@@ -121,6 +153,7 @@ test("a swatch copies its name rather than its hex", async ({
 }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await page.goto(PAGE)
+  await settled(page)
 
   await page.getByRole("button", { name: "Copy brand-500" }).click()
 
