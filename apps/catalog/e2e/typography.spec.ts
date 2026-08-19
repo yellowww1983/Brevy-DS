@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "./catalog-test"
+import { measured } from "./settled"
 
 const PAGE = "/getting-started/typography"
 
@@ -57,17 +58,44 @@ async function readSpecimens(page: Page) {
   return readings
 }
 
+const WIDTHS = { Desktop: 1440, Tablet: 810, Mobile: 390 } as const
+
+/** The tab flips its own state at once; what every assertion below reads is the
+ *  width the frames actually take, which arrives a beat later. Waiting on that
+ *  rather than on a duration is the difference between a condition and a guess
+ *  about how fast the machine is.
+ *
+ *  Deliberately the cause and not the effect: waiting until the badges agree
+ *  with their samples would make the spec that asserts exactly that agreement
+ *  true by construction. */
 async function choose(page: Page, viewport: "Desktop" | "Tablet" | "Mobile") {
   await page.getByRole("button", { name: viewport }).click()
   await expect(page.getByRole("button", { name: viewport })).toHaveAttribute(
     "aria-pressed",
     "true",
   )
-  await page.waitForTimeout(300)
+
+  await expect
+    .poll(async () => {
+      const widths = await Promise.all(
+        page
+          .frames()
+          .filter((frame) => frame.url().includes("/specimens/typography"))
+          .map((frame) =>
+            frame
+              .evaluate(() => document.documentElement.clientWidth)
+              .catch(() => 0),
+          ),
+      )
+
+      return widths.every((width) => width === WIDTHS[viewport])
+    })
+    .toBe(true)
 }
 
 test("every badge reports what its own sample renders", async ({ page }) => {
   await page.goto(PAGE)
+  await measured(page)
 
   for (const viewport of ["Desktop", "Tablet", "Mobile"] as const) {
     await choose(page, viewport)
@@ -88,6 +116,7 @@ test("the frame is a viewport, so the fluid roles actually change", async ({
   page,
 }) => {
   await page.goto(PAGE)
+  await measured(page)
 
   const sizes = async () => {
     const readings = await readSpecimens(page)
@@ -97,23 +126,25 @@ test("the frame is a viewport, so the fluid roles actually change", async ({
   }
 
   await choose(page, "Desktop")
-  expect(await sizes()).toMatchObject({ display: 60, h1: 42, h2: 36 })
+  await expect.poll(sizes).toMatchObject({ display: 60, h1: 42, h2: 36 })
 
   /** h1 is drawn at all three widths and its points are not collinear, so the
    *  middle one is the assertion that matters: a single straight line through
    *  the ends lands here on 35. */
   await choose(page, "Tablet")
-  expect(await sizes()).toMatchObject({ h1: 36, h2: 30 })
+  await expect.poll(sizes).toMatchObject({ h1: 36, h2: 30 })
 
   await choose(page, "Mobile")
-  expect(
-    await sizes(),
-    "narrowing an ordinary container would leave these untouched",
-  ).toMatchObject({ display: 36, h1: 30, h2: 30 })
+  await expect
+    .poll(sizes, {
+      message: "narrowing an ordinary container would leave these untouched",
+    })
+    .toMatchObject({ display: 36, h1: 30, h2: 30 })
 })
 
 test("the five fixed roles do not move between viewports", async ({ page }) => {
   await page.goto(PAGE)
+  await measured(page)
   const fixed = ["h3", "body-lg", "body", "caption", "label"]
 
   const readFixed = async () => {
@@ -138,6 +169,7 @@ test("the frames follow the catalog theme after they have loaded", async ({
   page,
 }) => {
   await page.goto(PAGE)
+  await measured(page)
 
   const framesInDark = () =>
     page.evaluate(() =>
@@ -163,6 +195,7 @@ test("every sample fits the part of the frame the column can show", async ({
   page,
 }) => {
   await page.goto(PAGE)
+  await measured(page)
 
   for (const viewport of ["Desktop", "Tablet", "Mobile"] as const) {
     await choose(page, viewport)
@@ -201,6 +234,7 @@ test("the sample panels open and close on the same amount of space", async ({
   page,
 }) => {
   await page.goto(PAGE)
+  await measured(page)
 
   for (const viewport of ["Desktop", "Tablet", "Mobile"] as const) {
     await choose(page, viewport)
@@ -235,6 +269,7 @@ test("headings are set in the serif and everything else in the sans", async ({
   page,
 }) => {
   await page.goto(PAGE)
+  await measured(page)
 
   const readings = await readSpecimens(page)
   const serif = readings.filter((r) => r.face === "Hedvig Letters Serif")

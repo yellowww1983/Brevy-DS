@@ -97,6 +97,8 @@ export function PaletteSwatch({
     <button
       type="button"
       aria-label={`Copy ${name}`}
+      data-measures
+      data-measured={label ? "" : undefined}
       onClick={() => {
         copy(name)
       }}
@@ -136,7 +138,11 @@ export function TokenSwatch({
   const { ref, label } = useSwatch()
 
   return (
-    <span data-swatch={theme}>
+    <span
+      data-swatch={theme}
+      data-measures
+      data-measured={label ? "" : undefined}
+    >
       <span className="flex items-center gap-2.5">
         {/* The theme class covers the block and nothing else. Wrapped any wider
             it would take the labels with it, and text pinned to dark on a light

@@ -175,6 +175,8 @@ export function ViewportFrame({
         ref={frame}
         src={`/specimens/typography?group=${group}`}
         title={`${title} specimens`}
+        data-measures
+        data-measured={height ? "" : undefined}
         style={{ width, height: height || 320 }}
         onLoad={() => {
           setLoads((count) => count + 1)
