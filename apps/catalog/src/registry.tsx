@@ -13,7 +13,7 @@ import {
   type BadgeProps,
   type ButtonProps,
 } from "@brevy/ui"
-import { Check, Plus } from "lucide-react"
+import { Check, Download, Plus } from "lucide-react"
 import type { ReactNode } from "react"
 
 import { EmailField } from "./components/email-field"
@@ -67,6 +67,22 @@ const buttonForms: Record<string, ButtonForm> = {
       </>
     ),
   },
+  "Outline · label": { variant: "outline", children: "Button" },
+  "Outline · icon + label": {
+    variant: "outline",
+    children: (
+      <>
+        <Download />
+        Download app
+      </>
+    ),
+  },
+  "Outline · icon only": {
+    variant: "outline",
+    children: <Download />,
+    label: "Download app",
+  },
+  "Secondary · label": { variant: "secondary", children: "Get started" },
   "Ghost · label": { variant: "ghost", children: "Button" },
   "Ghost · icon only": {
     variant: "ghost",
@@ -95,6 +111,10 @@ export const components: readonly ComponentEntry[] = [
         phrasing: {
           "Primary · label": "primary, with a text label",
           "Primary · icon + label": "primary, with an icon before the label",
+          "Outline · label": "outlined, with a text label",
+          "Outline · icon + label": "outlined, with an icon before the label",
+          "Outline · icon only": "outlined, with an icon and no label",
+          "Secondary · label": "soft green, with a text label",
           "Ghost · label": "ghost, with a text label",
           "Ghost · icon only": "ghost, with an icon and no label",
         },
@@ -104,7 +124,13 @@ export const components: readonly ComponentEntry[] = [
         values: ["Default", "Hover", "Focus", "Active", "Disabled"],
       },
     ],
-    omitted: [{ key: "Primary · label/Active", note: "missing in Figma" }],
+    omitted: [
+      { key: "Primary · label/Active", note: "missing in Figma" },
+      { key: "Outline · label/Active", note: "missing in Figma" },
+      { key: "Outline · icon + label/Active", note: "missing in Figma" },
+      { key: "Outline · icon only/Active", note: "missing in Figma" },
+      { key: "Secondary · label/Active", note: "missing in Figma" },
+    ],
     render: (combination) => {
       const state = combination.State
       const form = buttonForms[combination.Form ?? ""]

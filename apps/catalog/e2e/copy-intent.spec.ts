@@ -24,6 +24,10 @@ test("a component offers one prompt per real choice, not per state", async ({
   ).toEqual([
     "Use the Brevy Button — primary, with a text label.",
     "Use the Brevy Button — primary, with an icon before the label.",
+    "Use the Brevy Button — outlined, with a text label.",
+    "Use the Brevy Button — outlined, with an icon before the label.",
+    "Use the Brevy Button — outlined, with an icon and no label.",
+    "Use the Brevy Button — soft green, with a text label.",
     "Use the Brevy Button — ghost, with a text label.",
     "Use the Brevy Button — ghost, with an icon and no label.",
   ])

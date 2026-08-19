@@ -23,6 +23,26 @@ temporary and goes away when search becomes global.
 
 ---
 
+## The preloader specs race the overlay
+
+**Diagnosis.** The preloader takes itself down after roughly 2.4s, and its
+specs assert `toBeVisible()` on the overlay before acting on it. With five
+workers on a loaded machine the page can take long enough that the overlay is
+already gone by the time the assertion runs, so a different test fails on each
+run and a rerun passes. Observed on `feat/button-variants` and reproduced with
+identical code: once `Escape takes it down`, once `dark mode repaints the
+animation`, once a clean pass of all five.
+
+Nothing in the button work touches the overlay; the flake arrived with the
+preloader itself and is already on `main`.
+
+**Fix.** Install Playwright's clock (`page.clock`) in those specs so the
+dismissal happens when the test advances time rather than whenever the machine
+gets there. Deliberately not done alongside the button work — it is a third
+subject and belongs in its own change.
+
+---
+
 ## Carried over, not scheduled
 
 - **Badge icon stroke.** Renders at 2, the app file draws 1.25. Button was fixed

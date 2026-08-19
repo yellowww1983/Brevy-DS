@@ -186,6 +186,85 @@ is meant to look different from a hover, it is not drawn anywhere.
 
 ---
 
+## The outline and secondary variants
+
+Both were found outside the states board and are now part of `@brevy/ui`.
+`outline` is drawn as white with an `emerald/500` stroke — `24977:629` with a
+label, `24936:9004` and `24936:9010` with an icon before it, `24977:616` and
+`24977:620` as a square icon button. `secondary` is drawn as an `olive/500`
+fill with no stroke — `25109:1705`, `25297:4541`, `25318:12356`, `25109:1672`.
+
+### 18. Horizontal padding: the file says 24, production ships 28
+
+Every leaf button in Figma declares `12/24`. Every leaf button on
+`brevy-mobile-lp.vercel.app` computes to `0px/28px`, read from live CSS rather
+than inferred. The code follows the file at 24 so the four variants stay
+internally consistent, but one of the two sources is wrong and they should be
+brought together.
+
+### 19. `outline` renders at font-weight 500 in production
+
+Primary, secondary and ghost all compute to 400, and Figma specifies Regular
+for all four. Only `outline` on the live site is 500 — production disagreeing
+with itself rather than with the file, so the code stays at 400 for every
+variant. Worth correcting on the Brevy side.
+
+### 20. Neither `outline` nor `secondary` has an Active state
+
+Nothing is drawn in Figma and nothing is defined in the production CSS beyond
+hover and disabled. Primary carries Active only in its icon-and-label form. The
+catalog marks four combinations as `missing in Figma` and draws 31 cells rather
+than 35.
+
+### 21. The app drains olive out of dark, and the code overrides that
+
+Read through `valuesByMode` rather than a raw fill, the app file answers the
+question explicitly and the answer is grey. A whole family exists in
+`3. Mode`:
+
+| variable                            | Light     | Dark      |
+| ----------------------------------- | --------- | --------- |
+| `custom/olive-200 dark:neutral-800` | `#e6eedc` | `#262626` |
+| `custom/olive-300 dark:neutral-900` | `#dce7cf` | `#171717` |
+| `custom/olive-400 dark:neutral-800` | `#d4e2c6` | `#262626` |
+| `custom/olive-500 dark:neutral-700` | `#d7e4c9` | `#404040` |
+| `custom/olive-600 dark:neutral-600` | `#b8c7aa` | `#525252` |
+
+The names say it outright: the entire olive ramp becomes a neutral grey in
+dark, and `base/secondary` does the same — `beige/500` in light,
+`neutral/800` in dark. The `tailwind colors/olive/*` ramp itself carries one
+mode only, so there is no olive value for dark to read.
+
+`@brevy/ui` deliberately departs from that and keeps `olive/500` in both
+modes, so the brand stays in the variant instead of turning into a grey
+block. Only the outline colour flips between modes, because `emerald/500`
+reads on white and `olive/500` reads on near-black.
+
+This is a decision, not a gap. It is recorded so the two sides can agree on
+one answer rather than discovering the difference later.
+
+### 22. `secondary` hover: production drops the outline, the code adds one
+
+Both sources agree that hovering `secondary` turns the `olive/500` fill white
+and leaves no border: Figma draws no hover at all, and production computes
+`#d7e4c9 → #ffffff` with `border-width: 0` throughout. The code deliberately
+departs from that and adds a green outline on hover, matching what `primary`
+does, so the button keeps a visible edge in every context.
+
+Worth knowing why the sources look thinner than they are: `secondary` sits on a
+`#023620` surface in production, where turning white is the strongest contrast
+available rather than a disappearance. On a light surface — which is where the
+catalog previews it — the same hover has no edge at all. The added outline
+covers both cases; production should pick one and match it.
+
+### 23. Primary carries a stroke in its own fill colour in production
+
+The board draws primary with no stroke at all. Production gives it
+`1px solid #023620` on a `#023620` fill — invisible, and there to keep the box
+from shifting when hover inverts it. The code does the same.
+
+---
+
 ## Missing dark values for the web Button
 
 The web Button needs two interaction colours the Figma board only defines for
@@ -204,3 +283,18 @@ indistinguishable in dark mode** for ghost.
 
 Together these need one pair of neutral interaction surfaces for dark, a step
 apart from each other.
+
+---
+
+### 24. `neutral` is missing from the palette, so dark falls back to Tailwind v4
+
+The `@theme` block defines seventeen families — brand, olive, beige, taupe,
+emerald and the rest — but not `neutral`. Every `--color-neutral-*` reference
+therefore resolves against Tailwind v4's built-in ramp in oklch rather than
+the Figma values pinned to v3.
+
+In dark that reaches `--background`, `--secondary`, `--muted`, `--accent`,
+`--popover`, `--ring-offset` and `--sidebar-accent`. The differences are small
+because v4 recomputed the same colours, but it is a hole in the decision that
+the palette comes from Figma. Either emit the neutral family alongside the
+others or state that neutral is intentionally Tailwind's.
