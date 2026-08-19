@@ -23,6 +23,28 @@ temporary and goes away when search becomes global.
 
 ---
 
+## The preloader flake has two histories
+
+Closed, kept because the record is misleading without it. Searching the log for
+"the preloader flake" turns up a fix that did not end the failures.
+
+**First race — timers.** The specs asserted the overlay was on screen while it
+was removing itself on a real 2.4s timer, so a slow page load could lose the
+race. Fixed by freezing the clock with `page.clock`, and the fix holds.
+
+**Second race — hydration.** Freezing the clock meant the reload spec could no
+longer wait on the overlay's disappearance, so that wait was replaced by reading
+the session flag directly. The flag is written by an effect, and reading it
+without waiting races hydration instead. Same file, same test, a different
+mechanism — roughly one failure in three under load. Fixed by polling.
+
+So the timer fix did not cause the second failure so much as uncover it: the
+`toHaveCount` it removed had been synchronising the test with hydration as a
+side effect nobody had noticed. Anything that removes a wait from these specs
+should be checked for what that wait was quietly doing.
+
+---
+
 ## Carried over, not scheduled
 
 - **Badge icon stroke.** Renders at 2, the app file draws 1.25. Button was fixed
