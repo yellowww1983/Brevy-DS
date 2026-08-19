@@ -99,16 +99,30 @@ test("every badge reports what its own sample renders", async ({ page }) => {
 
   for (const viewport of ["Desktop", "Tablet", "Mobile"] as const) {
     await choose(page, viewport)
-    const readings = await readSpecimens(page)
-    expect(readings.length, viewport).toBe(8)
 
-    for (const reading of readings) {
-      expect(reading.badgeSize, `${reading.role} at ${viewport}`).toBe(
-        `${String(Math.round(reading.size))}px`,
+    expect((await readSpecimens(page)).length, viewport).toBe(8)
+
+    /** A badge re-measures when the frame resizes, which is a beat after the
+     *  frame reaches its new width — so the disagreements are collected until
+     *  there are none rather than read once. This is still the assertion, not
+     *  a wait dressed up as one: agreement that never arrives fails here. */
+    await expect
+      .poll(
+        async () =>
+          (await readSpecimens(page))
+            .filter(
+              (reading) =>
+                reading.badgeSize !== `${String(Math.round(reading.size))}px` ||
+                reading.badgeLeading !== String(reading.leading) ||
+                reading.badgeWeight !== reading.weight,
+            )
+            .map(
+              (reading) =>
+                `${reading.role}: badge says ${reading.badgeSize}/${reading.badgeLeading}/${reading.badgeWeight}, sample renders ${String(Math.round(reading.size))}px/${String(reading.leading)}/${reading.weight}`,
+            ),
+        { message: viewport },
       )
-      expect(reading.badgeLeading).toBe(String(reading.leading))
-      expect(reading.badgeWeight).toBe(reading.weight)
-    }
+      .toEqual([])
   }
 })
 
@@ -200,33 +214,41 @@ test("every sample fits the part of the frame the column can show", async ({
   for (const viewport of ["Desktop", "Tablet", "Mobile"] as const) {
     await choose(page, viewport)
 
-    const clipped = await page.evaluate(() => {
-      const found: string[] = []
+    /** Line boxes settle a beat after the frame reaches its new width. */
+    await expect
+      .poll(
+        () =>
+          page.evaluate(() => {
+            const found: string[] = []
 
-      for (const frame of document.querySelectorAll("iframe")) {
-        const visible = frame.parentElement?.clientWidth ?? 0
-        const document_ = frame.contentDocument
+            for (const frame of document.querySelectorAll("iframe")) {
+              const visible = frame.parentElement?.clientWidth ?? 0
+              const document_ = frame.contentDocument
 
-        for (const sample of document_?.querySelectorAll("[data-specimen]") ??
-          []) {
-          const range = document_?.createRange()
-          range?.selectNodeContents(sample)
-          const reach = Math.max(
-            ...[...(range?.getClientRects() ?? [])].map((rect) => rect.right),
-          )
+              for (const sample of document_?.querySelectorAll(
+                "[data-specimen]",
+              ) ?? []) {
+                const range = document_?.createRange()
+                range?.selectNodeContents(sample)
+                const reach = Math.max(
+                  ...[...(range?.getClientRects() ?? [])].map(
+                    (rect) => rect.right,
+                  ),
+                )
 
-          if (reach > visible) {
-            found.push(
-              `${sample.getAttribute("data-specimen") ?? ""} reaches ${String(Math.round(reach))} of ${String(visible)}`,
-            )
-          }
-        }
-      }
+                if (reach > visible) {
+                  found.push(
+                    `${sample.getAttribute("data-specimen") ?? ""} reaches ${String(Math.round(reach))} of ${String(visible)}`,
+                  )
+                }
+              }
+            }
 
-      return found
-    })
-
-    expect(clipped, viewport).toEqual([])
+            return found
+          }),
+        { message: viewport },
+      )
+      .toEqual([])
   }
 })
 
@@ -239,29 +261,35 @@ test("the sample panels open and close on the same amount of space", async ({
   for (const viewport of ["Desktop", "Tablet", "Mobile"] as const) {
     await choose(page, viewport)
 
-    const padding = await page.evaluate(() =>
-      [...document.querySelectorAll("iframe")].map((frame) => {
-        const list = frame.contentDocument?.querySelector("ul")
-        const items = [...(list?.children ?? [])]
-        const box = list?.getBoundingClientRect()
+    /** Boxes settle a beat after the frame reaches its new width. */
+    await expect
+      .poll(
+        () =>
+          page.evaluate(() =>
+            [...document.querySelectorAll("iframe")]
+              .map((frame) => {
+                const list = frame.contentDocument?.querySelector("ul")
+                const items = [...(list?.children ?? [])]
+                const box = list?.getBoundingClientRect()
 
-        return {
-          top: Math.round(
-            (items.at(0)?.getBoundingClientRect().top ?? 0) - (box?.top ?? 0),
-          ),
-          bottom: Math.round(
-            (box?.bottom ?? 0) -
-              (items.at(-1)?.getBoundingClientRect().bottom ?? 0),
-          ),
-        }
-      }),
-    )
+                const top = Math.round(
+                  (items.at(0)?.getBoundingClientRect().top ?? 0) -
+                    (box?.top ?? 0),
+                )
+                const bottom = Math.round(
+                  (box?.bottom ?? 0) -
+                    (items.at(-1)?.getBoundingClientRect().bottom ?? 0),
+                )
 
-    for (const panel of padding) {
-      expect(panel.bottom, `${viewport}: a lopsided panel is the bug`).toBe(
-        panel.top,
+                return top === bottom
+                  ? null
+                  : `opens on ${String(top)}, closes on ${String(bottom)}`
+              })
+              .filter((panel) => panel !== null),
+          ),
+        { message: `${viewport}: a lopsided panel is the bug` },
       )
-    }
+      .toEqual([])
   }
 })
 
