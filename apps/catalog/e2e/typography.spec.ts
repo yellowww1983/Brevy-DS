@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "./catalog-test"
+import { measured } from "./settled"
 
 const PAGE = "/getting-started/typography"
 
@@ -57,30 +58,71 @@ async function readSpecimens(page: Page) {
   return readings
 }
 
+const WIDTHS = { Desktop: 1440, Tablet: 810, Mobile: 390 } as const
+
+/** The tab flips its own state at once; what every assertion below reads is the
+ *  width the frames actually take, which arrives a beat later. Waiting on that
+ *  rather than on a duration is the difference between a condition and a guess
+ *  about how fast the machine is.
+ *
+ *  Deliberately the cause and not the effect: waiting until the badges agree
+ *  with their samples would make the spec that asserts exactly that agreement
+ *  true by construction. */
 async function choose(page: Page, viewport: "Desktop" | "Tablet" | "Mobile") {
   await page.getByRole("button", { name: viewport }).click()
   await expect(page.getByRole("button", { name: viewport })).toHaveAttribute(
     "aria-pressed",
     "true",
   )
-  await page.waitForTimeout(300)
+
+  await expect
+    .poll(async () => {
+      const widths = await Promise.all(
+        page
+          .frames()
+          .filter((frame) => frame.url().includes("/specimens/typography"))
+          .map((frame) =>
+            frame
+              .evaluate(() => document.documentElement.clientWidth)
+              .catch(() => 0),
+          ),
+      )
+
+      return widths.every((width) => width === WIDTHS[viewport])
+    })
+    .toBe(true)
 }
 
 test("every badge reports what its own sample renders", async ({ page }) => {
   await page.goto(PAGE)
+  await measured(page)
 
   for (const viewport of ["Desktop", "Tablet", "Mobile"] as const) {
     await choose(page, viewport)
-    const readings = await readSpecimens(page)
-    expect(readings.length, viewport).toBe(8)
 
-    for (const reading of readings) {
-      expect(reading.badgeSize, `${reading.role} at ${viewport}`).toBe(
-        `${String(Math.round(reading.size))}px`,
+    expect((await readSpecimens(page)).length, viewport).toBe(8)
+
+    /** A badge re-measures when the frame resizes, which is a beat after the
+     *  frame reaches its new width — so the disagreements are collected until
+     *  there are none rather than read once. This is still the assertion, not
+     *  a wait dressed up as one: agreement that never arrives fails here. */
+    await expect
+      .poll(
+        async () =>
+          (await readSpecimens(page))
+            .filter(
+              (reading) =>
+                reading.badgeSize !== `${String(Math.round(reading.size))}px` ||
+                reading.badgeLeading !== String(reading.leading) ||
+                reading.badgeWeight !== reading.weight,
+            )
+            .map(
+              (reading) =>
+                `${reading.role}: badge says ${reading.badgeSize}/${reading.badgeLeading}/${reading.badgeWeight}, sample renders ${String(Math.round(reading.size))}px/${String(reading.leading)}/${reading.weight}`,
+            ),
+        { message: viewport },
       )
-      expect(reading.badgeLeading).toBe(String(reading.leading))
-      expect(reading.badgeWeight).toBe(reading.weight)
-    }
+      .toEqual([])
   }
 })
 
@@ -88,6 +130,7 @@ test("the frame is a viewport, so the fluid roles actually change", async ({
   page,
 }) => {
   await page.goto(PAGE)
+  await measured(page)
 
   const sizes = async () => {
     const readings = await readSpecimens(page)
@@ -97,23 +140,25 @@ test("the frame is a viewport, so the fluid roles actually change", async ({
   }
 
   await choose(page, "Desktop")
-  expect(await sizes()).toMatchObject({ display: 60, h1: 42, h2: 36 })
+  await expect.poll(sizes).toMatchObject({ display: 60, h1: 42, h2: 36 })
 
   /** h1 is drawn at all three widths and its points are not collinear, so the
    *  middle one is the assertion that matters: a single straight line through
    *  the ends lands here on 35. */
   await choose(page, "Tablet")
-  expect(await sizes()).toMatchObject({ h1: 36, h2: 30 })
+  await expect.poll(sizes).toMatchObject({ h1: 36, h2: 30 })
 
   await choose(page, "Mobile")
-  expect(
-    await sizes(),
-    "narrowing an ordinary container would leave these untouched",
-  ).toMatchObject({ display: 36, h1: 30, h2: 30 })
+  await expect
+    .poll(sizes, {
+      message: "narrowing an ordinary container would leave these untouched",
+    })
+    .toMatchObject({ display: 36, h1: 30, h2: 30 })
 })
 
 test("the five fixed roles do not move between viewports", async ({ page }) => {
   await page.goto(PAGE)
+  await measured(page)
   const fixed = ["h3", "body-lg", "body", "caption", "label"]
 
   const readFixed = async () => {
@@ -138,6 +183,7 @@ test("the frames follow the catalog theme after they have loaded", async ({
   page,
 }) => {
   await page.goto(PAGE)
+  await measured(page)
 
   const framesInDark = () =>
     page.evaluate(() =>
@@ -163,37 +209,46 @@ test("every sample fits the part of the frame the column can show", async ({
   page,
 }) => {
   await page.goto(PAGE)
+  await measured(page)
 
   for (const viewport of ["Desktop", "Tablet", "Mobile"] as const) {
     await choose(page, viewport)
 
-    const clipped = await page.evaluate(() => {
-      const found: string[] = []
+    /** Line boxes settle a beat after the frame reaches its new width. */
+    await expect
+      .poll(
+        () =>
+          page.evaluate(() => {
+            const found: string[] = []
 
-      for (const frame of document.querySelectorAll("iframe")) {
-        const visible = frame.parentElement?.clientWidth ?? 0
-        const document_ = frame.contentDocument
+            for (const frame of document.querySelectorAll("iframe")) {
+              const visible = frame.parentElement?.clientWidth ?? 0
+              const document_ = frame.contentDocument
 
-        for (const sample of document_?.querySelectorAll("[data-specimen]") ??
-          []) {
-          const range = document_?.createRange()
-          range?.selectNodeContents(sample)
-          const reach = Math.max(
-            ...[...(range?.getClientRects() ?? [])].map((rect) => rect.right),
-          )
+              for (const sample of document_?.querySelectorAll(
+                "[data-specimen]",
+              ) ?? []) {
+                const range = document_?.createRange()
+                range?.selectNodeContents(sample)
+                const reach = Math.max(
+                  ...[...(range?.getClientRects() ?? [])].map(
+                    (rect) => rect.right,
+                  ),
+                )
 
-          if (reach > visible) {
-            found.push(
-              `${sample.getAttribute("data-specimen") ?? ""} reaches ${String(Math.round(reach))} of ${String(visible)}`,
-            )
-          }
-        }
-      }
+                if (reach > visible) {
+                  found.push(
+                    `${sample.getAttribute("data-specimen") ?? ""} reaches ${String(Math.round(reach))} of ${String(visible)}`,
+                  )
+                }
+              }
+            }
 
-      return found
-    })
-
-    expect(clipped, viewport).toEqual([])
+            return found
+          }),
+        { message: viewport },
+      )
+      .toEqual([])
   }
 })
 
@@ -201,33 +256,40 @@ test("the sample panels open and close on the same amount of space", async ({
   page,
 }) => {
   await page.goto(PAGE)
+  await measured(page)
 
   for (const viewport of ["Desktop", "Tablet", "Mobile"] as const) {
     await choose(page, viewport)
 
-    const padding = await page.evaluate(() =>
-      [...document.querySelectorAll("iframe")].map((frame) => {
-        const list = frame.contentDocument?.querySelector("ul")
-        const items = [...(list?.children ?? [])]
-        const box = list?.getBoundingClientRect()
+    /** Boxes settle a beat after the frame reaches its new width. */
+    await expect
+      .poll(
+        () =>
+          page.evaluate(() =>
+            [...document.querySelectorAll("iframe")]
+              .map((frame) => {
+                const list = frame.contentDocument?.querySelector("ul")
+                const items = [...(list?.children ?? [])]
+                const box = list?.getBoundingClientRect()
 
-        return {
-          top: Math.round(
-            (items.at(0)?.getBoundingClientRect().top ?? 0) - (box?.top ?? 0),
-          ),
-          bottom: Math.round(
-            (box?.bottom ?? 0) -
-              (items.at(-1)?.getBoundingClientRect().bottom ?? 0),
-          ),
-        }
-      }),
-    )
+                const top = Math.round(
+                  (items.at(0)?.getBoundingClientRect().top ?? 0) -
+                    (box?.top ?? 0),
+                )
+                const bottom = Math.round(
+                  (box?.bottom ?? 0) -
+                    (items.at(-1)?.getBoundingClientRect().bottom ?? 0),
+                )
 
-    for (const panel of padding) {
-      expect(panel.bottom, `${viewport}: a lopsided panel is the bug`).toBe(
-        panel.top,
+                return top === bottom
+                  ? null
+                  : `opens on ${String(top)}, closes on ${String(bottom)}`
+              })
+              .filter((panel) => panel !== null),
+          ),
+        { message: `${viewport}: a lopsided panel is the bug` },
       )
-    }
+      .toEqual([])
   }
 })
 
@@ -235,6 +297,7 @@ test("headings are set in the serif and everything else in the sans", async ({
   page,
 }) => {
   await page.goto(PAGE)
+  await measured(page)
 
   const readings = await readSpecimens(page)
   const serif = readings.filter((r) => r.face === "Hedvig Letters Serif")

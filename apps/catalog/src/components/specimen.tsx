@@ -55,7 +55,11 @@ export function Specimen({ role }: { role: TypeRole }) {
   }, [])
 
   return (
-    <li className="border-t border-border py-10 first:border-t-0 first:pt-0 last:pb-0">
+    <li
+      data-measures
+      data-measured={measured ? "" : undefined}
+      className="border-t border-border py-10 first:border-t-0 first:pt-0 last:pb-0"
+    >
       <p
         ref={sample}
         data-specimen={role.name}
