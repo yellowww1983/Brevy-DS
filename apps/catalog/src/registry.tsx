@@ -111,6 +111,10 @@ export const components: readonly ComponentEntry[] = [
         phrasing: {
           "Primary · label": "primary, with a text label",
           "Primary · icon + label": "primary, with an icon before the label",
+          "Outline · label": "outlined, with a text label",
+          "Outline · icon + label": "outlined, with an icon before the label",
+          "Outline · icon only": "outlined, with an icon and no label",
+          "Secondary · label": "soft green, with a text label",
           "Ghost · label": "ghost, with a text label",
           "Ghost · icon only": "ghost, with an icon and no label",
         },
