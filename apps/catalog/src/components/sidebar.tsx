@@ -27,7 +27,7 @@ const GETTING_STARTED: readonly Entry[] = [
 
 const FOUNDATIONS: readonly Entry[] = [
   { label: "Color", icon: Palette },
-  { label: "Typography", icon: Type },
+  { label: "Typography", icon: Type, href: "/getting-started/typography" },
 ]
 
 function Section({ title, children }: { title: string; children: ReactNode }) {

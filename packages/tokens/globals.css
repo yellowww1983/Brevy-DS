@@ -218,6 +218,53 @@
 
   --icon-stroke-width: 1.5;
 
+  /* Roles, not sizes. The three headings are fluid because the website is; the
+     other five never change width to width, in Figma or in the browser.
+
+     Two heroes are drawn, not one. Every page but one opens at 42/36/30 across
+     the three breakpoints — that is h1. The Mobile App landing opens louder at
+     60 and is the only page drawn that way, so it gets display. Production
+     sized both around that single page, which is the only one built so far,
+     and so has no size for the hero the other seven share. */
+  --text-display: clamp(2.25rem, 4vw + 1rem, 3.75rem);
+  --text-display--line-height: 1.2;
+
+  /* Drawn at 30, 36 and 42 for 390, 810 and 1440. Those three points are not
+     collinear — the first step gains 6px over 420px of width, the second the
+     same 6px over 630px — so one straight line cannot pass through them all.
+
+     Two lines can. The first runs 390 → 810, the second 810 → 1440, and they
+     meet at 36. Below 810 the first is the lower of the two, above 810 the
+     second is, so `min()` picks the right segment on its own and needs no
+     breakpoint to switch them. Fluid throughout, with a bend at tablet where
+     a straight line would have missed by a pixel. */
+  --text-h1: clamp(
+    1.875rem,
+    min(1.4286vw + 1.5268rem, 0.9524vw + 1.7679rem),
+    2.625rem
+  );
+  --text-h1--line-height: 1.333;
+
+  --text-h2: clamp(1.875rem, 2.5vw + 0.5rem, 2.25rem);
+  --text-h2--line-height: 1.333;
+
+  --text-h3: 1.25rem;
+  --text-h3--line-height: 1.45;
+  --text-h3--font-weight: 600;
+
+  --text-body-lg: 1.25rem;
+  --text-body-lg--line-height: 1.45;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.5;
+
+  --text-caption: 0.875rem;
+  --text-caption--line-height: 1.429;
+
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.333;
+  --text-label--font-weight: 500;
+
   --font-sans: "Rethink Sans", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Hedvig Letters Serif", ui-serif, Georgia, serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
