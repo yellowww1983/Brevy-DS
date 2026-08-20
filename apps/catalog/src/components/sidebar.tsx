@@ -6,6 +6,7 @@ import {
   Move,
   Layers,
   Palette,
+  Shapes,
   Squircle,
   Type,
   Wrench,
@@ -40,6 +41,7 @@ const FOUNDATIONS: readonly Entry[] = [
   { label: "Spacing", icon: Move, href: "/getting-started/spacing" },
   { label: "Radius", icon: Squircle, href: "/getting-started/radius" },
   { label: "Shadows", icon: Layers, href: "/getting-started/shadows" },
+  { label: "Icons", icon: Shapes, href: "/getting-started/icons" },
 ]
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
