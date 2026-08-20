@@ -11,6 +11,7 @@ const PAGES = [
   ["/getting-started/radius", "Radius"],
   ["/getting-started/shadows", "Shadows"],
   ["/getting-started/icons", "Icons"],
+  ["/getting-started/layout", "Layout"],
 ] as const
 
 for (const [path, name] of PAGES) {
