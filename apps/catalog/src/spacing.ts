@@ -1,3 +1,5 @@
+import { join, preamble, table } from "./doc"
+
 /** The numbers are Tailwind's own, because Tailwind's ladder already is the
  *  4px grid the design is drawn on, and every value below maps onto it without a
  *  remainder. Nothing here is a size: a size would be a second copy of a number
@@ -60,3 +62,46 @@ export const STEPS: readonly Step[] = [
     seen: "section wrappers",
   },
 ]
+
+/** The page's prose, written as markdown so the page and the text the copy
+ *  button hands out come from one place. */
+export const INTRO =
+  "The spacing scale keeps rhythm consistent across every page. Use these steps for padding, gaps, and margins so elements line up the same way wherever they appear."
+
+export const SCALE_NOTE =
+  "Each bar is drawn at its real size. Click a name to copy it."
+
+export const NAMING = [
+  "There are no `--space-*` tokens. Tailwind's number is the value: `p-6` is 24px because 6 × 4 = 24, which matches the 4px grid the design uses. A custom name would add a second layer to keep in sync.",
+  "Use the standard classes: `p-6`, `gap-2`, `mt-24`. This page documents which ones the design uses.",
+]
+
+/** Four pixels per step is Tailwind's own arithmetic, the same one the bars on
+ *  the page are sized by, so the table cannot claim a size the page does not
+ *  draw. */
+export function spacingDoc() {
+  return join([
+    preamble("Spacing"),
+    "",
+    "# Spacing",
+    "",
+    INTRO,
+    "",
+    "## The scale",
+    "",
+    "The same number works for padding, gaps and margins: `p-6`, `gap-6`, `mt-6`.",
+    "",
+    table(
+      ["Class", "Size", "Use"],
+      STEPS.map((step) => [
+        `\`p-${String(step.step)}\``,
+        `${String(step.step * 4)}px`,
+        `${step.role} Used on ${step.seen}.`,
+      ]),
+    ),
+    "",
+    "## Naming",
+    "",
+    ...NAMING.flatMap((paragraph) => [paragraph, ""]),
+  ])
+}

@@ -1,3 +1,5 @@
+import { join, preamble, table } from "./doc"
+
 /** Names only. Every colour on the page is read back from what the browser
  *  actually paints, so nothing here can claim a value the system does not
  *  ship. The one thing that has to be written down is where a semantic token
@@ -188,3 +190,76 @@ export const BORROWED: readonly BorrowedRamp[] = [
     why: "Used by destructive and its foreground.",
   },
 ]
+
+export const INTRO =
+  "The color system pairs a branded palette with semantic tokens that adapt to light and dark. Use semantic tokens like background and primary so color stays consistent and theme-aware."
+
+export const BRAND_NOTE =
+  "The full ramps, including shades nothing has reached for yet. This is the palette that exists to be used, not an inventory of what has been used so far."
+
+export const SEMANTIC_NOTE =
+  "These are the names a page asks for. Each one resolves to a different colour depending on the theme, which is the whole point of using it instead of a ramp."
+
+export const BORROWED_NOTE =
+  "Three ramps that come from Tailwind rather than the Brevy palette. Only the shades in use are shown."
+
+const RAMP_STEPS = "50 to 950"
+
+export function colorsDoc() {
+  return join([
+    preamble("Colors"),
+    "",
+    "# Colors",
+    "",
+    INTRO,
+    "",
+    "Reach for a semantic token first. Use a ramp directly only where no semantic token says what you mean.",
+    "",
+    "## Semantic tokens",
+    "",
+    SEMANTIC_NOTE,
+    "",
+    ...SEMANTIC_GROUPS.flatMap((group) => [
+      `### ${group.title}`,
+      "",
+      group.note,
+      "",
+      table(
+        ["Token", "Light", "Dark"],
+        group.tokens.map((token) => [
+          `\`${token.token}\``,
+          token.light,
+          token.dark,
+        ]),
+      ),
+      "",
+    ]),
+    "## Brand palette",
+    "",
+    BRAND_NOTE,
+    "",
+    ...BRAND_GROUPS.flatMap((group) => [
+      `### ${group.title}`,
+      "",
+      group.note,
+      "",
+      table(
+        ["Ramp", "Shades"],
+        group.ramps.map((ramp) => [`\`${ramp.family}\``, RAMP_STEPS]),
+      ),
+      "",
+    ]),
+    "## Borrowed",
+    "",
+    BORROWED_NOTE,
+    "",
+    table(
+      ["Ramp", "Shades in use", "Where"],
+      BORROWED.map((ramp) => [
+        `\`${ramp.family}\``,
+        ramp.shades.join(", "),
+        ramp.why,
+      ]),
+    ),
+  ])
+}

@@ -1,3 +1,5 @@
+import { join, preamble, table } from "./doc"
+
 /** Five steps of Tailwind's own shadow scale, which the design reproduces
  *  exactly. The classes are written out rather than built from a name, because
  *  Tailwind reads source text and never sees a class assembled at runtime. */
@@ -29,3 +31,28 @@ export const SHADOWS: readonly Shadow[] = [
     role: "The deepest lift. Use it on hero images and large feature cards.",
   },
 ]
+
+export const INTRO =
+  "Shadows lift an element off the surface and show how far. Use the scale to keep elevation consistent across cards, buttons, and overlays."
+
+export const SCALE_NOTE =
+  "Each tile uses the class next to it. Offsets are measured from the rendered tile. Click a name to copy it."
+
+export function shadowsDoc() {
+  return join([
+    preamble("Shadows"),
+    "",
+    "# Shadows",
+    "",
+    INTRO,
+    "",
+    "## The scale",
+    "",
+    "These are Tailwind's own shadow values, which the design reproduces exactly, so the class is all you need.",
+    "",
+    table(
+      ["Class", "Use"],
+      SHADOWS.map((shadow) => [`\`${shadow.className}\``, shadow.role]),
+    ),
+  ])
+}

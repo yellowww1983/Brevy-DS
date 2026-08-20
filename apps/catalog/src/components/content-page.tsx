@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 
+import { CopyPage } from "./copy-page"
 import { TableOfContents, type Section } from "./table-of-contents"
 
 /** Same container as every other catalog page, so the left edge of the text
@@ -7,15 +8,25 @@ import { TableOfContents, type Section } from "./table-of-contents"
  *  is pushed to the container's right edge for the same reason. */
 export function ContentPage({
   sections,
+  markdown,
   children,
 }: {
   sections: readonly Section[]
+  /** The page as text. Present once a page can hand itself to Claude. */
+  markdown?: string
   children: ReactNode
 }) {
   return (
     <div className="mx-auto max-w-6xl">
       <div className="flex gap-10">
-        <article className="max-w-3xl min-w-0 flex-1">{children}</article>
+        <article className="relative max-w-3xl min-w-0 flex-1">
+          {markdown ? (
+            <div className="absolute top-0 right-0">
+              <CopyPage markdown={markdown} />
+            </div>
+          ) : null}
+          {children}
+        </article>
         <TableOfContents sections={sections} />
       </div>
     </div>

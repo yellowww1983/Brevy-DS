@@ -1,9 +1,11 @@
 import { Button } from "@brevy/ui"
 import { ArrowUp, Bell, Check, ChevronDown, Download, Play } from "lucide-react"
 
-import { ContentPage, HEADING, LINK } from "@/components/content-page"
+import { ContentPage, HEADING } from "@/components/content-page"
 import { IconSample, IconSize } from "@/components/icon-specimen"
+import { MarkdownText } from "@/components/markdown-text"
 import type { Section } from "@/components/table-of-contents"
+import { iconsDoc, IN_A_COMPONENT, INTRO, SET, SIZE, STROKE } from "@/icons"
 
 const SECTIONS: readonly Section[] = [
   { id: "the-set", title: "The set" },
@@ -14,32 +16,21 @@ const SECTIONS: readonly Section[] = [
 
 export default function IconsPage() {
   return (
-    <ContentPage sections={SECTIONS}>
+    <ContentPage sections={SECTIONS} markdown={iconsDoc()}>
       <h1 className="text-4xl font-bold tracking-tight">Icons</h1>
 
       <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-        Icons come from lucide, sized and styled to match the rest of the
-        system. Drop one into a component and it inherits the right size and
-        stroke.
+        {INTRO}
       </p>
 
       <h2 id="the-set" className={HEADING}>
         The set
       </h2>
       <p className="mt-4 leading-relaxed">
-        Every icon comes from{" "}
-        <a href="https://lucide.dev" className={LINK}>
-          lucide
-        </a>
-        , which ships with <code className="font-mono text-sm">@brevy/ui</code>.
-        Search it for the icon you need and use it by name. There is no shorter
-        approved list: the set is whatever lucide offers.
+        <MarkdownText>{SET[0] ?? ""}</MarkdownText>
       </p>
 
-      <p className="mt-4 leading-relaxed">
-        A few the design already uses, to show the convention rather than to
-        limit it. Click a name to copy it.
-      </p>
+      <p className="mt-4 leading-relaxed">{SET[1] ?? ""}</p>
 
       <ul className="mt-4">
         <IconSample name="Check">
@@ -62,12 +53,7 @@ export default function IconsPage() {
       <h2 id="size" className={HEADING}>
         Size
       </h2>
-      <p className="mt-4 leading-relaxed">
-        Components set the size, so most of the time there is nothing to choose.
-        Where you are placing an icon yourself, 24px is the usual size and 16px
-        suits a dense row. Every size is one class, and the stroke stays the
-        same at all of them.
-      </p>
+      <p className="mt-4 leading-relaxed">{SIZE}</p>
 
       <ul className="mt-6">
         <IconSize label="size-4">
@@ -88,27 +74,19 @@ export default function IconsPage() {
         Stroke
       </h2>
       <p className="mt-4 leading-relaxed">
-        Icons are drawn at a stroke of 1.5, applied with{" "}
-        <code className="font-mono text-sm">icon-stroke</code>. Lucide&rsquo;s
-        own default is 2, which reads heavy beside Brevy type, so the system
-        overrides it.
+        <MarkdownText>{STROKE[0] ?? ""}</MarkdownText>
       </p>
-      <p className="mt-4 leading-relaxed">
-        The stroke stays 1.5 at every size. A line is normally measured inside
-        the icon&rsquo;s own grid, which would draw a smaller icon thinner, so
-        the system measures it on screen instead. A 16px icon and a 32px icon
-        read with the same weight.
-      </p>
+      <p className="mt-4 leading-relaxed">{STROKE[1] ?? ""}</p>
 
       <h2 id="in-a-component" className={HEADING}>
         In a component
       </h2>
-      <p className="mt-4 leading-relaxed">
-        Components normalise both size and stroke, so pass the icon and nothing
-        else.
-      </p>
+      <p className="mt-4 leading-relaxed">{IN_A_COMPONENT}</p>
 
-      <div className="mt-6 flex flex-wrap items-center gap-4">
+      <div
+        data-component-demo
+        className="mt-6 flex flex-wrap items-center gap-4"
+      >
         <Button>
           <Download />
           Download the app
