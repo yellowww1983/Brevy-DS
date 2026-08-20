@@ -1,7 +1,16 @@
 import { ContentPage, HEADING } from "@/components/content-page"
 import { CopyToken, PaletteSwatch, TokenSwatch } from "@/components/swatch"
 import type { Section } from "@/components/table-of-contents"
-import { BORROWED, BRAND_GROUPS, SEMANTIC_GROUPS } from "@/colors"
+import {
+  BORROWED,
+  BORROWED_NOTE,
+  BRAND_GROUPS,
+  BRAND_NOTE,
+  colorsDoc,
+  INTRO,
+  SEMANTIC_GROUPS,
+  SEMANTIC_NOTE,
+} from "@/colors"
 
 const SECTIONS: readonly Section[] = [
   { id: "brand-palette", title: "Brand palette" },
@@ -33,22 +42,18 @@ function Ramp({
 
 export default function ColorsPage() {
   return (
-    <ContentPage sections={SECTIONS}>
+    <ContentPage sections={SECTIONS} markdown={colorsDoc()}>
       <h1 className="text-4xl font-bold tracking-tight">Colors</h1>
 
       <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-        The color system pairs a branded palette with semantic tokens that adapt
-        to light and dark. Use semantic tokens like background and primary so
-        color stays consistent and theme-aware.
+        {INTRO}
       </p>
 
       <h2 id="brand-palette" className={HEADING}>
         Brand palette
       </h2>
       <p className="mt-4 leading-relaxed">
-        The full ramps, including shades nothing has reached for yet. This is
-        the palette that exists to be used, not an inventory of what has been
-        used so far. Click a name to copy it.
+        {BRAND_NOTE} Click a name to copy it.
       </p>
 
       {BRAND_GROUPS.map((group) => (
@@ -71,10 +76,8 @@ export default function ColorsPage() {
         Semantic tokens
       </h2>
       <p className="mt-4 leading-relaxed">
-        These are the names a page asks for. Each one resolves to a different
-        colour depending on the theme, which is the whole point of using it
-        instead of a ramp, and the reason both answers are shown side by side
-        here rather than one at a time.
+        {SEMANTIC_NOTE} Both answers are shown side by side here rather than one
+        at a time.
       </p>
 
       {SEMANTIC_GROUPS.map((group) => (
@@ -115,10 +118,7 @@ export default function ColorsPage() {
       <h2 id="borrowed" className={HEADING}>
         Borrowed
       </h2>
-      <p className="mt-4 leading-relaxed">
-        Three ramps that come from Tailwind rather than the Brevy palette. Only
-        the shades in use are shown.
-      </p>
+      <p className="mt-4 leading-relaxed">{BORROWED_NOTE}</p>
 
       <div className="mt-6 grid gap-8 sm:grid-cols-2">
         {BORROWED.map((ramp) => (

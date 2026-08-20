@@ -95,7 +95,7 @@ test("a button normalises the icon it is handed", async ({ page }) => {
   await measured(page)
 
   const inside = await page
-    .locator("main button svg")
+    .locator("[data-component-demo] button svg")
     .first()
     .evaluate((svg) => ({
       size: Math.round(svg.getBoundingClientRect().width),
@@ -104,7 +104,7 @@ test("a button normalises the icon it is handed", async ({ page }) => {
 
   expect(
     inside,
-    "passing an icon should be enough; the button decides the rest",
+    "scoped to the demo: the page's own copy button carries a smaller icon",
   ).toEqual({ size: 24, stroke: 1.5 })
 })
 

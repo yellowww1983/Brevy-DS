@@ -1,7 +1,7 @@
 import { ContentPage, HEADING } from "@/components/content-page"
 import type { Section } from "@/components/table-of-contents"
 import { ViewportFrame, ViewportProvider } from "@/components/viewport-frame"
-import { TYPE_GROUPS } from "@/typography"
+import { INTRO, typographyDoc, TYPE_GROUPS } from "@/typography"
 
 const SECTIONS: readonly Section[] = TYPE_GROUPS.map((group) => ({
   id: group.id,
@@ -10,13 +10,11 @@ const SECTIONS: readonly Section[] = TYPE_GROUPS.map((group) => ({
 
 export default function TypographyPage() {
   return (
-    <ContentPage sections={SECTIONS}>
+    <ContentPage sections={SECTIONS} markdown={typographyDoc()}>
       <h1 className="text-4xl font-bold tracking-tight">Typography</h1>
 
       <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-        The type scale sets the hierarchy for every page, from hero headlines
-        down to labels. Each role has a fixed size and weight so text stays
-        consistent wherever it appears.
+        {INTRO}
       </p>
 
       <ViewportProvider>

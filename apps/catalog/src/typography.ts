@@ -1,3 +1,5 @@
+import { join, preamble, table } from "./doc"
+
 export type TypeRole = {
   name: string
   sample: string
@@ -89,4 +91,35 @@ export const TYPE_GROUPS: readonly TypeGroup[] = [
 
 export function groupById(id: string) {
   return TYPE_GROUPS.find((group) => group.id === id)
+}
+
+export const INTRO =
+  "The type scale sets the hierarchy for every page, from hero headlines down to labels. Each role has a fixed size and weight so text stays consistent wherever it appears."
+
+export function typographyDoc() {
+  return join([
+    preamble("Typography"),
+    "",
+    "# Typography",
+    "",
+    INTRO,
+    "",
+    "Reach for a role by name. The three heading roles scale with the viewport; the other five never move.",
+    "",
+    ...TYPE_GROUPS.flatMap((group) => [
+      `## ${group.title}`,
+      "",
+      group.note,
+      "",
+      table(
+        ["Role", "Class", "Typeface"],
+        group.roles.map((role) => [
+          `\`${role.name}\``,
+          `\`${role.style.split(" ").find((piece) => piece.startsWith("text-")) ?? role.style}\``,
+          role.face,
+        ]),
+      ),
+      "",
+    ]),
+  ])
 }
