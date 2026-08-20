@@ -47,7 +47,7 @@ export const STEPS: readonly Step[] = [
   {
     step: 12,
     role: "Between the blocks that make up a section.",
-    seen: "text blocks, the navbar, the logo strip — 60 times",
+    seen: "text blocks, the navbar — 60 times",
   },
   {
     step: 16,
