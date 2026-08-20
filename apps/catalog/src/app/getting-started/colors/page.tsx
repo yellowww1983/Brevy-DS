@@ -1,13 +1,12 @@
 import { ContentPage, HEADING } from "@/components/content-page"
 import { CopyToken, PaletteSwatch, TokenSwatch } from "@/components/swatch"
 import type { Section } from "@/components/table-of-contents"
-import { BORROWED, BRAND_GROUPS, OMITTED, SEMANTIC_GROUPS } from "@/colors"
+import { BORROWED, BRAND_GROUPS, SEMANTIC_GROUPS } from "@/colors"
 
 const SECTIONS: readonly Section[] = [
   { id: "brand-palette", title: "Brand palette" },
   { id: "semantic-tokens", title: "Semantic tokens" },
   { id: "borrowed", title: "Borrowed" },
-  { id: "not-in-the-system", title: "Not in the system" },
 ]
 
 const SUB_HEADING = "mt-10 text-base font-semibold"
@@ -38,19 +37,18 @@ export default function ColorsPage() {
       <h1 className="text-4xl font-bold tracking-tight">Colors</h1>
 
       <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-        Ten ramps drawn for Brevy, and a short set of names that decide which of
-        them a page actually gets. Every value below is read off the colour the
-        browser paints, so nothing here can drift from what ships. Click a name
-        to copy it.
+        The color system pairs a branded palette with semantic tokens that adapt
+        to light and dark. Use semantic tokens like background and primary so
+        color stays consistent and theme-aware.
       </p>
 
       <h2 id="brand-palette" className={HEADING}>
         Brand palette
       </h2>
       <p className="mt-4 leading-relaxed">
-        The full ramps, including shades nothing has reached for yet — this is
+        The full ramps, including shades nothing has reached for yet. This is
         the palette that exists to be used, not an inventory of what has been
-        used so far.
+        used so far. Click a name to copy it.
       </p>
 
       {BRAND_GROUPS.map((group) => (
@@ -75,7 +73,7 @@ export default function ColorsPage() {
       <p className="mt-4 leading-relaxed">
         These are the names a page asks for. Each one resolves to a different
         colour depending on the theme, which is the whole point of using it
-        instead of a ramp — and the reason both answers are shown side by side
+        instead of a ramp, and the reason both answers are shown side by side
         here rather than one at a time.
       </p>
 
@@ -118,16 +116,8 @@ export default function ColorsPage() {
         Borrowed
       </h2>
       <p className="mt-4 leading-relaxed">
-        Three ramps that came from Tailwind rather than from the Brevy palette,
-        and only the shades something reaches for — what the design draws, plus
-        what a semantic token resolves to in either theme. The rest of each ramp
-        is still available in code and deliberately absent here.
-      </p>
-      <p className={NOTE}>
-        Worth knowing: neutral and zinc are not pinned. Every other ramp on this
-        page is written out in the token file with values taken from the design;
-        these two are not written down at all, so they fall through to
-        Tailwind&rsquo;s own — recomputed values, not the drawn ones.
+        Three ramps that come from Tailwind rather than the Brevy palette. Only
+        the shades in use are shown.
       </p>
 
       <div className="mt-6 grid gap-8 sm:grid-cols-2">
@@ -138,18 +128,6 @@ export default function ColorsPage() {
           </div>
         ))}
       </div>
-
-      <h2 id="not-in-the-system" className={HEADING}>
-        Not in the system
-      </h2>
-      <p className="mt-4 leading-relaxed">
-        Six more ramps sit in the token file — {OMITTED.join(", ")} — and no
-        swatch of them appears here. Nothing in the design draws them, and the
-        only thing in code that names them is a set of five chart colours that
-        no component renders. They are reachable if a chart ever needs them, and
-        showing sixty-six swatches for it would bury the palette that is
-        actually in use.
-      </p>
     </ContentPage>
   )
 }

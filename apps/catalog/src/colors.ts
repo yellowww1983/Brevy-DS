@@ -35,19 +35,19 @@ export const BRAND_GROUPS: readonly RampGroup[] = [
   {
     id: "greens",
     title: "Greens",
-    note: "The brand itself. Emerald carries most of the weight — it is what a button, a link and a heading accent are made of — while brand green marks the current item in navigation.",
+    note: "Use emerald for buttons, links, and heading accents. Brand green marks the current item in navigation.",
     ramps: [full("brand"), full("emerald"), full("green"), full("olive")],
   },
   {
     id: "warm-neutrals",
     title: "Warm neutrals",
-    note: "The paper the product is printed on. Beige is the quiet surface behind cards and rows; taupe and stone are drawn but barely used, and are here because the ramp exists to be reached for.",
+    note: "Use beige for the surfaces behind cards and rows. Taupe and stone are available for the same purpose.",
     ramps: [full("beige"), full("taupe"), full("stone")],
   },
   {
     id: "accents",
     title: "Accents",
-    note: "Used sparingly and on purpose — a highlight, an illustration, a badge. None of them carries meaning on its own the way the greens do.",
+    note: "Use these for highlights, illustrations, and badges. None of them carries meaning on its own.",
     ramps: [full("orange"), full("yellow"), full("violet")],
   },
 ]
@@ -70,7 +70,7 @@ export const SEMANTIC_GROUPS: readonly SemanticGroup[] = [
   {
     id: "surfaces",
     title: "Surfaces",
-    note: "What sits behind content. Light is warm — beige over white — and dark is a plain grey stack, because a tinted dark surface muddies every colour placed on it.",
+    note: "Backgrounds for content. Use these rather than a ramp so a surface follows the theme.",
     tokens: [
       { token: "background", light: "white", dark: "neutral-950" },
       { token: "card", light: "white", dark: "neutral-900" },
@@ -85,7 +85,7 @@ export const SEMANTIC_GROUPS: readonly SemanticGroup[] = [
   {
     id: "text",
     title: "Text",
-    note: "Every foreground is paired with the surface it belongs on, so reaching for the pair rather than the colour is what keeps contrast right in both themes.",
+    note: "Foreground colors, each paired with the surface it belongs on. Use the pair to keep contrast right in both themes.",
     tokens: [
       { token: "foreground", light: "zinc-800", dark: "neutral-50" },
       { token: "card-foreground", light: "zinc-800", dark: "neutral-50" },
@@ -100,7 +100,7 @@ export const SEMANTIC_GROUPS: readonly SemanticGroup[] = [
   {
     id: "brand-and-state",
     title: "Brand and state",
-    note: "The only tokens that mean something rather than describe something. Primary is the one colour that changes family between themes: emerald reads on white, and a brighter green is needed to hold up against near-black.",
+    note: "Use primary for the main action and destructive for anything that removes data. Primary is the one token that changes family between themes.",
     tokens: [
       { token: "primary", light: "emerald-500", dark: "brand-vivid" },
       { token: "destructive", light: "red-600", dark: "red-400" },
@@ -120,7 +120,7 @@ export const SEMANTIC_GROUPS: readonly SemanticGroup[] = [
   {
     id: "lines-and-focus",
     title: "Lines and focus",
-    note: "The only place a semantic token is not a palette colour: dark draws its lines as translucent white, so they sit on whatever surface is underneath instead of fighting it.",
+    note: "Borders, inputs, and focus rings. In dark these are translucent white, so they sit on whatever surface is underneath.",
     tokens: [
       { token: "border", light: "neutral-300", dark: "white 10%" },
       { token: "input", light: "neutral-300", dark: "white 15%" },
@@ -131,7 +131,7 @@ export const SEMANTIC_GROUPS: readonly SemanticGroup[] = [
   {
     id: "sidebar",
     title: "Sidebar",
-    note: "Navigation keeps its own set so it can sit a shade apart from the page without every surface token moving with it.",
+    note: "Navigation has its own set so it can sit a shade apart from the page.",
     tokens: [
       { token: "sidebar", light: "beige-200", dark: "neutral-900" },
       { token: "sidebar-foreground", light: "zinc-800", dark: "neutral-50" },
@@ -175,18 +175,16 @@ export const BORROWED: readonly BorrowedRamp[] = [
       "900",
       "950",
     ],
-    why: "Every dark-mode surface and most lines in both themes. Nineteen of the thirty-three semantic tokens resolve here in dark.",
+    why: "Every dark-mode surface, and most lines in both themes.",
   },
   {
     family: "zinc",
     shades: ["300", "400", "500", "600", "700", "800"],
-    why: "All body text in light mode. The design reaches for it more often than any other family, brand greens included.",
+    why: "All body text in light mode.",
   },
   {
     family: "red",
     shades: ["50", "400", "500", "600"],
-    why: "Nothing but destructive and its foreground, plus a single shade drawn in the design.",
+    why: "Used by destructive and its foreground.",
   },
 ]
-
-export const OMITTED = ["amber", "blue", "cyan", "purple", "rose", "teal"]

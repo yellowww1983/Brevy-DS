@@ -14,10 +14,9 @@ export default function TypographyPage() {
       <h1 className="text-4xl font-bold tracking-tight">Typography</h1>
 
       <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-        Eight roles, named by the job they do rather than how big they are. You
-        pick a role; the size, spacing and weight come with it. Every sample
-        below is the real thing, and every number beside it is read off that
-        sample rather than written down next to it.
+        The type scale sets the hierarchy for every page, from hero headlines
+        down to labels. Each role has a fixed size and weight so text stays
+        consistent wherever it appears.
       </p>
 
       <ViewportProvider>
