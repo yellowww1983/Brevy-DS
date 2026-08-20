@@ -92,6 +92,7 @@ const WITH_CONTENTS = [
   "/getting-started/colors",
   "/getting-started/spacing",
   "/getting-started/radius",
+  "/getting-started/shadows",
 ] as const
 
 for (const path of WITH_CONTENTS) {
