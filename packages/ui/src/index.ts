@@ -11,6 +11,7 @@ export {
   CardHeader,
   CardTitle,
 } from "./components/card.js"
+export { Container } from "./components/container.js"
 export {
   Form,
   FormControl,
