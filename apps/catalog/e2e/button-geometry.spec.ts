@@ -2,7 +2,7 @@ import { expect, test } from "./catalog-test"
 
 /** The board draws ghost as a square when it holds nothing but an icon and as a
  *  text-hugging pill when it holds a label. The component tells the two apart
- *  with :has(), which only resolves where CSS runs — not in jsdom. */
+ *  with :has(), which only resolves where CSS runs, not in jsdom. */
 test("ghost is square when it carries an icon alone", async ({ page }) => {
   await page.goto("/components/button")
 

@@ -3,7 +3,7 @@
 /* `static` because a design system ships its palette whether or not this build
    happens to use it. Left to itself Tailwind emits only the variables some
    generated utility references, so a ramp nothing has reached for yet resolves
-   to nothing at all — which makes `var(--color-violet-500)` transparent rather
+   to nothing at all, which makes `var(--color-violet-500)` transparent rather
    than violet, and would quietly hollow out the palette page. */
 @theme static {
   --color-brand-50: #e9f7f1;
@@ -220,6 +220,14 @@
   --radius-2xl: 1rem;
   --radius-3xl: 1.5rem;
   --radius-4xl: 2rem;
+  --radius-full: 9999px;
+
+  /* The leaf: tight on one diagonal, wide on the other. It is the one shape the
+     brand owns, and it is not a step on the radius scale: it is four corners at
+     once. Written out of the scale rather than beside it so a button and a
+     photograph reach for the same thing. */
+  --radius-leaf: var(--radius-sm) var(--radius-2xl) var(--radius-sm)
+    var(--radius-2xl);
 
   --icon-stroke-width: 1.5;
 
@@ -227,7 +235,7 @@
      other five never change width to width, in Figma or in the browser.
 
      Two heroes are drawn, not one. Every page but one opens at 42/36/30 across
-     the three breakpoints — that is h1. The Mobile App landing opens louder at
+     the three breakpoints, and that is h1. The Mobile App landing opens louder at
      60 and is the only page drawn that way, so it gets display. Production
      sized both around that single page, which is the only one built so far,
      and so has no size for the hero the other seven share. */
@@ -235,8 +243,8 @@
   --text-display--line-height: 1.2;
 
   /* Drawn at 30, 36 and 42 for 390, 810 and 1440. Those three points are not
-     collinear — the first step gains 6px over 420px of width, the second the
-     same 6px over 630px — so one straight line cannot pass through them all.
+     collinear: the first step gains 6px over 420px of width, the second the
+     same 6px over 630px, so one straight line cannot pass through them all.
 
      Two lines can. The first runs 390 → 810, the second 810 → 1440, and they
      meet at 36. Below 810 the first is the lower of the two, above 810 the
@@ -276,7 +284,7 @@
 }
 
 /* lucide ships stroke-width 2 as a presentation attribute; the website board
-   draws its 24 px icons at 1.5. Named away from the `stroke-*` namespace — a
+   draws its 24 px icons at 1.5. Named away from the `stroke-*` namespace, because a
    token called `--stroke-icon` also registers as a stroke colour, and the
    built-in utility then paints `stroke: 1.5`, which resolves to none. */
 @utility icon-stroke {
@@ -348,7 +356,7 @@
   --surface-hover: var(--accent);
   --surface-active: var(--accent);
   /* Deliberately the same olive as light. The app maps its whole olive ramp
-     onto neutral greys in dark — custom/olive-500 dark:neutral-700 — which
+     onto neutral greys in dark (custom/olive-500 dark:neutral-700), which
      drains the brand out of this variant, so the mapping is overridden here.
      Only the outline colour flips, because emerald reads on white and olive
      reads on near-black. */

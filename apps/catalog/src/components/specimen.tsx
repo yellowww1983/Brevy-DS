@@ -71,9 +71,9 @@ export function Specimen({ role }: { role: TypeRole }) {
       <div className="mt-6 flex flex-wrap gap-2 font-sans">
         <Fact name="Role" value={role.name} />
         <Fact name="Typeface" value={role.face} />
-        <Fact name="Font Size" value={measured?.size ?? "—"} />
-        <Fact name="Line Height" value={measured?.leading ?? "—"} />
-        <Fact name="Weight" value={measured?.weight ?? "—"} />
+        <Fact name="Font Size" value={measured?.size ?? "…"} />
+        <Fact name="Line Height" value={measured?.leading ?? "…"} />
+        <Fact name="Weight" value={measured?.weight ?? "…"} />
       </div>
     </li>
   )

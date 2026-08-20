@@ -1,7 +1,15 @@
 "use client"
 
 import { cn } from "@brevy/ui"
-import { ChevronDown, Move, Palette, Type, Wrench, Zap } from "lucide-react"
+import {
+  ChevronDown,
+  Move,
+  Palette,
+  Squircle,
+  Type,
+  Wrench,
+  Zap,
+} from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import type { ComponentType, ReactNode } from "react"
@@ -29,6 +37,7 @@ const FOUNDATIONS: readonly Entry[] = [
   { label: "Colors", icon: Palette, href: "/getting-started/colors" },
   { label: "Typography", icon: Type, href: "/getting-started/typography" },
   { label: "Spacing", icon: Move, href: "/getting-started/spacing" },
+  { label: "Radius", icon: Squircle, href: "/getting-started/radius" },
 ]
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
@@ -49,12 +58,12 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 const ITEM = "flex items-center gap-2 px-3 py-2 text-sm"
 
-/** Keyboard focus has to stay visible, so the ring stays — tinted to the active
+/** Keyboard focus has to stay visible, so the ring stays, tinted to the active
  *  colour rather than the default grey, which read as a box around the item. */
 const FOCUS =
   "rounded-md focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
 
-/** An entry without an href has no page yet — a link would lead to a 404, so it
+/** An entry without an href has no page yet: a link would lead to a 404, so it
  *  renders as visibly inert until the page lands. */
 function NavEntry({
   label,

@@ -6,8 +6,8 @@ import type { Step } from "@/spacing"
 
 import { useCopy } from "./use-copy"
 
-/** The bar is sized the way Tailwind sizes anything — its own `--spacing`
- *  multiplied by the step — rather than by a number written here. If that base
+/** The bar is sized the way Tailwind sizes anything: its own `--spacing`
+ *  multiplied by the step, rather than by a number written here. If that base
  *  ever moved, the bar would move with it and the page would still be telling
  *  the truth. The label is then read back off the bar, so what it claims and
  *  what it draws cannot come apart. */
@@ -77,7 +77,7 @@ export function SpacingStep({ step }: { step: Step }) {
 
       <span className="text-sm leading-relaxed">
         {step.role}{" "}
-        <span className="text-muted-foreground">Drawn on {step.seen}.</span>
+        <span className="text-muted-foreground">Used on {step.seen}.</span>
       </span>
     </li>
   )

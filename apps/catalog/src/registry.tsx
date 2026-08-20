@@ -423,7 +423,7 @@ export function copyChoices(entry: ComponentEntry) {
   })
 }
 
-/** One source for the card and the page header — they used to disagree, the
+/** One source for the card and the page header. They used to disagree, the
  *  card saying "No variants" where the header said "1 variant". */
 export function variantLabel(entry: ComponentEntry, query: string) {
   const total = variantCount(entry)

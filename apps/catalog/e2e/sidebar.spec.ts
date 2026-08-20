@@ -5,8 +5,8 @@ test("every sidebar entry is either a working link or plainly inert", async ({
 }) => {
   await page.goto("/components/button")
 
-  /** Entries graduate from inert to linked as pages land — Colors was the last
-   *  one — so the count is deliberately not pinned. What has to hold either way
+  /** Entries graduate from inert to linked as pages land, and Colors was the
+   *  last one, so the count is deliberately not pinned. What has to hold either way
    *  is that an inert entry is never an anchor, because an anchor with nowhere
    *  to go is a link that silently does nothing. */
   const pending = page.locator('aside [aria-disabled="true"]')

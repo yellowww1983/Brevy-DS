@@ -18,7 +18,7 @@ export const TYPE_GROUPS: readonly TypeGroup[] = [
   {
     id: "headings",
     title: "Headings",
-    note: "Set in Hedvig Letters Serif, and all three scale with the viewport — switch the width above and watch them move. h1 opens a page; display is the louder opening the Mobile App landing uses, and nothing else does.",
+    note: "Set in Hedvig Letters Serif and scaled to the viewport. Use h1 to open a page. Display is reserved for the Mobile App landing.",
     roles: [
       {
         name: "display",
@@ -43,7 +43,7 @@ export const TYPE_GROUPS: readonly TypeGroup[] = [
   {
     id: "body",
     title: "Body",
-    note: "Set in Rethink Sans. These never change with the width of the window — switch the viewport and nothing here moves. h3 and body-lg are the same size and differ only in weight: one titles a card, the other opens a paragraph.",
+    note: "Set in Rethink Sans at fixed sizes. h3 and body-lg share a size and differ only in weight: use h3 to title a card, body-lg to open a paragraph.",
     roles: [
       {
         name: "h3",
@@ -69,7 +69,7 @@ export const TYPE_GROUPS: readonly TypeGroup[] = [
   {
     id: "supporting",
     title: "Supporting",
-    note: "The small print — metadata, timestamps and the short uppercase labels that sit above a block of content.",
+    note: "Use these for metadata, timestamps, and the short uppercase labels above a block of content.",
     roles: [
       {
         name: "caption",

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react"
 const FEEDBACK_MS = 2000
 
 /** Puts a name on the clipboard and says so for a moment. Shared by every page
- *  that hands out something to paste — a colour's name, a spacing class — so
+ *  that hands out something to paste, a colour's name or a spacing class, so
  *  the two cannot disagree about how long "Copied" stays up. */
 export function useCopy() {
   const [copied, setCopied] = useState(false)

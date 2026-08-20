@@ -31,7 +31,7 @@ export default function HowToUsePage() {
       <h1 className="text-4xl font-bold tracking-tight">How to use</h1>
 
       <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-        You work with this system through Claude — you describe what you want,
+        You work with this system through Claude. You describe what you want,
         Claude builds it from the Brevy pieces. No design tools, no code editor.
         Here&rsquo;s how to get the most out of it.
       </p>
@@ -47,8 +47,8 @@ export default function HowToUsePage() {
       <p className="mt-4 leading-relaxed">
         Tell Claude the goal first, not the parts. &ldquo;A landing page for the
         spring caregiver campaign&rdquo; gives Claude more to work with than
-        &ldquo;a hero and three cards.&rdquo; It can suggest which blocks fit —
-        that&rsquo;s what the catalog is for.
+        &ldquo;a hero and three cards.&rdquo; It can suggest which blocks fit.
+        That&rsquo;s what the catalog is for.
       </p>
 
       <h2 id="point-claude-at-the-pieces" className={HEADING}>
@@ -57,7 +57,7 @@ export default function HowToUsePage() {
 
       <p className="mt-4 leading-relaxed">
         Browse Components and Blocks here. When you find something that fits,
-        use the Copy button — it gives you the exact phrase to paste to Claude,
+        use the Copy button. It gives you the exact phrase to paste to Claude,
         so you name the real piece instead of describing it and hoping Claude
         guesses right.
       </p>
@@ -74,7 +74,7 @@ export default function HowToUsePage() {
         You bring the words and the intent; the system brings the look.
         &ldquo;Headline about saving caregivers time, three benefits, a sign-up
         button at the bottom&rdquo; is enough. You never pick colors, fonts, or
-        spacing — those are already decided, and that&rsquo;s what keeps every
+        spacing. Those are already decided, and that&rsquo;s what keeps every
         page on-brand.
       </p>
 
@@ -84,7 +84,7 @@ export default function HowToUsePage() {
 
       <p className="mt-4 leading-relaxed">
         Claude shows you the result. If something&rsquo;s off, say so in plain
-        language — &ldquo;make the hero shorter,&rdquo; &ldquo;swap the second
+        language: &ldquo;make the hero shorter,&rdquo; &ldquo;swap the second
         and third sections.&rdquo; You&rsquo;re editing by conversation, not by
         hand.
       </p>
@@ -97,7 +97,7 @@ export default function HowToUsePage() {
 
       <p className="mt-4 leading-relaxed">
         If the catalog doesn&rsquo;t have the piece you need, don&rsquo;t force
-        it and don&rsquo;t ask Claude to invent one — that&rsquo;s how pages
+        it and don&rsquo;t ask Claude to invent one. That&rsquo;s how pages
         drift off-brand. Reach out to the Brevy team and we&rsquo;ll add it
         properly, so it works everywhere including your page.
       </p>

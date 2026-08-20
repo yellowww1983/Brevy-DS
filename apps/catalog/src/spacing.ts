@@ -1,5 +1,5 @@
 /** The numbers are Tailwind's own, because Tailwind's ladder already is the
- *  4px grid the design is drawn on — every value below maps onto it without a
+ *  4px grid the design is drawn on, and every value below maps onto it without a
  *  remainder. Nothing here is a size: a size would be a second copy of a number
  *  the browser already knows, and the page measures what it renders instead.
  *  What is written down is which rungs of that ladder the design reaches for,
@@ -9,54 +9,54 @@ export type Step = {
   /** As it appears in a class: `p-6`, `gap-6`, `mt-6`. */
   step: number
   role: string
-  /** Where it was counted in the design, so the role is evidence, not a guess. */
+  /** Where the step is used, so the role points somewhere concrete. */
   seen: string
 }
 
 export const STEPS: readonly Step[] = [
   {
     step: 1,
-    role: "Between an icon and the label beside it.",
-    seen: "chips, badges, inputs — 140 times",
+    role: "Between an icon and its label.",
+    seen: "chips, badges, and inputs",
   },
   {
     step: 2,
-    role: "Inside a control. The workhorse of the whole design, used more than every other step put together.",
-    seen: "buttons, cards, blocks of text — 1,433 times",
+    role: "Inside controls.",
+    seen: "buttons, cards, and blocks of text",
   },
   {
     step: 3,
-    role: "A control's own vertical padding — a button is 12 down, 24 across.",
-    seen: "buttons, chips, inputs — 349 times",
+    role: "Vertical padding inside controls. A button is 12 vertical, 24 horizontal.",
+    seen: "buttons, chips, and inputs",
   },
   {
     step: 4,
     role: "Between elements inside a card.",
-    seen: "buttons, cards — 347 times",
+    seen: "buttons and cards",
   },
   {
     step: 6,
-    role: "A card's padding, and the gap between one group of text and the next.",
-    seen: "cards, text blocks, the newsletter — 488 times",
+    role: "Card padding, and the gap between text groups.",
+    seen: "cards, text blocks, and the newsletter",
   },
   {
     step: 8,
-    role: "A wider gap between groups of text, where 24 reads as too tight.",
-    seen: "text blocks — 26 times",
+    role: "A wider gap between text groups.",
+    seen: "text blocks",
   },
   {
     step: 12,
     role: "Between the blocks that make up a section.",
-    seen: "text blocks, the navbar — 60 times",
+    seen: "text blocks and the navbar",
   },
   {
     step: 16,
-    role: "Between the columns of a two-column layout. Almost always horizontal.",
-    seen: "page columns, footer, hero — 56 times",
+    role: "Between layout columns. Almost always horizontal.",
+    seen: "page columns, the footer, and the hero",
   },
   {
     step: 24,
-    role: "Between one section and the next. The vertical rhythm of a page.",
-    seen: "section wrappers — 65 times",
+    role: "Between page sections.",
+    seen: "section wrappers",
   },
 ]

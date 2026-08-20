@@ -11,7 +11,7 @@ test("every swatch reports the colour it is painted", async ({ page }) => {
 
   /** Zero opacity is the failure worth naming. A ramp nothing else in the build
    *  uses gets its variables dropped, and every swatch of it then measures a
-   *  perfectly well-formed `#000000` at 0% — invisible on the page and a pass
+   *  perfectly well-formed `#000000` at 0%, invisible on the page and a pass
    *  for any check that only looks at the shape of the string. */
   const wrong = await page
     .locator("[data-hex]")
@@ -37,7 +37,7 @@ test("a semantic token lands on the colour it says it does", async ({
   await page.goto(PAGE)
 
   /** The page states where each token points, and that is the one thing on it
-   *  that is written down rather than measured — so it is the one thing that
+   *  that is written down rather than measured, so it is the one thing that
    *  can drift from the token file. Resolving both sides in the browser and
    *  comparing is what keeps the claim honest. */
   const drift = await page.evaluate(() => {
@@ -67,7 +67,7 @@ test("a semantic token lands on the colour it says it does", async ({
         }
 
         /** Most sources name a shade of a ramp, but a few name another
-         *  semantic token — dark's hover surface is simply the accent. The
+         *  semantic token: dark's hover surface is simply the accent. The
          *  fallback covers both without the test having to know which. */
         const actual = paint(`var(--${token})`, theme)
         const claimed = paint(`var(--color-${source}, var(--${source}))`, theme)
@@ -111,7 +111,7 @@ test("the two themes are shown at once, whichever one the reader is in", async (
   await page.getByRole("button", { name: "Toggle color theme" }).click()
 
   /** Checked before the columns are, because a click that lands before the page
-   *  is interactive changes nothing — and "nothing changed" is exactly what the
+   *  is interactive changes nothing, and "nothing changed" is exactly what the
    *  assertion below wants to see. Without this it would pass either way. */
   await expect
     .poll(() =>
