@@ -27,13 +27,14 @@ function useIcon() {
       return
     }
 
-    /** With the stroke taken out of the glyph's scaling, the declared width is
-     *  the width on screen, whatever size the icon is drawn at. */
+    /** The declared width is measured on the icon's 24 unit grid, so what lands
+     *  on screen is that width scaled by however large the icon is drawn. */
     const declared = parseFloat(getComputedStyle(svg).strokeWidth)
+    const width = svg.getBoundingClientRect().width
 
     setMeasured({
-      size: `${String(Math.round(svg.getBoundingClientRect().width))}px`,
-      stroke: String(Math.round(declared * 100) / 100),
+      size: `${String(Math.round(width))}px`,
+      stroke: String(Math.round(declared * (width / 24) * 100) / 100),
     })
   }, [])
 
