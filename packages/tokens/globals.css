@@ -231,6 +231,11 @@
 
   --icon-stroke-width: 1.5;
 
+  /* The three widths the website is drawn at. Mobile is 390 and needs no
+     breakpoint, because it is where the page starts. */
+  --breakpoint-tablet: 810px;
+  --breakpoint-desktop: 1440px;
+
   /* Roles, not sizes. The three headings are fluid because the website is; the
      other five never change width to width, in Figma or in the browser.
 
@@ -281,6 +286,43 @@
   --font-sans: "Rethink Sans", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Hedvig Letters Serif", ui-serif, Georgia, serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* The content column every block sits on. Two numbers describe it: how wide the
+   column is allowed to get, and how much room is left at the edge of the screen.
+   The second is the only one that changes between the three widths.
+
+   Kept out of `@theme` on purpose. Tailwind reads `--container-*` as the source
+   of the `max-w-*` utilities, so a token named that way would quietly redefine
+   classes the framework already ships.
+
+   The gutter is margin outside the column rather than padding inside it. Padding
+   would come out of the column and leave 1200 minus two gutters of content,
+   which is not what the design draws. */
+:root {
+  --content-width: 75rem;
+  --content-gutter: 1rem;
+}
+
+@media (width >= theme(--breakpoint-tablet)) {
+  :root {
+    --content-gutter: 1.5rem;
+  }
+}
+
+@media (width >= theme(--breakpoint-desktop)) {
+  :root {
+    --content-gutter: 7.5rem;
+  }
+}
+
+/* Below the cap the column is the screen less both gutters. At and above it the
+   column stops at 1200 and the room left over goes to the margins, so the text
+   never widens past what the design draws however large the window is. */
+@utility container-content {
+  width: calc(100% - 2 * var(--content-gutter));
+  max-width: var(--content-width);
+  margin-inline: auto;
 }
 
 /* lucide ships stroke-width 2 as a presentation attribute; the design draws at

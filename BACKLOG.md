@@ -45,6 +45,35 @@ should be checked for what that wait was quietly doing.
 
 ---
 
+## An unexplained failure on the layout page
+
+`copy-page.spec.ts` failed once on `Layout hands itself to Claude as text`. The
+saved snapshot showed `Application error: a client-side exception has occurred`,
+so the page had gone down rather than the test being early.
+
+**What was found and fixed.** A frame partway through a navigation has a
+document with no `documentElement` yet. Both frame effects reached through it,
+and `observe(null)` throws in the body of an effect, which takes the whole page
+with it rather than just the frame. Guarded in `frame-theme.ts` and
+`container-frame.tsx`. Measured: three failures in seven runs before, none in
+ten after.
+
+**Why it stays open.** A single failure came back after that fix, on a later
+build, and its `error-context.md` was deleted before anyone read it. Nothing has
+failed since, across roughly a hundred runs spanning three builds, so there is
+no evidence to say whether it was the same race surviving in a rarer form or a
+one-off. Two changes since then removed plausible feeding ground: the frame no
+longer measures its own height, which ended a resize loop between the frame's
+height and the document's, and nothing thin is drawn inside the scaled frame any
+more.
+
+**On the next failure, read `test-results/*/error-context.md` before cleaning.**
+It carries the page snapshot, which is the difference between knowing whether
+the page crashed or the test was early, and guessing. That artefact is why the
+first race was found in one pass and why this one is still open.
+
+---
+
 ## Carried over, not scheduled
 
 - **Badge icon stroke.** Renders at 2, the app file draws 1.25. Button was fixed

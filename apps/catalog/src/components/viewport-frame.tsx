@@ -12,6 +12,8 @@ import {
   type ReactNode,
 } from "react"
 
+import { useFrameTheme } from "./frame-theme"
+
 /** Tablet and mobile are the widths of the Figma frames. Desktop was going to
  *  be whatever room the page has, but that measures 766px here, narrower than
  *  the tablet frame, which put the three tabs out of order and showed desktop
@@ -134,37 +136,7 @@ export function ViewportFrame({
     }
   }, [width, loads])
 
-  /** The frame is a document of its own, so the script that reads the stored
-   *  theme runs once, when it loads, and never hears the toggle afterwards.
-   *  Left alone it keeps whichever theme it was born in: a white panel on a
-   *  dark page. Watching the class the toggle writes is what carries it over. */
-  useEffect(() => {
-    const document_ = frame.current?.contentDocument
-
-    if (!document_) {
-      return
-    }
-
-    const sync = () => {
-      document_.documentElement.classList.toggle(
-        "dark",
-        document.documentElement.classList.contains("dark"),
-      )
-    }
-
-    sync()
-
-    const observer = new MutationObserver(sync)
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    })
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [loads])
+  useFrameTheme(frame, loads)
 
   return (
     <div
