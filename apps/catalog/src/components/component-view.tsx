@@ -121,7 +121,7 @@ export function ComponentView({ slug }: { slug: string }) {
             No {entry.name} variants match “{query}”
             {suggestion ? (
               <>
-                {" — "}
+                {" · "}
                 <Link
                   href={`/components/${suggestion.slug}`}
                   className="rounded-sm text-primary underline underline-offset-4 hover:decoration-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"

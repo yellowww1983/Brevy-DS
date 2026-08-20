@@ -6,7 +6,7 @@
 /* The borrowed ramps belong to Tailwind, not to the token file, and Tailwind
    emits a colour variable only when some utility asks for it. The colours page
    paints its swatches straight through `var(--color-…)`, which is not a utility
-   and does not count — so a shade nothing else happens to reference resolves to
+   and does not count, so a shade nothing else happens to reference resolves to
    nothing and the swatch comes out empty rather than wrong. Naming the shades
    that page shows is what keeps them real, and it is deliberately not the same
    as writing values down: pinning these ramps is an open question for the
@@ -29,13 +29,13 @@
 /* The catalog's chrome is not part of the design system, the same way its
    typeface is not. Reaching for --surface-hover made a swatch row and a
    viewport tab wear the fill drawn for a Brevy ghost button, which is a
-   deliberate, visible press — far too much weight for a row you are only
+   deliberate, visible press, far too much weight for a row you are only
    pointing at. Written as values rather than borrowed from a ramp, because
    borrowing is what coupled them in the first place.
 
    Chosen by measured contrast against the surface each one sits on: roughly
    1.15 for a hover and 1.2 for a selection. Enough to see, not enough to read
-   as a block of colour. The two sit close together on purpose — a tab shows no
+   as a block of colour. The two sit close together on purpose: a tab shows no
    fill at all when merely pointed at, so a selected one has nothing to outrank
    and only has to be legible. */
 :root {

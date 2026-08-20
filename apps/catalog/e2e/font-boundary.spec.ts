@@ -54,7 +54,7 @@ test("every design system element renders in the system face", async ({
 
   expect(
     inspected,
-    "no design system elements were found on any route — the selector or the routes are wrong",
+    "no design system elements were found on any route: the selector or the routes are wrong",
   ).toBeGreaterThan(0)
 
   expect(
@@ -113,6 +113,6 @@ test("client-side navigation keeps the app alive", async ({ page }) => {
 
   expect(
     failures,
-    "a soft navigation threw — hard page loads hide errors that only fire when React renders on the client",
+    "a soft navigation threw. Hard page loads hide errors that only fire when React renders on the client",
   ).toEqual([])
 })

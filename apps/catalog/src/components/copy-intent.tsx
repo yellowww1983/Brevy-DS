@@ -7,7 +7,7 @@ const FEEDBACK_MS = 2000
 
 /** Deliberately knows nothing about components: it takes a name and a choice,
  *  so a block in phase 2 uses it without the registry shape changing. The
- *  choice is required — a prompt with no choice in it is the vagueness this
+ *  choice is required: a prompt with no choice in it is the vagueness this
  *  button exists to remove. */
 export function CopyIntent({ name, choice }: { name: string; choice: string }) {
   const [copied, setCopied] = useState(false)
@@ -20,7 +20,7 @@ export function CopyIntent({ name, choice }: { name: string; choice: string }) {
     [],
   )
 
-  const sentence = `Use the ${name} — ${choice}.`
+  const sentence = `Use the ${name}: ${choice}.`
 
   return (
     <button

@@ -13,7 +13,7 @@ import {
 } from "react"
 
 /** Tablet and mobile are the widths of the Figma frames. Desktop was going to
- *  be whatever room the page has, but that measures 766px here — narrower than
+ *  be whatever room the page has, but that measures 766px here, narrower than
  *  the tablet frame, which put the three tabs out of order and showed desktop
  *  as the smallest type. It is a real width instead, and the column shows as
  *  much of that frame as it has room for. Samples are short enough to land
@@ -110,7 +110,7 @@ export function ViewportFrame({
 
   /** A frame wider than the column shows only its left part, so text laid out
    *  to the full frame width would break where nobody can see it and read as
-   *  cut off. The frame keeps its width — that is what `vw` resolves against —
+   *  cut off. The frame keeps its width, which is what `vw` resolves against,
    *  and the samples inside wrap to whatever the column can actually show. */
   useEffect(() => {
     const document_ = frame.current?.contentDocument
@@ -136,7 +136,7 @@ export function ViewportFrame({
 
   /** The frame is a document of its own, so the script that reads the stored
    *  theme runs once, when it loads, and never hears the toggle afterwards.
-   *  Left alone it keeps whichever theme it was born in — a white panel on a
+   *  Left alone it keeps whichever theme it was born in: a white panel on a
    *  dark page. Watching the class the toggle writes is what carries it over. */
   useEffect(() => {
     const document_ = frame.current?.contentDocument

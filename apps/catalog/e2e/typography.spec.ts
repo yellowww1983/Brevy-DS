@@ -103,7 +103,7 @@ test("every badge reports what its own sample renders", async ({ page }) => {
     expect((await readSpecimens(page)).length, viewport).toBe(8)
 
     /** A badge re-measures when the frame resizes, which is a beat after the
-     *  frame reaches its new width — so the disagreements are collected until
+     *  frame reaches its new width, so the disagreements are collected until
      *  there are none rather than read once. This is still the assertion, not
      *  a wait dressed up as one: agreement that never arrives fails here. */
     await expect

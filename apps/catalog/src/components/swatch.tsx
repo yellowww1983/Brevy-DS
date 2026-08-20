@@ -99,7 +99,7 @@ export function PaletteSwatch({
 
 /** The same token painted under a theme it may not be in. A frame would be the
  *  other way to force one, but a token is only a custom property, and those
- *  inherit — so the theme class on a wrapper is enough to resolve the whole
+ *  inherit, so the theme class on a wrapper is enough to resolve the whole
  *  chain here rather than in the reader's current mode. */
 export function TokenSwatch({
   token,

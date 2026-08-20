@@ -28,7 +28,7 @@ export const HEADING = "mt-14 scroll-mt-8 text-2xl font-semibold tracking-tight"
 export const LINK =
   "rounded-sm font-medium text-primary underline underline-offset-4 hover:decoration-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
 
-/** Real artwork lands later — until then the frame states what belongs in it,
+/** Real artwork lands later. Until then the frame states what belongs in it,
  *  so an empty page never reads as a finished one. */
 export function ImageSlot({ children }: { children: string }) {
   return (

@@ -51,7 +51,7 @@ export function TableOfContents({
   /** The band above sits in the top third of the screen, so a heading only
    *  becomes current once there is a screenful of content below it to scroll
    *  through. The last section rarely has that much, and its heading comes to
-   *  rest below the band with the page already at its end — leaving the final
+   *  rest below the band with the page already at its end, leaving the final
    *  item unreachable, and on a page whose sections are all short, leaving the
    *  highlight wherever it happened to be. Running out of document says the
    *  same thing the band does: there is nothing after this left to read. */
@@ -63,8 +63,8 @@ export function TableOfContents({
 
     check()
 
-    /** Content that settles late — a frame that measures itself, an image
-     *  arriving — moves the end of the document without a scroll event. */
+    /** Content that settles late, such as a frame that measures itself or an
+     *  image arriving, moves the end of the document without a scroll event. */
     const observer = new ResizeObserver(check)
     observer.observe(document.documentElement)
     window.addEventListener("scroll", check, { passive: true })

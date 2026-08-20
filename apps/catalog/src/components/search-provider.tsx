@@ -26,8 +26,8 @@ export function SearchProvider({ children }: { children: ReactNode }) {
 }
 
 /** Search narrows lists of components. A content page has no list, so the field
- *  is absent there and a query typed earlier stops applying until you return —
- *  otherwise the sidebar would stay filtered with no way to clear it. */
+ *  is absent there and a query typed earlier stops applying until you return,
+ *  because otherwise the sidebar would stay filtered with no way to clear it. */
 export function useSearchable() {
   return usePathname().startsWith("/components")
 }
