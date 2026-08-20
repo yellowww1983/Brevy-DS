@@ -13,11 +13,11 @@ export const SET = [
 ]
 
 export const SIZE =
-  "Components set the size, so most of the time there is nothing to choose. Where you are placing an icon yourself, 24px is the usual size and 16px suits a dense row. Every size is one class, and the stroke stays the same at all of them."
+  "Components set the size, so most of the time there is nothing to choose. Where you are placing an icon yourself, 24px is the usual size and 16px suits a dense row. Every size is one class, and lucide scales the glyph and its stroke together."
 
 export const STROKE = [
   "Icons are drawn at a stroke of 1.5, applied with `icon-stroke`. Lucide's own default is 2, which reads heavy beside Brevy type, so the system overrides it.",
-  "The stroke stays 1.5 at every size. A line is normally measured inside the icon's own grid, which would draw a smaller icon thinner, so the system measures it on screen instead. A 16px icon and a 32px icon read with the same weight.",
+  "The 1.5 is measured on the icon's own 24 unit grid, so it scales with the glyph: a 16px icon draws its line at 1. That matches the design, which draws 1.5 in a 24 frame and 1 in a 16 frame.",
 ]
 
 export const IN_A_COMPONENT =

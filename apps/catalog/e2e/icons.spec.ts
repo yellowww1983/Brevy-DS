@@ -5,14 +5,14 @@ test.use({ viewport: { width: 1440, height: 900 } })
 
 const PAGE = "/getting-started/icons"
 
-/** A class, the pixels it renders, and the stroke on screen. The stroke is the
- *  same at every size on purpose: taken out of the glyph's scaling so a small
- *  icon does not read thinner than a large one. */
+/** A class, the pixels it renders, and the stroke that comes with it. 1.5 is
+ *  anchored on lucide's 24 grid and scales with the glyph, which is what the
+ *  design draws: 1.5 in a 24 frame, 1 in a 16 frame. */
 const SIZES = [
-  ["size-4", 16, 1.5],
-  ["size-5", 20, 1.5],
+  ["size-4", 16, 1],
+  ["size-5", 20, 1.25],
   ["size-6", 24, 1.5],
-  ["size-8", 32, 1.5],
+  ["size-8", 32, 2],
 ] as const
 
 test("each size renders the pixels its class owes", async ({ page }) => {
@@ -33,7 +33,9 @@ test("each size renders the pixels its class owes", async ({ page }) => {
   expect(drawn).toEqual(SIZES.map(([name, px]) => [name, px]))
 })
 
-test("the stroke is 1.5 on screen at every size", async ({ page }) => {
+test("the stroke is 1.5 on the grid, so it scales with the glyph", async ({
+  page,
+}) => {
   await page.goto(PAGE)
   await measured(page)
 
@@ -45,15 +47,11 @@ test("the stroke is 1.5 on screen at every size", async ({ page }) => {
         return 0
       }
 
-      const shape = svg.querySelector("path, circle, line, polyline, polygon")
-      const scaled =
-        shape && getComputedStyle(shape).vectorEffect === "non-scaling-stroke"
-          ? 1
-          : svg.getBoundingClientRect().width / 24
+      const scale = svg.getBoundingClientRect().width / 24
 
       return (
         Math.round(
-          parseFloat(getComputedStyle(svg).strokeWidth) * scaled * 100,
+          parseFloat(getComputedStyle(svg).strokeWidth) * scale * 100,
         ) / 100
       )
     }),
@@ -78,7 +76,7 @@ test("every label reports what its own icon renders", async ({ page }) => {
           svg ? getComputedStyle(svg).strokeWidth : "0",
         )
         const owed = `${String(Math.round(width))}px · ${String(
-          Math.round(declared * 100) / 100,
+          Math.round(declared * (width / 24) * 100) / 100,
         )} stroke`
         const said = node.querySelector("[data-size]")?.textContent ?? ""
 

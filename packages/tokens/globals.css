@@ -283,23 +283,16 @@
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
-/* lucide ships stroke-width 2 as a presentation attribute; the system draws at
+/* lucide ships stroke-width 2 as a presentation attribute; the design draws at
    1.5. Named away from the `stroke-*` namespace, because a token called
    `--stroke-icon` also registers as a stroke colour, and the built-in utility
    then paints `stroke: 1.5`, which resolves to none.
 
-   A stroke is normally measured in the icon's own 24 unit grid, so an icon
-   rendered at 16 draws its line at two thirds the width and a small icon looks
-   thinner than a large one. `non-scaling-stroke` takes the line out of that
-   scaling and measures it on screen instead, which holds 1.5 at every size. It
-   has to reach the shapes rather than the svg, because vector-effect does not
-   inherit. */
+   The 1.5 is anchored on the icon's own 24 unit grid and scales with it, which
+   is what the design does: 1.5 drawn in a 24 frame, 1 drawn in a 16 frame. A
+   stroke held constant on screen was tried and is wrong for this system. */
 @utility icon-stroke {
   stroke-width: var(--icon-stroke-width);
-
-  & :is(path, circle, ellipse, line, polyline, polygon, rect) {
-    vector-effect: non-scaling-stroke;
-  }
 }
 
 /* `.light` is the same set under a class, so a subtree can be pinned to one
