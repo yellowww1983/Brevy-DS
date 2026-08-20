@@ -5,7 +5,7 @@ test.use({ viewport: { width: 1440, height: 900 } })
 
 const PAGE = "/getting-started/introduction"
 
-/** Puts a heading where a reader would have it — near the top of the viewport,
+/** Puts a heading where a reader would have it, near the top of the viewport,
  *  which is the band the contents list watches. */
 async function bringToReadingPosition(page: Page, id: string) {
   await page.evaluate((target: string) => {
@@ -91,6 +91,7 @@ const WITH_CONTENTS = [
   "/getting-started/typography",
   "/getting-started/colors",
   "/getting-started/spacing",
+  "/getting-started/radius",
 ] as const
 
 for (const path of WITH_CONTENTS) {

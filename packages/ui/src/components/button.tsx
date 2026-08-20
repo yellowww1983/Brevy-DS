@@ -6,9 +6,7 @@ import type { ComponentProps } from "react"
 
 import { cn } from "../lib/utils.js"
 
-const LEAF = "rounded-tl-sm rounded-tr-2xl rounded-br-sm rounded-bl-2xl"
-
-/** An icon-only button is a square. `:only-child` alone cannot detect one — it
+/** An icon-only button is a square. `:only-child` alone cannot detect one, because it
  *  counts elements, and a label beside the icon is a text node, so an icon with
  *  a label would match too. The accessible name settles it: a button with
  *  nothing but an icon has to carry one, a labelled button never does.
@@ -30,9 +28,9 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: `${LEAF} h-12 border border-primary bg-primary px-6 text-primary-foreground hover:bg-background hover:text-primary active:bg-background active:text-primary`,
-        outline: `${LEAF} h-12 border border-primary bg-background px-6 text-primary hover:bg-primary hover:text-primary-foreground ${OUTLINE_ICON_ONLY}`,
-        secondary: `${LEAF} h-12 border border-transparent bg-surface-olive px-6 text-surface-olive-foreground hover:border-surface-olive-outline hover:bg-background hover:text-surface-olive-outline`,
+        primary: `rounded-leaf h-12 border border-primary bg-primary px-6 text-primary-foreground hover:bg-background hover:text-primary active:bg-background active:text-primary`,
+        outline: `rounded-leaf h-12 border border-primary bg-background px-6 text-primary hover:bg-primary hover:text-primary-foreground ${OUTLINE_ICON_ONLY}`,
+        secondary: `rounded-leaf h-12 border border-transparent bg-surface-olive px-6 text-surface-olive-foreground hover:border-surface-olive-outline hover:bg-background hover:text-surface-olive-outline`,
         ghost: `h-9 rounded-lg px-4 text-foreground hover:bg-surface-hover active:bg-surface-active ${GHOST_ICON_ONLY}`,
       },
     },

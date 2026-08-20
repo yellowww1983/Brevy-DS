@@ -451,3 +451,57 @@ The remaining 3.6% never resolve to a four-pixel step:
 The cluster at **31, 33, 39, 41, 42** is the telling one: 48 measurements that
 are all within two pixels of 32 or 40. They read as dragged rather than typed,
 and each one is a place where a developer has to decide which step was meant.
+
+---
+
+## Radii
+
+### 33. The radius ramp came from the app file, not the website
+
+The token file defines eight radii — `xs` through `4xl` — and their values match
+the app file rather than anything drawn on the website. Two consequences follow,
+and both are visible in code today.
+
+**Four of the eight are never drawn.** Across the six page templates, `2`, `14`,
+`24` and `32` appear zero times. They are the same kind of leftover as the six
+colour ramps that exist only to feed unused chart tokens.
+
+**The names no longer mean what Tailwind means by them.** Because the values came
+from elsewhere, five of them sit a step away from the framework's own:
+
+| class         | here | stock Tailwind |
+| ------------- | ---- | -------------- |
+| `rounded-sm`  | 6px  | 4px            |
+| `rounded-md`  | 8px  | 6px            |
+| `rounded-lg`  | 10px | 8px            |
+| `rounded-xl`  | 14px | 12px           |
+| `rounded-2xl` | 16px | 16px           |
+
+This is the opposite of the spacing result, where Tailwind's ladder turned out to
+be the design's own grid and nothing had to be overridden. Here the override is
+real, so anyone typing `rounded-md` from habit gets a different corner than they
+expect. The radii page carries a warning about it; the reason it happened is
+recorded here.
+
+### 34. `full` was the most-drawn radius and had no token
+
+`9999` is used **171 times across all six pages** — avatars, chips, dots, rules —
+more than any other radius including the 16 that cards and photographs use. It
+was absent from the token file entirely.
+
+It has been added as `--radius-full`. Recorded because it is the third foundation
+where the most-used value in the design was the one missing from the tokens,
+after `neutral` and `zinc` in colour.
+
+### 35. The leaf is a brand shape and was locked inside one component
+
+`6px 16px 6px 16px` — tight on one diagonal, wide on the other — is drawn **46
+times on five of the six pages, and never once inside the app mockup**. It is the
+website's own signature, and it is not only a button: **18 of those uses are
+photographs**, and roughly 30 further elements round a subset of their corners at
+16 in the same spirit.
+
+In code it existed as a private string inside `button.tsx`, so nothing but a
+button could reach for it. It is now `rounded-leaf`, defined beside the radius
+scale. Worth confirming with the designer that the corner-subset variants are
+meant as the same signature rather than as separate shapes.
