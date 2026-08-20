@@ -412,3 +412,42 @@ ramps read as "available palette" when they are closer to leftovers from the
 shadcn starter. Either a charting component is coming and they should stay, or
 they and the chart tokens can go together. The colours page omits all six and
 says so rather than showing sixty-six swatches nobody can use.
+
+---
+
+## Spacing
+
+### 31. The logo strip is fitted by hand, and fitted twice
+
+Across the six page templates, 3,163 gaps and paddings were measured. **96.4% of
+them land on a four-pixel grid**, which is a strong result and the reason the
+spacing scale needed no invention — Tailwind's ladder already is that grid.
+
+Three values sit outside the scale for a reason worth stating. **40, 56 and 60
+appear in one place only: the strip of partner logos.** None is used as a gap
+anywhere; all three are padding on that one block, evidently nudged so marks of
+different widths sit evenly. That is a fitting rather than a step, and it is why
+the spacing page omits them.
+
+Within that block, **the same horizontal padding is drawn as 56 in one place and
+60 in another** — 44 times and 12 times. If the strip is meant to be even, one of
+the two is wrong; if the two are deliberate, the reason is not visible in the
+file.
+
+### 32. A hundred and fifteen measurements sit off the grid
+
+The remaining 3.6% never resolve to a four-pixel step:
+
+| value                  | uses    | reading             |
+| ---------------------- | ------- | ------------------- |
+| `41`                   | 20      | nudged 40           |
+| `6`                    | 26      | nudged 4 or 8       |
+| `2`                    | 21      | nudged 4            |
+| `33`, `39`             | 10 each | nudged 32 and 40    |
+| `42`                   | 6       | nudged 40           |
+| `129`, `349`           | 6 each  | one-off layout gaps |
+| `10`, `31`, `102`, `1` | 1–5     | one-offs            |
+
+The cluster at **31, 33, 39, 41, 42** is the telling one: 48 measurements that
+are all within two pixels of 32 or 40. They read as dragged rather than typed,
+and each one is a place where a developer has to decide which step was meant.

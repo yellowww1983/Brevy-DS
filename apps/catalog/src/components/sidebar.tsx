@@ -1,7 +1,7 @@
 "use client"
 
 import { cn } from "@brevy/ui"
-import { ChevronDown, Palette, Type, Wrench, Zap } from "lucide-react"
+import { ChevronDown, Move, Palette, Type, Wrench, Zap } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import type { ComponentType, ReactNode } from "react"
@@ -28,6 +28,7 @@ const GETTING_STARTED: readonly Entry[] = [
 const FOUNDATIONS: readonly Entry[] = [
   { label: "Colors", icon: Palette, href: "/getting-started/colors" },
   { label: "Typography", icon: Type, href: "/getting-started/typography" },
+  { label: "Spacing", icon: Move, href: "/getting-started/spacing" },
 ]
 
 function Section({ title, children }: { title: string; children: ReactNode }) {

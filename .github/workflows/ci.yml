@@ -12,6 +12,11 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    # A full run takes under two minutes. The ceiling is not a guess at how long
+    # the work needs — it is a cap on how long a stall can cost: the Playwright
+    # download once hung and GitHub let it burn six hours of the minute
+    # allowance before its own default cut in.
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
