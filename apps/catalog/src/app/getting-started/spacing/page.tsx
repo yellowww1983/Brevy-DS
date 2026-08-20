@@ -6,7 +6,6 @@ import { STEPS } from "@/spacing"
 const SECTIONS: readonly Section[] = [
   { id: "the-scale", title: "The scale" },
   { id: "naming", title: "Naming" },
-  { id: "not-on-this-page", title: "Not on this page" },
 ]
 
 export default function SpacingPage() {
@@ -36,6 +35,12 @@ export default function SpacingPage() {
         ))}
       </ul>
 
+      <p className="mt-4 text-sm text-muted-foreground">
+        The rest of Tailwind&rsquo;s ladder still works —{" "}
+        <code className="font-mono text-xs">p-5</code> will do exactly what you
+        expect. It is simply not a step the design reaches for.
+      </p>
+
       <h2 id="naming" className={HEADING}>
         Naming
       </h2>
@@ -54,25 +59,6 @@ export default function SpacingPage() {
         <code className="font-mono text-sm">gap-2</code>,{" "}
         <code className="font-mono text-sm">mt-24</code>. What this page adds is
         which of them are ours.
-      </p>
-
-      <h2 id="not-on-this-page" className={HEADING}>
-        Not on this page
-      </h2>
-      <p className="mt-4 leading-relaxed">
-        The rest of Tailwind&rsquo;s ladder still works. Nothing is blocked, and
-        a layout that genuinely needs{" "}
-        <code className="font-mono text-sm">p-5</code> can have it. It is absent
-        here because the design does not draw it, in the same way the colours
-        page shows only the ramps the design actually uses.
-      </p>
-      <p className="mt-4 leading-relaxed">
-        Three values were left out deliberately rather than for lack of use: 40,
-        56 and 60. All three appear in one place only — the strip of partner
-        logos — where the spacing is nudged by hand to sit between marks of
-        different widths. That is a fitting, not a step, and the same padding is
-        drawn as 56 in one place and 60 in another. It is recorded for the
-        designer instead.
       </p>
     </ContentPage>
   )
