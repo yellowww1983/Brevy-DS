@@ -4,6 +4,7 @@ import { cn } from "@brevy/ui"
 import {
   ChevronDown,
   Move,
+  Layers,
   Palette,
   Squircle,
   Type,
@@ -38,6 +39,7 @@ const FOUNDATIONS: readonly Entry[] = [
   { label: "Typography", icon: Type, href: "/getting-started/typography" },
   { label: "Spacing", icon: Move, href: "/getting-started/spacing" },
   { label: "Radius", icon: Squircle, href: "/getting-started/radius" },
+  { label: "Shadows", icon: Layers, href: "/getting-started/shadows" },
 ]
 
 function Section({ title, children }: { title: string; children: ReactNode }) {

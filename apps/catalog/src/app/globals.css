@@ -38,7 +38,11 @@
    as a block of colour. The two sit close together on purpose: a tab shows no
    fill at all when merely pointed at, so a selected one has nothing to outrank
    and only has to be legible. */
-:root {
+/* `.light` alongside `:root` for the same reason the token file carries it: a
+   subtree can then be pinned to one theme while the page is in the other, which
+   is how the shadow specimens keep a surface a shadow can be seen on. */
+:root,
+.light {
   --catalog-hover: #f3f1ef;
   --catalog-active: #edeae7;
 }
