@@ -33,11 +33,6 @@ export default function RadiusPage() {
         ))}
       </ul>
 
-      <p className="mt-4 text-sm text-muted-foreground">
-        Other Tailwind radius classes still work. These five are the ones the
-        design uses.
-      </p>
-
       <h2 id="the-leaf" className={HEADING}>
         The leaf
       </h2>

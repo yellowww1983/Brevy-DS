@@ -32,12 +32,6 @@ export default function SpacingPage() {
         ))}
       </ul>
 
-      <p className="mt-4 text-sm text-muted-foreground">
-        Other Tailwind spacing classes still work.{" "}
-        <code className="font-mono text-xs">p-5</code> is simply not a step the
-        design uses.
-      </p>
-
       <h2 id="naming" className={HEADING}>
         Naming
       </h2>
