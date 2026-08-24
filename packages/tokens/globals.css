@@ -369,7 +369,7 @@
   --surface-olive: var(--color-olive-500);
   --surface-olive-foreground: var(--color-emerald-500);
   --surface-olive-outline: var(--color-emerald-500);
-  --destructive: var(--color-red-600);
+  --destructive: var(--color-red-500);
   --destructive-foreground: var(--color-red-50);
   --border: var(--color-neutral-300);
   --input: var(--color-neutral-300);

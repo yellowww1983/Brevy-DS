@@ -168,8 +168,17 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "input",
     name: "Input",
-    // Drawn from Brevy app · component set 65:533
+    // Drawn from Brevy app · component set 65:533; the tall size from the
+    // website file, where every form field is 48.
     axes: [
+      {
+        label: "Size",
+        values: ["Default", "Tall"],
+        phrasing: {
+          Default: "at the default height",
+          Tall: "at the tall height the website uses",
+        },
+      },
       {
         label: "Type",
         values: ["Text", "File"],
@@ -199,6 +208,7 @@ export const components: readonly ComponentEntry[] = [
       return (
         <Input
           type={combination.Type === "File" ? "file" : "text"}
+          size={combination.Size === "Tall" ? "tall" : "default"}
           aria-label="Email"
           placeholder="hello@brevy.com"
           defaultValue={
