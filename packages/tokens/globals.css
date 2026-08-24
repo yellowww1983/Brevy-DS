@@ -231,12 +231,6 @@
 
   --icon-stroke-width: 1.5;
 
-  /* The chip's hairline. Drawn as a shadow rather than a border, in the file
-     and on the shipped site alike: a 1px blur of half black, hugging the
-     pill. A border would take a pixel out of the layout; this paints over
-     whatever is behind it. */
-  --shadow-chip: 0 0 1px 0 rgb(0 0 0 / 0.5);
-
   /* The three widths the website is drawn at. Mobile is 390 and needs no
      breakpoint, because it is where the page starts. */
   --breakpoint-tablet: 810px;
@@ -292,6 +286,39 @@
   --font-sans: "Rethink Sans", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Hedvig Letters Serif", ui-serif, Georgia, serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* The hairline: the thin grey thread the design draws around a chip, a FAQ
+   card and a footer social button. Drawn as a crisp 1px stroke inside the
+   edge, running neutral-200 at the top to neutral-300 at the bottom.
+
+   It is a masked overlay rather than anything simpler, because each simpler
+   form fails a requirement. A border-image drops the corner radius entirely,
+   and the pill is fully round. A two-layer background owns the element's own
+   background shorthand, and the chip paints a gradient of its own there. A
+   box-shadow cannot carry a gradient at all. The overlay touches none of
+   that: it inherits the corner, sits inside the edge, and leaves both the
+   background and every shadow slot to the element. */
+@utility hairline {
+  position: relative;
+
+  &::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      to bottom,
+      var(--color-neutral-200),
+      var(--color-neutral-300)
+    );
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+  }
 }
 
 /* The content column every block sits on. Two numbers describe it: how wide the

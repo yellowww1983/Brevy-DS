@@ -1,4 +1,8 @@
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
   Badge,
   Button,
   Card,
@@ -37,6 +41,9 @@ export type ComponentEntry = {
   name: string
   axes: readonly Axis[]
   omitted: readonly Omission[]
+  /** One preview per row instead of the grid, for a component whose drawn
+   *  width is wider than a grid cell. */
+  wide?: true
   render: (combination: Record<string, string>) => ReactNode
 }
 
@@ -292,6 +299,73 @@ export const components: readonly ComponentEntry[] = [
         <Chip variant="eyebrow" count={counted ? 3 : undefined}>
           Easy Steps
         </Chip>
+      )
+    },
+  },
+  {
+    slug: "accordion",
+    name: "Accordion",
+    wide: true,
+    // Drawn from Brevy Website · the FAQ list on the home pages, one card per
+    // question, the first drawn open. The copy is the shipped site's own.
+    axes: [
+      {
+        label: "Type",
+        values: ["Single", "Multiple"],
+        phrasing: {
+          Single: "one question open at a time",
+          Multiple: "several questions open at once",
+        },
+      },
+    ],
+    omitted: [],
+    render: (combination) => {
+      const multiple = combination.Type === "Multiple"
+      const items = (
+        <>
+          <AccordionItem value="paid">
+            <AccordionTrigger>
+              Can Brevy help me get paid as a caregiver?
+            </AccordionTrigger>
+            <AccordionContent>
+              Yes! Brevy can help you discover caregiver support programs in
+              your state that provide compensation for taking care of family
+              members at home.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="free">
+            <AccordionTrigger>Is Brevy really free?</AccordionTrigger>
+            <AccordionContent>
+              Absolutely. Brevy is completely free to use. We help you find and
+              enroll in benefits at no cost to you.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="eligibility">
+            <AccordionTrigger>
+              How does the eligibility check work?
+            </AccordionTrigger>
+            <AccordionContent>
+              Our intelligent assistant asks you a few simple questions about
+              your situation and instantly checks your eligibility across
+              hundreds of benefit programs.
+            </AccordionContent>
+          </AccordionItem>
+        </>
+      )
+
+      /** The drawn width: the desktop FAQ column is 592. Shown at that size
+       *  rather than squeezed into a grid cell, the way the navbar is shown
+       *  at its own width. */
+      return (
+        <div className="w-full" style={{ maxWidth: 592 }}>
+          {multiple ? (
+            <Accordion type="multiple" defaultValue={["paid", "free"]}>
+              {items}
+            </Accordion>
+          ) : (
+            <Accordion defaultValue="paid">{items}</Accordion>
+          )}
+        </div>
       )
     },
   },

@@ -40,10 +40,12 @@ function Preview({ label, children }: { label: string; children: ReactNode }) {
 function Section({
   title,
   action,
+  wide,
   children,
 }: {
   title: string | null
   action?: ReactNode
+  wide?: boolean
   children: ReactNode
 }) {
   return (
@@ -56,7 +58,13 @@ function Section({
           {action}
         </div>
       )}
-      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <ul
+        className={
+          wide
+            ? "flex flex-col gap-5"
+            : "grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        }
+      >
         {children}
       </ul>
     </section>
@@ -143,6 +151,7 @@ export function ComponentView({ slug }: { slug: string }) {
               key={group.title ?? String(index)}
               title={group.title}
               action={copyFor(group.title)}
+              wide={entry.wide}
             >
               {group.rows.map((row) => (
                 <Preview
