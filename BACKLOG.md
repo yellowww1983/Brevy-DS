@@ -67,6 +67,12 @@ longer measures its own height, which ended a resize loop between the frame's
 height and the document's, and nothing thin is drawn inside the scaled frame any
 more.
 
+**It happened again, and the artefact was lost again.** One `toHaveCount`
+failure on the first run after a server restart, name unread, and three
+passing runs launched before anyone looked at `test-results`, which cleans
+itself on every run. Three deliberate cold starts afterwards stayed green.
+The count stands at two unexplained failures, both swallowed the same way.
+
 **On the next failure, read `test-results/*/error-context.md` before cleaning.**
 It carries the page snapshot, which is the difference between knowing whether
 the page crashed or the test was early, and guessing. That artefact is why the
