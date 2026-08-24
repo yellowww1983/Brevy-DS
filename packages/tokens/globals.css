@@ -231,6 +231,12 @@
 
   --icon-stroke-width: 1.5;
 
+  /* The chip's hairline. Drawn as a shadow rather than a border, in the file
+     and on the shipped site alike: a 1px blur of half black, hugging the
+     pill. A border would take a pixel out of the layout; this paints over
+     whatever is behind it. */
+  --shadow-chip: 0 0 1px 0 rgb(0 0 0 / 0.5);
+
   /* The three widths the website is drawn at. Mobile is 390 and needs no
      breakpoint, because it is where the page starts. */
   --breakpoint-tablet: 810px;

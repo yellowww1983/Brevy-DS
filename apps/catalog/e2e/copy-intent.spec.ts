@@ -57,7 +57,7 @@ test("the prompt reaches the clipboard and the button says so", async ({
 
   await expect(button).toHaveText("Copied")
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    "Use the Brevy Badge: the verified style, with a check mark.",
+    "Use the Brevy Badge: on the quiet beige.",
   )
   await expect(button).toHaveText("Copy", { timeout: 4000 })
 })

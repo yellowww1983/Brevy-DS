@@ -6,20 +6,22 @@ import type { ComponentProps } from "react"
 
 import { cn } from "../lib/utils.js"
 
+/** The website's badge: 24 tall on a radius of 8, its label at 14 SemiBold,
+ *  with room for a 16px icon before it. Three skins are drawn and they are
+ *  all there is; the app file's destructive and verified variants appear
+ *  nowhere on the website and are gone. */
 const badgeVariants = cva(
-  "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-md border border-transparent px-2 py-0.5 text-xs font-semibold whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:border-ring/50 focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background aria-invalid:border-destructive [&>svg]:pointer-events-none [&>svg]:size-3",
+  "inline-flex h-6 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-md border border-transparent px-2 text-sm font-semibold whitespace-nowrap outline-none focus-visible:border-ring/50 focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&>svg]:pointer-events-none [&>svg]:size-4 [&>svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-olive-500 text-brand-500 [a&]:hover:bg-olive-500/20",
-        secondary: "bg-secondary text-muted-foreground",
         outline: "border-border bg-background text-foreground",
-        destructive: "bg-red-200 text-red-800",
-        verified: "bg-blue-500 text-white dark:bg-blue-600",
+        olive: "bg-surface-olive text-brand-500",
+        beige: "bg-secondary text-muted-foreground",
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "outline",
     },
   },
 )
