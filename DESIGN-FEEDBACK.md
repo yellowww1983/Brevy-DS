@@ -595,3 +595,43 @@ box: 34 tall against 48, padding 6/8 against 4/12, and a `#dedad6` border
 against `#d4d4d4`. Two occurrences on one page. Left out of the system on
 purpose; if a date field is meant to become a pattern, it needs a drawing
 that agrees with the input it is built from.
+
+### 42. The pill family, mapped
+
+**website**, 167 chips and badges across both drawn pages, plus two pill
+shapes the name search does not catch
+
+Four families. A: the fully round chips on the white to `#f5f5f5` gradient,
+in three shapes: the 24px eyebrow at 14/Regular `#023620` with an optional
+step counter, the 32px chat suggestion at 14/Regular `#27272a`, and the 32px
+filter at 16/Medium `#3f3f46`. B: the 24px badges on a radius of 8 at
+14/SemiBold, in three skins: white on a `#d4d4d4` hairline, olive on
+`#d7e4c9`, beige on `#f5f2ef`, the coloured two with a 16px icon. C: the 40px
+notification pill on `#023620` with a gradient hairline, drawn 15 times but
+only inside the home pages' hero artwork, which reads as illustration rather
+than component. D: the 44px feature pill on white with a gradient disc,
+drawn 3 times in the Mobile App section.
+
+A and B are now `Chip` and `Badge` in `@brevy/ui`. C and D are not: C lives
+inside artwork, and D is closer to a future block's list item than to a
+badge.
+
+### 43. Strays in the chip family
+
+**website**, For Organizations and Caregiving pages
+
+Two eyebrows are drawn 48 tall instead of 24, with vertical padding zeroed
+out to hold the height, one of them the only chip whose horizontal padding is 16. And two chips carry gradients ending at `#e5e5e5` and `#f8f5f2` instead
+of the `#f5f5f5` the other 129 share, each exactly once. All four read as
+copies that drifted rather than as intent. The system ships the majority
+values.
+
+### 44. The standalone number badge is drawn once
+
+**website**, "Badge Number" in the Mobile App section
+
+A 24px counter on the badge's olive skin, but fully round where every badge
+is drawn at a radius of 8, and padded 0/4 where every badge is padded 2/8.
+Both properties that define the box differ, so it is not a fourth badge
+variant; it is one occurrence of something else. Left out of the system. The
+chip's eyebrow counter, which is drawn twenty times, is shipped instead.

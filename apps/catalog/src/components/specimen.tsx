@@ -13,7 +13,7 @@ type Measured = {
 
 function Fact({ name, value }: { name: string; value: string }) {
   return (
-    <Badge variant="secondary">
+    <Badge variant="beige">
       {name}: <span className="text-foreground">{value}</span>
     </Badge>
   )

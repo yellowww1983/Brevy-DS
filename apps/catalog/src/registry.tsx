@@ -8,12 +8,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  Chip,
   Input,
   Label,
   type BadgeProps,
   type ButtonProps,
 } from "@brevy/ui"
-import { Check, Download, MessageCircleHeart, Plus } from "lucide-react"
+import { Check, Clock, Download, MessageCircleHeart, Plus } from "lucide-react"
 import type { ReactNode } from "react"
 
 import { EmailField } from "./components/email-field"
@@ -28,7 +29,7 @@ export type Axis = {
 
 export type Omission = {
   key: string
-  note: "missing in Figma" | "identical to Default"
+  note: "missing in Figma" | "identical to Default" | "not drawn"
 }
 
 export type ComponentEntry = {
@@ -103,11 +104,9 @@ const buttonForms: Record<string, ButtonForm> = {
 }
 
 const badgeVariants: Record<string, NonNullable<BadgeProps["variant"]>> = {
-  Default: "default",
-  Secondary: "secondary",
   Outline: "outline",
-  Destructive: "destructive",
-  Verified: "verified",
+  Olive: "olive",
+  Beige: "beige",
 }
 
 export const components: readonly ComponentEntry[] = [
@@ -215,38 +214,86 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "badge",
     name: "Badge",
-    // Drawn from Brevy app · component set 26:169
+    // Drawn from Brevy Website · the Mobile App section's status badges
     axes: [
       {
         label: "Variant",
-        values: ["Default", "Secondary", "Outline", "Destructive", "Verified"],
+        values: ["Outline", "Olive", "Beige"],
         phrasing: {
-          Default: "the default style",
-          Secondary: "the secondary style",
-          Outline: "the outline style",
-          Destructive: "the destructive style",
-          Verified: "the verified style, with a check mark",
+          Outline: "outlined on white",
+          Olive: "on the soft olive",
+          Beige: "on the quiet beige",
         },
       },
-      { label: "State", values: ["Default", "Hover", "Focus"] },
+      {
+        label: "Content",
+        values: ["Label", "Icon + label"],
+        phrasing: {
+          Label: "with a text label",
+          "Icon + label": "with an icon before the label",
+        },
+      },
+    ],
+    omitted: [{ key: "Outline/Icon + label", note: "not drawn" }],
+    render: (combination) => {
+      const variant = badgeVariants[combination.Variant ?? ""] ?? "outline"
+      const withIcon = combination.Content === "Icon + label"
+      const label =
+        variant === "olive" ? "Active" : variant === "beige" ? "Pending" : "PAS"
+
+      return (
+        <Badge variant={variant}>
+          {withIcon && (variant === "beige" ? <Clock /> : <Check />)}
+          {label}
+        </Badge>
+      )
+    },
+  },
+  {
+    slug: "chip",
+    name: "Chip",
+    // Drawn from Brevy Website · the pill family every page decorates with
+    axes: [
+      {
+        label: "Variant",
+        values: ["Eyebrow", "Suggestion", "Filter"],
+        phrasing: {
+          Eyebrow: "an eyebrow over a section heading",
+          Suggestion: "a suggested line of chat",
+          Filter: "a category filter",
+        },
+      },
+      {
+        label: "Content",
+        values: ["Label", "Counter + label"],
+        phrasing: {
+          Label: "with a text label",
+          "Counter + label": "with a step counter before the label",
+        },
+      },
     ],
     omitted: [
-      { key: "Secondary/Hover", note: "missing in Figma" },
-      { key: "Outline/Hover", note: "missing in Figma" },
-      { key: "Destructive/Hover", note: "identical to Default" },
-      { key: "Verified/Hover", note: "identical to Default" },
+      { key: "Suggestion/Counter + label", note: "not drawn" },
+      { key: "Filter/Counter + label", note: "not drawn" },
     ],
-    render: (combination) => (
-      <Badge
-        asChild
-        variant={badgeVariants[combination.Variant ?? ""] ?? "default"}
-      >
-        <a href="#" data-force={forceOf(combination.State)}>
-          {combination.Variant === "Verified" && <Check />}
-          Badge
-        </a>
-      </Badge>
-    ),
+    render: (combination) => {
+      const variant = combination.Variant ?? "Eyebrow"
+      const counted = combination.Content === "Counter + label"
+
+      if (variant === "Suggestion") {
+        return <Chip variant="suggestion">Hi, can I get help for my mom?</Chip>
+      }
+
+      if (variant === "Filter") {
+        return <Chip variant="filter">Daily Routines</Chip>
+      }
+
+      return (
+        <Chip variant="eyebrow" count={counted ? 3 : undefined}>
+          Easy Steps
+        </Chip>
+      )
+    },
   },
   {
     slug: "card",
@@ -259,9 +306,9 @@ export const components: readonly ComponentEntry[] = [
           <CardTitle>Visit summary</CardTitle>
           <CardDescription>Two shifts logged this week.</CardDescription>
           <CardAction>
-            <Badge variant="verified">
+            <Badge variant="olive">
               <Check />
-              Verified
+              Active
             </Badge>
           </CardAction>
         </CardHeader>
