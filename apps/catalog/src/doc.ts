@@ -2,8 +2,13 @@
  *  markdown beside the data the page renders, so the page and the copy are one
  *  source rather than two that drift. */
 
-export function preamble(foundation: string) {
-  return `This is documentation for the ${foundation} foundation from the Brevy design system. Use it to help me apply these tokens correctly.`
+export function preamble(
+  name: string,
+  kind: "foundation" | "block" = "foundation",
+) {
+  return kind === "block"
+    ? `This is documentation for the ${name} block from the Brevy design system. Use it to help me use the block correctly.`
+    : `This is documentation for the ${name} foundation from the Brevy design system. Use it to help me apply these tokens correctly.`
 }
 
 export function table(

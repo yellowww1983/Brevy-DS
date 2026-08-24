@@ -5,16 +5,17 @@ test.use({ viewport: { width: 1440, height: 900 } })
 /** Every foundation, and the heading its copied text has to carry. A page that
  *  copies nothing, or copies a shell with no body, fails on the heading. */
 const PAGES = [
-  ["/getting-started/typography", "Typography"],
-  ["/getting-started/colors", "Colors"],
-  ["/getting-started/spacing", "Spacing"],
-  ["/getting-started/radius", "Radius"],
-  ["/getting-started/shadows", "Shadows"],
-  ["/getting-started/icons", "Icons"],
-  ["/getting-started/layout", "Layout"],
+  ["/getting-started/typography", "Typography", "foundation"],
+  ["/getting-started/colors", "Colors", "foundation"],
+  ["/getting-started/spacing", "Spacing", "foundation"],
+  ["/getting-started/radius", "Radius", "foundation"],
+  ["/getting-started/shadows", "Shadows", "foundation"],
+  ["/getting-started/icons", "Icons", "foundation"],
+  ["/getting-started/layout", "Layout", "foundation"],
+  ["/blocks/navbar", "Navbar", "block"],
 ] as const
 
-for (const [path, name] of PAGES) {
+for (const [path, name, kind] of PAGES) {
   test(`${name} hands itself to Claude as text`, async ({ page, context }) => {
     await context.grantPermissions(["clipboard-read", "clipboard-write"])
     await page.goto(path)
@@ -29,8 +30,8 @@ for (const [path, name] of PAGES) {
 
     const copied = await page.evaluate(() => navigator.clipboard.readText())
 
-    expect(copied, "the instruction has to name the foundation").toContain(
-      `documentation for the ${name} foundation`,
+    expect(copied, "the instruction has to name the page").toContain(
+      `documentation for the ${name} ${kind}`,
     )
     expect(
       copied,

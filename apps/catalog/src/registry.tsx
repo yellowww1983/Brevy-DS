@@ -13,7 +13,7 @@ import {
   type BadgeProps,
   type ButtonProps,
 } from "@brevy/ui"
-import { Check, Download, Plus } from "lucide-react"
+import { Check, Download, MessageCircleHeart, Plus } from "lucide-react"
 import type { ReactNode } from "react"
 
 import { EmailField } from "./components/email-field"
@@ -54,6 +54,7 @@ type ButtonForm = {
   variant: NonNullable<ButtonProps["variant"]>
   children: ReactNode
   label?: string
+  size?: NonNullable<ButtonProps["size"]>
 }
 
 const buttonForms: Record<string, ButtonForm> = {
@@ -63,6 +64,16 @@ const buttonForms: Record<string, ButtonForm> = {
     children: (
       <>
         <Plus />
+        New chat
+      </>
+    ),
+  },
+  "Primary compact · icon + label": {
+    variant: "primary",
+    size: "compact",
+    children: (
+      <>
+        <MessageCircleHeart />
         New chat
       </>
     ),
@@ -111,6 +122,8 @@ export const components: readonly ComponentEntry[] = [
         phrasing: {
           "Primary · label": "primary, with a text label",
           "Primary · icon + label": "primary, with an icon before the label",
+          "Primary compact · icon + label":
+            "primary at the compact height, with an icon before the label",
           "Outline · label": "outlined, with a text label",
           "Outline · icon + label": "outlined, with an icon before the label",
           "Outline · icon only": "outlined, with an icon and no label",
@@ -142,6 +155,7 @@ export const components: readonly ComponentEntry[] = [
       return (
         <Button
           variant={form.variant}
+          size={form.size}
           aria-label={form.label}
           disabled={state === "Disabled"}
           data-force={forceOf(state)}

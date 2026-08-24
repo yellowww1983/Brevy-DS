@@ -102,12 +102,20 @@ test("client-side navigation keeps the app alive", async ({ page }) => {
 
   await page.goto("/components")
 
-  const links = page.locator("aside nav a")
-  const count = await links.count()
-  expect(count).toBeGreaterThan(1)
+  /** Addressed by href rather than by position. A soft navigation re-renders
+   *  the sidebar, and a locator holding the tenth link can be pointing at a
+   *  node that has been replaced by the time the click lands. */
+  const hrefs = await page
+    .locator("aside nav a")
+    .evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute("href") ?? ""),
+    )
 
-  for (let index = 0; index < count; index++) {
-    await links.nth(index).click()
+  expect(hrefs.length).toBeGreaterThan(1)
+
+  for (const href of hrefs) {
+    await page.locator(`aside nav a[href="${href}"]`).click()
+    await expect(page).toHaveURL(new RegExp(`${href}$`))
     await expect(page.locator("main h1")).toBeVisible()
   }
 
