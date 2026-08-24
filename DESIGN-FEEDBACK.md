@@ -505,3 +505,70 @@ In code it existed as a private string inside `button.tsx`, so nothing but a
 button could reach for it. It is now `rounded-leaf`, defined beside the radius
 scale. Worth confirming with the designer that the corner-subset variants are
 meant as the same signature rather than as separate shapes.
+
+### 36. The navbar has no interaction states at all
+
+**website**, `23205:1216` desktop, `23205:1918` tablet, `23205:2589` mobile
+
+The bar is drawn once per page and only at rest. There is no hover on the links,
+no focus, no state for a page that has been scrolled, and nothing saying the bar
+sticks. Searching the file for `hover`, `active`, `pressed`, `scrolled`, `sticky`
+and `focus` returns fifteen nodes, all of them body copy or the two boards that
+cover something else: "Buttons States" and "Chat States".
+
+The shipped site has all four. The links take a `#dedad6` background on hover,
+the bar is `sticky` at the top of the page, and past 50px of scroll the pill
+drops to 70% opacity, gains a 12px blur behind it and swaps its shadow.
+
+`@brevy/ui` ships them, taken from the site, because a header without them reads
+as broken. Please draw them so the two sides agree, and so the hover colour in
+particular is a decision rather than an inheritance: `#dedad6` is the same value
+the drawing already uses for the pill's own border.
+
+### 37. Five measurements where the shipped bar and the drawing disagree
+
+**website**, same three nodes
+
+Taken from the drawing in every case, so this is a list of what the code will
+have to change rather than the other way round.
+
+|                             | Drawn                             | Shipped                           |
+| --------------------------- | --------------------------------- | --------------------------------- |
+| Band height                 | 112 at all three widths           | 104 desktop and tablet, 80 mobile |
+| Pill width at desktop       | 794                               | 816                               |
+| Pill padding                | 16 top and bottom, 24 either side | 12 and 24                         |
+| Pill border                 | 1px `#dedad6`                     | none                              |
+| Gutter at tablet and mobile | 24 and 16                         | 32 and 20                         |
+
+The last row is the same gutter divergence already recorded against the content
+container, so the bar is the second place it shows.
+
+### 38. The open mobile menu is drawn inside the hero and has no surface of its own
+
+**website**, `22687:2120`, the fourth variant of `22659:5737`
+
+The menu is drawn as a version of the hero: the links sit where the hero's own
+text sits, over the same mountain artwork, and the call to action takes the place
+of the hero's button. There is no panel behind them.
+
+That works as a picture of one page and does not survive being a block, because a
+menu opened over a page that does not begin with a hero has nothing behind it.
+The frame's own fill is white, so white is what has been built. Please confirm,
+or draw the surface the menu is meant to have.
+
+Two smaller things in the same node. The menu names its second link **Eldercare
+Guide** while the bar on the same page names it **Blog**, and the shipped site
+uses Eldercare Guide in both places. And the menu's links are set at 20/28 while
+the type scale reads 20/29, so either the scale or the drawing is a pixel out.
+
+### 39. The Winter page set has two variants with the same name
+
+**website**, `22659:5737`
+
+`Breakpoint=Mobile` appears twice: once as the page and once as the page with the
+menu open. Figma reports the set as having errors, and reading properties off any
+variant in it throws. The open state is a state rather than a breakpoint, so it
+wants a property of its own, something like `Menu=Open`.
+
+Worth saying plainly: this is why the menu was reported as missing the first time
+the file was searched. It was found only when the node was pointed at directly.
