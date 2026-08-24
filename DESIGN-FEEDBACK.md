@@ -635,3 +635,22 @@ is drawn at a radius of 8, and padded 0/4 where every badge is padded 2/8.
 Both properties that define the box differ, so it is not a fourth badge
 variant; it is one occurrence of something else. Left out of the system. The
 chip's eyebrow counter, which is drawn twenty times, is shipped instead.
+
+### 45. The hairline is a system pattern drawn three ways
+
+**website**, the chips everywhere, the FAQ cards (`20919:11030` and kin), the
+footer's social buttons
+
+The same thin grey thread hugs all three, and the file draws it three ways:
+a 1px blur of half black on the chips, a `#e5e5e5` to `#d4d4d4` gradient
+stroke on the FAQ cards and the social buttons. The shipped site flattens
+them again, differently: the chip keeps the black ring, the FAQ card and the
+socials become a solid 1px `#e5e5e5` border.
+
+This is one pattern, not three coincidences, so `@brevy/ui` ships it as one
+utility, `hairline`, in the gradient form the FAQ cards and the socials draw:
+a crisp 1px line inside the edge, `#e5e5e5` at the top to `#d4d4d4` at the
+bottom, painted as a masked overlay so it takes no pixel out of the layout
+and holds the full round of a pill. The chips move with it, a step lighter
+than the half black ring they were drawn with. Please align the drawings the
+other way too, so all three places show the one hairline the system ships.

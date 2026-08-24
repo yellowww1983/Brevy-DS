@@ -10,7 +10,7 @@ import { cn } from "../lib/utils.js"
  *  The gradient is written in ramp colours rather than tokens because the
  *  design draws it the same on every page and never in dark mode. */
 const chipVariants = cva(
-  "inline-flex w-fit shrink-0 items-center rounded-full bg-linear-to-b from-white to-neutral-100 whitespace-nowrap shadow-chip",
+  "inline-flex w-fit shrink-0 items-center rounded-full bg-linear-to-b from-white to-neutral-100 whitespace-nowrap hairline",
   {
     variants: {
       variant: {

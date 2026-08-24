@@ -74,7 +74,8 @@ test("the chip family draws its three shapes on the gradient", async ({
           font: `${style.fontSize}/${style.fontWeight}`,
           color: style.color,
           gradient: style.backgroundImage.includes("linear-gradient"),
-          ring: style.boxShadow,
+          ring: getComputedStyle(node, "::before").backgroundImage,
+          shadow: style.boxShadow,
           count: count
             ? `${String(Math.round(count.getBoundingClientRect().height))} ${getComputedStyle(count).backgroundColor}`
             : null,
@@ -89,8 +90,9 @@ test("the chip family draws its three shapes on the gradient", async ({
     expect(chip.gradient, "and painted with the gradient").toBe(true)
     expect(
       chip.ring,
-      "the hairline is a 1px shadow of half black, as drawn and as shipped",
-    ).toContain("rgba(0, 0, 0, 0.5) 0px 0px 1px 0px")
+      "the hairline overlay carries the drawn gradient, inside the edge",
+    ).toContain("linear-gradient")
+    expect(chip.shadow, "and no shadow stands in for it any more").toBe("none")
   }
 
   /** The three drawn shapes and nothing else. */
