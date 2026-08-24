@@ -105,7 +105,7 @@ export const SEMANTIC_GROUPS: readonly SemanticGroup[] = [
     note: "Use primary for the main action and destructive for anything that removes data. Primary is the one token that changes family between themes.",
     tokens: [
       { token: "primary", light: "emerald-500", dark: "brand-vivid" },
-      { token: "destructive", light: "red-600", dark: "red-400" },
+      { token: "destructive", light: "red-500", dark: "red-400" },
       { token: "surface-olive", light: "olive-500", dark: "olive-500" },
       {
         token: "surface-olive-foreground",
@@ -186,7 +186,7 @@ export const BORROWED: readonly BorrowedRamp[] = [
   },
   {
     family: "red",
-    shades: ["50", "400", "500", "600"],
+    shades: ["50", "400", "500"],
     why: "Used by destructive and its foreground.",
   },
 ]
