@@ -169,7 +169,8 @@ export const components: readonly ComponentEntry[] = [
     slug: "input",
     name: "Input",
     // Drawn from Brevy app · component set 65:533; the tall size from the
-    // website file, where every form field is 48.
+    // website file, where every form field is 48. The file type exists on the
+    // component natively but is shown nowhere: the website never draws one.
     axes: [
       {
         label: "Size",
@@ -177,14 +178,6 @@ export const components: readonly ComponentEntry[] = [
         phrasing: {
           Default: "at the default height",
           Tall: "at the tall height the website uses",
-        },
-      },
-      {
-        label: "Type",
-        values: ["Text", "File"],
-        phrasing: {
-          Text: "for typed text",
-          File: "for choosing a file",
         },
       },
       {
@@ -207,15 +200,11 @@ export const components: readonly ComponentEntry[] = [
 
       return (
         <Input
-          type={combination.Type === "File" ? "file" : "text"}
+          type="text"
           size={combination.Size === "Tall" ? "tall" : "default"}
           aria-label="Email"
           placeholder="hello@brevy.com"
-          defaultValue={
-            state === "Filled" && combination.Type !== "File"
-              ? "hello@brevy.com"
-              : undefined
-          }
+          defaultValue={state === "Filled" ? "hello@brevy.com" : undefined}
           disabled={state === "Disabled"}
           aria-invalid={invalid}
           data-force={focused ? "focus-visible" : undefined}
