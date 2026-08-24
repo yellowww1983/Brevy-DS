@@ -45,7 +45,7 @@ should be checked for what that wait was quietly doing.
 
 ---
 
-## An unexplained failure on the layout page
+## An unexplained failure on the layout page, since caught
 
 `copy-page.spec.ts` failed once on `Layout hands itself to Claude as text`. The
 saved snapshot showed `Application error: a client-side exception has occurred`,
@@ -76,7 +76,17 @@ The count stands at two unexplained failures, both swallowed the same way.
 **On the next failure, read `test-results/*/error-context.md` before cleaning.**
 It carries the page snapshot, which is the difference between knowing whether
 the page crashed or the test was early, and guessing. That artefact is why the
-first race was found in one pass and why this one is still open.
+first race was found in one pass and why this one stayed open.
+
+**Caught on the third occurrence, because the artefact was finally read
+first.** The reduced-motion preloader spec: `clock.runFor` could outrun
+hydration, advancing a frozen clock before the effect that arms the dismiss
+timers had run, after which a timer scheduled against already-spent time
+never fires and the overlay stays up for good. Every clock advance in the
+suite now waits for the session flag those same effects write. Measured: 75
+runs of the spec and three full suites clean after the fix. The two swallowed
+failures cannot be identified in hindsight, but both wore this signature: a
+`toHaveCount` on the first run after a restart, when hydration is slowest.
 
 ---
 

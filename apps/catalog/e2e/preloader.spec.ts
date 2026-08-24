@@ -12,6 +12,16 @@ const STAGE = "[data-preloader-stage]"
  *  timer the component sets, rather than repeating their exact durations. */
 const PAST_EVERY_TIMER = 5_000
 
+/** The flag and every timer are armed by the same effect, so the flag landing
+ *  proves the timers exist. Advancing a frozen clock before that proves
+ *  nothing: a timer scheduled afterwards is measured against time that has
+ *  already passed and never fires, and the overlay stays up for good. */
+async function hydrated(page: import("@playwright/test").Page) {
+  await expect
+    .poll(() => page.evaluate(() => sessionStorage.getItem("preloader")))
+    .toBe("seen")
+}
+
 /** This build of Playwright does not type reducedMotion/colorScheme as test
  *  options, so the emulated contexts are built by hand. */
 async function visit(
@@ -33,10 +43,9 @@ test("the first visit plays the animation and clears itself", async ({
   await page.goto("/components")
 
   await expect(page.locator(`${STAGE} svg`)).toBeVisible()
-  expect(
-    await page.evaluate(() => sessionStorage.getItem("preloader")),
-    "the flag has to be written on the first visit or the reload will replay it",
-  ).toBe("seen")
+  /** Polled, not read once: the flag is written by an effect, and a single
+   *  read races hydration the way the reload test's setup once did. */
+  await hydrated(page)
 
   await page.clock.runFor(PAST_EVERY_TIMER)
 
@@ -70,6 +79,9 @@ test("Escape takes it down", async ({ page }) => {
   await page.goto("/components")
 
   await expect(page.locator(OVERLAY)).toBeVisible()
+  /** The Escape listener is registered by the same effect as the timers, so a
+   *  press before hydration lands on nothing. */
+  await hydrated(page)
 
   await page.keyboard.press("Escape")
   await page.clock.runFor(PAST_EVERY_TIMER)
@@ -86,6 +98,7 @@ test("reduced motion gets the static logo and never fetches the player", async (
     page.locator(OVERLAY),
     "the overlay must survive until a timer fires, not until the machine gets there",
   ).toBeVisible()
+  await hydrated(page)
 
   await page.clock.runFor(PAST_EVERY_TIMER)
 
@@ -110,6 +123,7 @@ test("dark mode repaints the animation to the dark logo colour", async ({
   const { page, context } = await visit(browser, { colorScheme: "dark" })
 
   await expect(page.locator(`${STAGE} svg`)).toBeVisible()
+  await hydrated(page)
 
   /** Far short of the ceiling, but enough frames for the player to draw. */
   await page.clock.runFor(400)
