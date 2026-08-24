@@ -24,18 +24,35 @@ const OUTLINE_ICON_ONLY =
   "[&[aria-label]:has(>svg:only-child)]:w-12 [&[aria-label]:has(>svg:only-child)]:px-0"
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 text-base font-normal whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:icon-stroke [&_svg:not([class*='size-'])]:size-6",
+  "inline-flex shrink-0 items-center justify-center text-base font-normal whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:icon-stroke",
   {
     variants: {
       variant: {
-        primary: `rounded-leaf h-12 border border-primary bg-primary px-6 text-primary-foreground hover:bg-background hover:text-primary active:bg-background active:text-primary`,
-        outline: `rounded-leaf h-12 border border-primary bg-background px-6 text-primary hover:bg-primary hover:text-primary-foreground ${OUTLINE_ICON_ONLY}`,
-        secondary: `rounded-leaf h-12 border border-transparent bg-surface-olive px-6 text-surface-olive-foreground hover:border-surface-olive-outline hover:bg-background hover:text-surface-olive-outline`,
-        ghost: `h-9 rounded-lg px-4 text-foreground hover:bg-surface-hover active:bg-surface-active ${GHOST_ICON_ONLY}`,
+        primary: `rounded-leaf border border-primary bg-primary text-primary-foreground hover:bg-background hover:text-primary active:bg-background active:text-primary`,
+        outline: `rounded-leaf border border-primary bg-background text-primary hover:bg-primary hover:text-primary-foreground ${OUTLINE_ICON_ONLY}`,
+        secondary: `rounded-leaf border border-transparent bg-surface-olive text-surface-olive-foreground hover:border-surface-olive-outline hover:bg-background hover:text-surface-olive-outline`,
+        ghost: `rounded-lg text-foreground hover:bg-surface-hover active:bg-surface-active ${GHOST_ICON_ONLY}`,
+      },
+      /** The height a button stands at, with the padding, the space beside an
+       *  icon and the icon itself that go with it. `compact` is the navbar's
+       *  call to action, measured off the shipped site: 36 tall, 12 of padding,
+       *  6 beside a 16px icon. */
+      size: {
+        default: "h-12 gap-2 px-6 [&_svg:not([class*='size-'])]:size-6",
+        compact: "h-9 gap-1.5 px-3 [&_svg:not([class*='size-'])]:size-4",
       },
     },
+    /** Ghost is drawn at one height only, and it is not the default one. */
+    compoundVariants: [
+      {
+        variant: "ghost",
+        size: "default",
+        class: "h-9 gap-2 px-4 [&_svg:not([class*='size-'])]:size-6",
+      },
+    ],
     defaultVariants: {
       variant: "primary",
+      size: "default",
     },
   },
 )
@@ -48,6 +65,7 @@ type ButtonProps = ComponentProps<"button"> &
 function Button({
   className,
   variant,
+  size,
   asChild = false,
   ...props
 }: ButtonProps) {
@@ -56,7 +74,7 @@ function Button({
   return (
     <Comp
       data-slot="button"
-      className={cn(buttonVariants({ variant, className }))}
+      className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />
   )

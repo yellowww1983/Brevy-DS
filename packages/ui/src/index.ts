@@ -24,4 +24,6 @@ export {
 } from "./components/form.js"
 export { Input } from "./components/input.js"
 export { Label } from "./components/label.js"
+export { Navbar } from "./blocks/navbar.js"
+export type { NavbarCta, NavbarLink } from "./blocks/navbar.js"
 export { cn } from "./lib/utils.js"

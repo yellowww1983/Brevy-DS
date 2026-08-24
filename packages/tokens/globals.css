@@ -302,6 +302,12 @@
 :root {
   --content-width: 75rem;
   --content-gutter: 1rem;
+
+  /* The navbar sits in a pill of its own rather than across the column: 794
+     wide, centred, and narrower than the column at every width that has room
+     for it. Below that it takes what the column gives it, which is what the
+     design draws at tablet and mobile. */
+  --navbar-width: 49.625rem;
 }
 
 @media (width >= theme(--breakpoint-tablet)) {
