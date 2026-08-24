@@ -572,3 +572,26 @@ wants a property of its own, something like `Menu=Open`.
 
 Worth saying plainly: this is why the menu was reported as missing the first time
 the file was searched. It was found only when the node was pointed at directly.
+
+### 40. The tall input's placeholder is 14 in the footer and 16 everywhere else
+
+**website**, footer inputs across all page sets against the funnel forms and
+`24975:935`
+
+The same 48px box, radius 8, `#d4d4d4` hairline, is drawn 66 times. The 25 in
+the footers set their placeholder at 14; the 38 funnel fields and the app
+page's password field set it at 16. One box, two type sizes, and nothing about
+the contexts explains the split.
+
+`@brevy/ui` ships the tall size at 16, with the majority. Please align the
+footers.
+
+### 41. The 34px date segments are one-offs, not a size
+
+**website**, Funnel page, two fields ("Mar", 58 and 69 wide)
+
+They differ from every other input in all three dimensions that define the
+box: 34 tall against 48, padding 6/8 against 4/12, and a `#dedad6` border
+against `#d4d4d4`. Two occurrences on one page. Left out of the system on
+purpose; if a date field is meant to become a pattern, it needs a drawing
+that agrees with the input it is built from.
