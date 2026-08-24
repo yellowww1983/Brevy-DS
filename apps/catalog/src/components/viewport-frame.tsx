@@ -35,6 +35,13 @@ type Width = number
 
 const WidthContext = createContext<Width>(1440)
 
+/** The width the tabs are on. One set of tabs serves the whole catalog, so a
+ *  page that shows something at three widths reads the choice from here rather
+ *  than growing a switcher of its own. */
+export function useViewport() {
+  return useContext(WidthContext)
+}
+
 export function ViewportProvider({ children }: { children: ReactNode }) {
   const [width, setWidth] = useState<Width>(1440)
 

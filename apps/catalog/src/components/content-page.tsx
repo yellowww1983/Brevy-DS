@@ -11,7 +11,9 @@ export function ContentPage({
   markdown,
   children,
 }: {
-  sections: readonly Section[]
+  /** Left off where a page is a demonstration rather than a reference, which
+   *  is every page under Blocks. The article then takes the whole column. */
+  sections?: readonly Section[]
   /** The page as text. Present once a page can hand itself to Claude. */
   markdown?: string
   children: ReactNode
@@ -19,7 +21,13 @@ export function ContentPage({
   return (
     <div className="mx-auto max-w-6xl">
       <div className="flex gap-10">
-        <article className="relative max-w-3xl min-w-0 flex-1">
+        <article
+          className={
+            sections
+              ? "relative max-w-3xl min-w-0 flex-1"
+              : "relative min-w-0 flex-1"
+          }
+        >
           {markdown ? (
             <div className="absolute top-0 right-0">
               <CopyPage markdown={markdown} />
@@ -27,7 +35,7 @@ export function ContentPage({
           ) : null}
           {children}
         </article>
-        <TableOfContents sections={sections} />
+        {sections ? <TableOfContents sections={sections} /> : null}
       </div>
     </div>
   )

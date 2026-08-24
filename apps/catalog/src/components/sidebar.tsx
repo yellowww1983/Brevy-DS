@@ -5,6 +5,7 @@ import {
   ChevronDown,
   Columns3,
   Move,
+  PanelTop,
   Layers,
   Palette,
   Shapes,
@@ -44,6 +45,10 @@ const FOUNDATIONS: readonly Entry[] = [
   { label: "Shadows", icon: Layers, href: "/getting-started/shadows" },
   { label: "Icons", icon: Shapes, href: "/getting-started/icons" },
   { label: "Layout", icon: Columns3, href: "/getting-started/layout" },
+]
+
+const BLOCKS: readonly Entry[] = [
+  { label: "Navbar", icon: PanelTop, href: "/blocks/navbar" },
 ]
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
@@ -173,9 +178,13 @@ export function Sidebar() {
         </Section>
 
         <Section title="Blocks">
-          <p className="px-3 py-2 text-sm text-muted-foreground/60">
-            Coming soon
-          </p>
+          {BLOCKS.map((entry) => (
+            <NavEntry
+              key={entry.label}
+              {...entry}
+              active={pathname === entry.href}
+            />
+          ))}
         </Section>
 
         <Section title="Foundations">
