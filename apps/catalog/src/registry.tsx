@@ -13,8 +13,12 @@ import {
   CardHeader,
   CardTitle,
   Chip,
+  Facebook,
   Input,
+  Instagram,
   Label,
+  LinkedIn,
+  TikTok,
   type BadgeProps,
   type ButtonProps,
 } from "@brevy/ui"
@@ -127,6 +131,15 @@ const buttonForms: Record<string, ButtonForm> = {
   },
 }
 
+/** The footer draws the four marks in a row, 8 apart, so the preview shows
+ *  the row rather than one button standing on its own. */
+const SOCIALS = [
+  { label: "Facebook", icon: <Facebook /> },
+  { label: "Instagram", icon: <Instagram /> },
+  { label: "TikTok", icon: <TikTok /> },
+  { label: "LinkedIn", icon: <LinkedIn /> },
+] as const
+
 const badgeVariants: Record<string, NonNullable<BadgeProps["variant"]>> = {
   Outline: "outline",
   Olive: "olive",
@@ -141,7 +154,7 @@ export const components: readonly ComponentEntry[] = [
     axes: [
       {
         label: "Form",
-        values: Object.keys(buttonForms),
+        values: [...Object.keys(buttonForms), "Social · icon only"],
         phrasing: {
           "Primary · label": "primary, with a text label",
           "Primary · icon + label": "primary, with an icon before the label",
@@ -154,6 +167,7 @@ export const components: readonly ComponentEntry[] = [
           "Ghost · label": "ghost, with a text label",
           "Ghost · icon only": "ghost, with an icon and no label",
           "Send · icon only": "the chat's round send, an arrow and no label",
+          "Social · icon only": "the footer's brand links, four in a row",
         },
       },
       {
@@ -168,9 +182,30 @@ export const components: readonly ComponentEntry[] = [
       { key: "Outline · icon only/Active", note: "missing in Figma" },
       { key: "Secondary · label/Active", note: "missing in Figma" },
       { key: "Send · icon only/Hover", note: "not drawn" },
+      { key: "Social · icon only/Active", note: "not drawn" },
     ],
     render: (combination) => {
       const state = combination.State
+
+      if (combination.Form === "Social · icon only") {
+        return (
+          <div className="flex gap-2">
+            {SOCIALS.map((social) => (
+              <Button
+                key={social.label}
+                variant="social"
+                size="compact"
+                aria-label={social.label}
+                disabled={state === "Disabled"}
+                data-force={forceOf(state)}
+              >
+                {social.icon}
+              </Button>
+            ))}
+          </div>
+        )
+      }
+
       const form = buttonForms[combination.Form ?? ""]
 
       if (!form) {

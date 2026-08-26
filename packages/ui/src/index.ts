@@ -11,6 +11,7 @@ export { Button, buttonVariants } from "./components/button.js"
 export type { ButtonProps } from "./components/button.js"
 export { Chat } from "./components/chat.js"
 export { Chip, chipVariants } from "./components/chip.js"
+export { Facebook, Instagram, LinkedIn, TikTok } from "./icons/brands/index.js"
 export type { ChipProps } from "./components/chip.js"
 export {
   Card,

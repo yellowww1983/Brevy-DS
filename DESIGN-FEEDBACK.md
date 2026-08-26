@@ -710,3 +710,36 @@ the file draws 8/12 on 24, centred rows at a gap of 8 where the file draws
 left-aligned rows at 16, and a 16 gap under the card where the file draws 8.
 Same height, different everything else. One chip, one outline: the system's
 `hairline`, per entry 45.
+
+### 51. The footer's brand links ship five steps away from the drawing
+
+**website**, the footer's social buttons, against the shipped site
+
+The file draws these 103 times across every artboard's footer, always the
+same: a 36 square at a radius of 8, white, wearing the gradient thread and
+the drawn `0 1 2` shadow, with a 16 mark stroked at 1 in `#3f3f46`. The
+shipped site renders five of those properties differently, and one of them
+differently from itself.
+
+| property    | drawn                           | shipped                  |
+| ----------- | ------------------------------- | ------------------------ |
+| outline     | gradient `#e5e5e5` to `#d4d4d4` | flat `#e5e5e5`           |
+| radius      | 8                               | 10                       |
+| mark stroke | 1 on the 16 box                 | 2                        |
+| mark colour | `#3f3f46` (zinc-700)            | zinc-800                 |
+| TikTok      | stroked, like the other three   | filled, alone among them |
+
+The outline is entry 45 and 50 again: the same thread, flattened a third
+time in a third place. The stroke of 2 is entry 48's twin, and for the same
+reason — an icon set's default left in place over the drawn weight. The
+radius and the mark colour are each one step off a value the system already
+has.
+
+The last one is not a Figma-versus-code question at all: the shipped site
+draws three of the four marks as outlines and TikTok as a solid, so the row
+is inconsistent with itself. The system takes all four as the file draws
+them, outlined. Please confirm that reading, or redraw TikTok filled and
+say the row is meant to mix.
+
+The hover is the one thing that already agrees: both sides turn the outline
+`#023620` and change nothing else.
