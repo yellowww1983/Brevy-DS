@@ -40,7 +40,7 @@ const SEND_ACTIVE_RING =
   "data-active:[background:linear-gradient(var(--color-primary),var(--color-primary))_padding-box,linear-gradient(var(--color-emerald-600),var(--color-emerald-700))_border-box]"
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center text-base font-normal whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:icon-stroke",
+  "inline-flex shrink-0 items-center justify-center text-base font-normal whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([data-brand])]:icon-stroke",
   {
     variants: {
       variant: {
