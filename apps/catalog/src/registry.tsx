@@ -22,7 +22,6 @@ import {
   Instagram,
   Label,
   LinkedIn,
-  SocialProof,
   TikTok,
   type BadgeProps,
   type ButtonProps,
@@ -38,7 +37,7 @@ import {
 import type { ReactNode } from "react"
 
 import { MISSING_PHOTO, PEOPLE } from "./avatar"
-import { LABEL, LABEL_PARTIAL } from "./social-proof"
+import { SocialProofFrame } from "./components/social-proof-frame"
 import { ChatFrame } from "./components/chat-frame"
 import { EmailField } from "./components/email-field"
 
@@ -494,6 +493,11 @@ export const components: readonly ComponentEntry[] = [
     // The row is 555 wide where it is drawn and its sentence is one line; a
     // grid cell folds it into a column, which is a different object.
     wide: true,
+    // It carries a breakpoint, so the three widths are the tabs rather than
+    // variants of their own: one row in three documents. A media query inside
+    // this page would answer the reader's window and the mobile break would
+    // never show.
+    viewport: true,
     // Drawn from Brevy Website · the row at `20919:10393`, carried in the same
     // form by four of the file's five heroes. The file draws only the
     // photographs form; initials are the same fallback the Avatar already has,
@@ -502,6 +506,9 @@ export const components: readonly ComponentEntry[] = [
     // The star wears the white edge the file strokes it with, so it reads on a
     // dark page and disappears into a pale one. That is the light theme being
     // what it is, not something for the preview to work around.
+    //
+    // The file breaks the row at mobile: the sentence drops under the faces
+    // and goes down to 14/24 (`22626:8745`).
     axes: [
       {
         label: "Faces",
@@ -516,16 +523,7 @@ export const components: readonly ComponentEntry[] = [
     render: (combination) => {
       const withPhotos = combination.Faces === "Photographs"
 
-      return (
-        <SocialProof
-          people={PEOPLE.map((person) => ({
-            name: person.name,
-            initials: person.initials,
-            photo: withPhotos ? person.photo : undefined,
-          }))}
-          label={withPhotos ? LABEL : LABEL_PARTIAL}
-        />
-      )
+      return <SocialProofFrame faces={withPhotos ? undefined : "initials"} />
     },
   },
   {
