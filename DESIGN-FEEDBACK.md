@@ -776,3 +776,43 @@ The legal links carry no hover in the file and `hover:underline` in
 production. Nothing else in the footer draws a link, so there is no second
 drawing to check it against: please confirm whether the underline is
 intended, in which case the file should show it.
+
+### 53. For Organizations swaps the eyebrow for the social proof row on mobile
+
+**website**, the For Organizations hero, across its three breakpoints
+
+The slot above the heading holds one thing at a time, and this page changes
+which thing at the narrow width. Desktop (`23205:3306`) and tablet both open
+with the eyebrow "No cost. No integration. No onboarding. No catch." and draw
+no faces. Mobile (`23402:998`) draws the faces, the stars and "Join 2,000+
+caregivers already using Brevy", and drops the eyebrow entirely.
+
+Every other hero in the file keeps whichever one it opens with at all three
+widths: the four home pages carry the faces at 1440, 810 and 390, the partner
+page carries an eyebrow. This is the only page that trades one for the other.
+
+The block treats the slot as one prop with three states, so either reading is
+one word to change. Please confirm whether the swap is intended — a page that
+leads with a promise on a wide screen and with proof on a narrow one is a
+defensible choice, but it is the only one of its kind in the file and reads
+equally well as an oversight.
+
+### 54. The hero's illustration band keeps its 1440 frame at every width
+
+**website**, the illustration band under every centred hero
+
+The band's frame is 1440 by 426 in all three breakpoints. What changes inside
+it is the artwork — the main illustration is 1406, 1082 and 524 across desktop,
+tablet and mobile, and the character shrinks with it — but the frame around
+them does not, so at 390 the band is a 1440 canvas centred and cropped by a
+390 window rather than a band fitted to the page.
+
+Two details follow from it. The `Fade` mask does resize with the page (1440,
+810, 389), so the mask and the frame it masks disagree about how wide the hero
+is. And the birds hold at 93 by 68 at every width while everything else around
+them scales, which makes them proportionally almost three times larger on
+mobile than on desktop.
+
+The block fits the picture to the page instead, because a client's image
+carries none of these hand-placed layers. Please confirm whether the drawn
+crop is deliberate framing or a frame nobody resized.
