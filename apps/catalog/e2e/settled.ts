@@ -71,3 +71,36 @@ export async function atFoot(page: Page) {
     })
     .toBe(true)
 }
+
+/** Reads the face every slotted element renders in, once they are all really
+ *  rendering.
+ *
+ *  A slot can be in the page and out of the render tree at the same moment,
+ *  and `getComputedStyle` answers an empty string for one of those: not the
+ *  wrong face, no face at all. Radix opens that window on every avatar — it
+ *  keeps the fallback mounted until the photograph arrives and removes it on
+ *  the load event, so a read that lands between the two sees a node on its way
+ *  out. The stand-in faces this catalog served first were small enough that the
+ *  window never opened for long enough to be caught; real photographs opened
+ *  it, and the sweep started failing about one run in three.
+ *
+ *  The condition is that no slot reports an empty family. A slot the browser
+ *  is rendering always names one, so this settles as soon as the tree does. */
+export async function slotFaces(page: Page) {
+  let faces: { slot: string; family: string }[] = []
+
+  await expect
+    .poll(async () => {
+      faces = await page.locator("[data-slot]").evaluateAll((nodes) =>
+        nodes.map((node) => ({
+          slot: node.getAttribute("data-slot") ?? "?",
+          family: getComputedStyle(node).fontFamily,
+        })),
+      )
+
+      return faces.filter(({ family }) => family === "").length
+    })
+    .toBe(0)
+
+  return faces
+}

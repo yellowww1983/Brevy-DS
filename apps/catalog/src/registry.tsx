@@ -3,6 +3,10 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Avatar,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarImage,
   Badge,
   Button,
   Card,
@@ -32,6 +36,7 @@ import {
 } from "lucide-react"
 import type { ReactNode } from "react"
 
+import { MISSING_PHOTO, PEOPLE } from "./avatar"
 import { ChatFrame } from "./components/chat-frame"
 import { EmailField } from "./components/email-field"
 
@@ -426,6 +431,58 @@ export const components: readonly ComponentEntry[] = [
             <Accordion defaultValue="paid">{items}</Accordion>
           )}
         </div>
+      )
+    },
+  },
+  {
+    slug: "avatar",
+    name: "Avatar",
+    // Drawn from Brevy Website · the avatar group at `22680:1103`, with the
+    // fallback's colours taken from the app file, which localised them where
+    // the website file left shadcn's own Geist and neutral-100 in place.
+    axes: [
+      {
+        label: "Form",
+        values: ["Photo", "Initials", "Group"],
+        phrasing: {
+          Photo: "a person's picture",
+          Initials: "the fallback, for when the picture does not arrive",
+          Group: "several people, overlapping",
+        },
+      },
+    ],
+    omitted: [],
+    render: (combination) => {
+      const person = PEOPLE[0]
+
+      if (!person) {
+        return null
+      }
+
+      if (combination.Form === "Group") {
+        return (
+          <AvatarGroup>
+            {PEOPLE.map((member) => (
+              <Avatar key={member.name}>
+                <AvatarImage src={member.photo} alt={member.name} />
+                <AvatarFallback>{member.initials}</AvatarFallback>
+              </Avatar>
+            ))}
+          </AvatarGroup>
+        )
+      }
+
+      /** The fallback is shown by pointing the image at nothing, so what the
+       *  preview demonstrates is Radix falling back rather than a second
+       *  component pretending to. */
+      const source =
+        combination.Form === "Initials" ? MISSING_PHOTO : person.photo
+
+      return (
+        <Avatar>
+          <AvatarImage src={source} alt={person.name} />
+          <AvatarFallback>{person.initials}</AvatarFallback>
+        </Avatar>
       )
     },
   },

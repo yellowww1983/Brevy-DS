@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "./catalog-test"
+import { slotFaces } from "./settled"
 
 const CATALOG_FACE = "Inter"
 const SYSTEM_FACE = "Rethink Sans"
@@ -34,12 +35,7 @@ test("every design system element renders in the system face", async ({
   for (const path of paths) {
     await page.goto(path)
 
-    const families = await page.locator("[data-slot]").evaluateAll((nodes) =>
-      nodes.map((node) => ({
-        slot: node.getAttribute("data-slot") ?? "?",
-        family: getComputedStyle(node).fontFamily,
-      })),
-    )
+    const families = await slotFaces(page)
 
     inspected += families.length
 
