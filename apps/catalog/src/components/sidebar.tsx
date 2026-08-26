@@ -112,7 +112,7 @@ function NavFamily({
 }: Family & { pathname: string }) {
   return (
     <div data-family={label}>
-      <p className={cn(ITEM, "font-medium")}>
+      <p className={cn(ITEM, "text-muted-foreground")}>
         <Icon className="size-4" />
         {label}
       </p>
