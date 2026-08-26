@@ -40,7 +40,11 @@ type HeroCenteredAction =
 /** Two layers, not one. The file paints a full-height wash behind everything
  *  (`20919:10373`, 1408 by 670) and a separate band along the foot
  *  (`20919:10374`, 426 tall), and the band is masked rather than faded by an
- *  overlay: `Fade` carries `isMask: true`. */
+ *  overlay: `Fade` carries `isMask: true`.
+ *
+ *  The band is one picture. The file lays the season, the two figures and the
+ *  birds as three rectangles it placed by hand, which is composition rather
+ *  than structure: a client brings one file with whatever is in it. */
 type HeroCenteredImage = {
   wash: string
   band: string
@@ -49,15 +53,26 @@ type HeroCenteredImage = {
   alt: string
 }
 
-/** The mask the file draws, read off its gradient stops: nothing at the very
- *  top, opaque from 14% to 78%, nothing again at 99%. It fades at both ends,
- *  which is why the artwork has no edge against the ground at either side.
+/** The ramp the file masks the band with: nothing at the edge, opaque from
+ *  14% to 78%, nothing again at 99%.
+ *
+ *  It runs left to right in the file, not top to bottom. Figma hands the axis
+ *  over as a matrix rather than an angle, and `Fade` carries a=1.018, b=0
+ *  (`23365:2570`) — the ramp reads off x, so it is the sides that dissolve.
+ *  The softness along the top of the drawn hero is painted into the artwork
+ *  itself, and the foot is a hard crop, because the band ends where the page
+ *  does and nobody sees the cut.
+ *
+ *  Both of those only hold for artwork drawn to fit this hero. A picture a
+ *  client brings has a square top and a square bottom, so the same ramp runs
+ *  on the other axis too and the two masks intersect. The horizontal pair is
+ *  the file's; the vertical pair is the file's numbers put to work where the
+ *  file relied on the paint.
  *
  *  Written out rather than composed, because Tailwind scans source text and
- *  never sees a class name built by interpolation. The webkit spelling rides
- *  along for Safari, which still wants it. */
+ *  never sees a class name built by interpolation. */
 const BAND_MASK =
-  "[mask-image:linear-gradient(to_bottom,transparent_0%,black_14%,black_78%,transparent_99%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_14%,black_78%,transparent_99%)]"
+  "[mask-image:linear-gradient(to_right,transparent_0%,black_14%,black_78%,transparent_99%),linear-gradient(to_bottom,transparent_0%,black_14%,black_78%,transparent_99%)] [mask-composite:intersect]"
 
 /** The centred hero. An eyebrow or a stack of faces, a serif heading, a line
  *  under it, then either a chat card or a button — over a picture that fades
