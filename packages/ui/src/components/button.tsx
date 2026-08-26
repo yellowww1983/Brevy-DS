@@ -39,14 +39,27 @@ const OUTLINE_ICON_ONLY =
 const SEND_ACTIVE_RING =
   "data-active:[background:linear-gradient(var(--color-primary),var(--color-primary))_padding-box,linear-gradient(var(--color-emerald-600),var(--color-emerald-700))_border-box]"
 
+/** Pressed or pointed at, the primary lets its own ground through rather than
+ *  painting `--background` over it. The two look the same on a page, which is
+ *  why the difference went unseen: `--background` *is* the page. Anywhere else
+ *  it is not — measured on the FAQ's olive card, the hover painted white over
+ *  the olive in the light and near-black over it in the dark, a page-coloured
+ *  rectangle instead of the drawn hollow. `transparent` shows whatever the
+ *  button actually stands on, which is the same thing on a page and the right
+ *  thing everywhere else.
+ *
+ *  Its two siblings carried the same mine. `secondary` hollows out the same
+ *  way under the pointer; `outline` is hollow from the start, so it painted
+ *  the page's colour over whatever it stood on at rest rather than only while
+ *  pointed at. All three now let their own ground through. */
 const buttonVariants = cva(
   "inline-flex shrink-0 items-center justify-center text-base font-normal whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([data-brand])]:icon-stroke",
   {
     variants: {
       variant: {
-        primary: `rounded-leaf border border-primary bg-primary text-primary-foreground hover:bg-background hover:text-primary active:bg-background active:text-primary`,
-        outline: `rounded-leaf border border-primary bg-background text-primary hover:bg-primary hover:text-primary-foreground ${OUTLINE_ICON_ONLY}`,
-        secondary: `rounded-leaf border border-transparent bg-surface-olive text-surface-olive-foreground hover:border-surface-olive-outline hover:bg-background hover:text-surface-olive-outline`,
+        primary: `rounded-leaf border border-primary bg-primary text-primary-foreground hover:bg-transparent hover:text-primary active:bg-transparent active:text-primary`,
+        outline: `rounded-leaf border border-primary bg-transparent text-primary hover:bg-primary hover:text-primary-foreground ${OUTLINE_ICON_ONLY}`,
+        secondary: `rounded-leaf border border-transparent bg-surface-olive text-surface-olive-foreground hover:border-surface-olive-outline hover:bg-transparent hover:text-surface-olive-outline`,
         ghost: `rounded-lg text-foreground hover:bg-surface-hover active:bg-surface-active ${GHOST_ICON_ONLY}`,
         /** The chat's round send. Its geometry is the default size whole: 48
          *  square with a 24 icon, the declared padding never binding against
@@ -60,11 +73,14 @@ const buttonVariants = cva(
         send: `rounded-full border border-olive-600 bg-surface-olive text-primary shadow-send data-active:border-transparent data-active:text-primary-foreground data-active:shadow-send-active ${SEND_ACTIVE_RING}`,
         /** The footer's brand links. Every colour on it is a ramp colour: the
          *  thread it wears cannot turn dark, so nothing on it may, the way the
-         *  chip is pinned. Pointed at, the thread goes out and the border
-         *  comes on — the overlay cannot simply change colour, and the border
-         *  is free here because the face is flat white rather than the chip's
-         *  gradient. */
-        social: `hairline rounded-md border border-transparent bg-white text-zinc-700 shadow-xs hover:border-emerald-500 hover:before:hidden`,
+         *  face is `--card`, so it is white where the file draws it white and
+         *  neutral-900 on a dark page, and the thread comes down with it.
+         *  Pointed at, the thread goes out and the border comes on — the
+         *  overlay cannot simply change colour, and the border is free here
+         *  because the face is flat rather than the chip's gradient. The dark
+         *  ring is the olive rather than the drawn green, which disappears
+         *  against neutral-900. */
+        social: `hairline rounded-md border border-transparent bg-card text-zinc-700 shadow-xs hover:border-emerald-500 hover:before:hidden dark:text-foreground dark:hover:border-olive-500`,
       },
       /** The height a button stands at, with the padding, the space beside an
        *  icon and the icon itself that go with it. `compact` is the navbar's

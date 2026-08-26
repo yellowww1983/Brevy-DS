@@ -12,6 +12,7 @@ export type { ButtonProps } from "./components/button.js"
 export { Chat } from "./components/chat.js"
 export { Chip, chipVariants } from "./components/chip.js"
 export { Facebook, Instagram, LinkedIn, TikTok } from "./icons/brands/index.js"
+export { BrevyLockup } from "./icons/logo/index.js"
 export type { ChipProps } from "./components/chip.js"
 export {
   Card,
@@ -38,6 +39,12 @@ export type { InputProps } from "./components/input.js"
 export { Label } from "./components/label.js"
 export { Faq } from "./blocks/faq.js"
 export type { FaqContact, FaqItem } from "./blocks/faq.js"
+export { Footer } from "./blocks/footer.js"
+export type {
+  FooterLink,
+  FooterNewsletter,
+  FooterSocial,
+} from "./blocks/footer.js"
 export { Navbar } from "./blocks/navbar.js"
 export type { NavbarCta, NavbarLink } from "./blocks/navbar.js"
 export { cn } from "./lib/utils.js"
