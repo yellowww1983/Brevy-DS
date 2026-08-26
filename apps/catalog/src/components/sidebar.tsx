@@ -5,11 +5,12 @@ import {
   ChevronDown,
   CircleHelp,
   Columns3,
+  Layers,
+  Megaphone,
   Move,
+  Palette,
   PanelBottom,
   PanelTop,
-  Layers,
-  Palette,
   Shapes,
   Squircle,
   Type,
@@ -28,6 +29,16 @@ type Entry = {
   label: string
   icon: ComponentType<{ className?: string }>
   href?: string
+}
+
+/** A block drawn in more than one shape. The heading is the family and the
+ *  pages under it are the shapes, which is how the file thinks about heroes:
+ *  one skeleton, several arrangements. It renders with the indent the
+ *  Components list already uses rather than a second mechanism. */
+type Family = {
+  label: string
+  icon: ComponentType<{ className?: string }>
+  variants: readonly { label: string; href: string }[]
 }
 
 const GETTING_STARTED: readonly Entry[] = [
@@ -49,8 +60,13 @@ const FOUNDATIONS: readonly Entry[] = [
   { label: "Layout", icon: Columns3, href: "/getting-started/layout" },
 ]
 
-const BLOCKS: readonly Entry[] = [
+const BLOCKS: readonly (Entry | Family)[] = [
   { label: "Navbar", icon: PanelTop, href: "/blocks/navbar" },
+  {
+    label: "Hero",
+    icon: Megaphone,
+    variants: [{ label: "Centered", href: "/blocks/hero/centered" }],
+  },
   { label: "FAQ", icon: CircleHelp, href: "/blocks/faq" },
   { label: "Footer", icon: PanelBottom, href: "/blocks/footer" },
 ]
@@ -73,10 +89,58 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 const ITEM = "flex items-center gap-2 px-3 py-2 text-sm"
 
+/** The indent the Components list wears, lifted out so a block family uses the
+ *  same one rather than a second that could drift from it. */
+const NESTED = "block py-2 pr-3 pl-5 text-sm"
+const NESTED_ACTIVE =
+  "font-medium text-sidebar-primary before:absolute before:inset-y-0 before:-left-px before:w-0.5 before:bg-primary"
+const NESTED_REST = "text-muted-foreground hover:text-foreground"
+
 /** Keyboard focus has to stay visible, so the ring stays, tinted to the active
  *  colour rather than the default grey, which read as a box around the item. */
 const FOCUS =
   "rounded-md focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+
+/** A family of blocks: a heading that goes nowhere and the shapes under it.
+ *  The heading is a label rather than a disabled link — there is no page it is
+ *  waiting for, it is the name of the group. */
+function NavFamily({
+  label,
+  icon: Icon,
+  variants,
+  pathname,
+}: Family & { pathname: string }) {
+  return (
+    <div data-family={label}>
+      <p className={cn(ITEM, "font-medium")}>
+        <Icon className="size-4" />
+        {label}
+      </p>
+
+      <ul className="ml-3 border-l border-sidebar-border">
+        {variants.map((variant) => {
+          const active = pathname === variant.href
+
+          return (
+            <li key={variant.href} className="relative">
+              <Link
+                href={variant.href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  NESTED,
+                  FOCUS,
+                  active ? NESTED_ACTIVE : NESTED_REST,
+                )}
+              >
+                {variant.label}
+              </Link>
+            </li>
+          )
+        })}
+      </ul>
+    </div>
+  )
+}
 
 /** An entry without an href has no page yet: a link would lead to a 404, so it
  *  renders as visibly inert until the page lands. */
@@ -166,11 +230,9 @@ export function Sidebar() {
                     href={href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "block py-2 pr-3 pl-5 text-sm",
+                      NESTED,
                       FOCUS,
-                      active
-                        ? "font-medium text-sidebar-primary before:absolute before:inset-y-0 before:-left-px before:w-0.5 before:bg-primary"
-                        : "text-muted-foreground hover:text-foreground",
+                      active ? NESTED_ACTIVE : NESTED_REST,
                     )}
                   >
                     {entry.name}
@@ -182,13 +244,17 @@ export function Sidebar() {
         </Section>
 
         <Section title="Blocks">
-          {BLOCKS.map((entry) => (
-            <NavEntry
-              key={entry.label}
-              {...entry}
-              active={pathname === entry.href}
-            />
-          ))}
+          {BLOCKS.map((entry) =>
+            "variants" in entry ? (
+              <NavFamily key={entry.label} {...entry} pathname={pathname} />
+            ) : (
+              <NavEntry
+                key={entry.label}
+                {...entry}
+                active={pathname === entry.href}
+              />
+            ),
+          )}
         </Section>
 
         <Section title="Foundations">
