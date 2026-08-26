@@ -18,9 +18,17 @@ import {
   type BadgeProps,
   type ButtonProps,
 } from "@brevy/ui"
-import { Check, Clock, Download, MessageCircleHeart, Plus } from "lucide-react"
+import {
+  ArrowUp,
+  Check,
+  Clock,
+  Download,
+  MessageCircleHeart,
+  Plus,
+} from "lucide-react"
 import type { ReactNode } from "react"
 
+import { ChatFrame } from "./components/chat-frame"
 import { EmailField } from "./components/email-field"
 
 export type Axis = {
@@ -44,6 +52,10 @@ export type ComponentEntry = {
   /** One preview per row instead of the grid, for a component whose drawn
    *  width is wider than a grid cell. */
   wide?: true
+  /** Shown at the three drawn widths behind the same tabs the blocks use,
+   *  for a component the design draws once and places at every width. The
+   *  previews then frame themselves, so each one is its own document. */
+  viewport?: true
   render: (combination: Record<string, string>) => ReactNode
 }
 
@@ -108,6 +120,11 @@ const buttonForms: Record<string, ButtonForm> = {
     children: <Plus />,
     label: "New chat",
   },
+  "Send · icon only": {
+    variant: "send",
+    children: <ArrowUp />,
+    label: "Send message",
+  },
 }
 
 const badgeVariants: Record<string, NonNullable<BadgeProps["variant"]>> = {
@@ -136,6 +153,7 @@ export const components: readonly ComponentEntry[] = [
           "Secondary · label": "soft green, with a text label",
           "Ghost · label": "ghost, with a text label",
           "Ghost · icon only": "ghost, with an icon and no label",
+          "Send · icon only": "the chat's round send, an arrow and no label",
         },
       },
       {
@@ -149,6 +167,7 @@ export const components: readonly ComponentEntry[] = [
       { key: "Outline · icon + label/Active", note: "missing in Figma" },
       { key: "Outline · icon only/Active", note: "missing in Figma" },
       { key: "Secondary · label/Active", note: "missing in Figma" },
+      { key: "Send · icon only/Hover", note: "not drawn" },
     ],
     render: (combination) => {
       const state = combination.State
@@ -158,13 +177,19 @@ export const components: readonly ComponentEntry[] = [
         return null
       }
 
+      /** The send's Active is not the pressed pseudo-class the other forms
+       *  force: it is the ready-to-send skin, worn through the attribute the
+       *  chat toggles. */
+      const sendActive = form.variant === "send" && state === "Active"
+
       return (
         <Button
           variant={form.variant}
           size={form.size}
           aria-label={form.label}
           disabled={state === "Disabled"}
-          data-force={forceOf(state)}
+          data-force={sendActive ? undefined : forceOf(state)}
+          data-active={sendActive ? "" : undefined}
         >
           {form.children}
         </Button>
@@ -288,7 +313,7 @@ export const components: readonly ComponentEntry[] = [
       const counted = combination.Content === "Counter + label"
 
       if (variant === "Suggestion") {
-        return <Chip variant="suggestion">Hi, can I get help for my mom?</Chip>
+        return <Chip variant="suggestion">How do I get paid?</Chip>
       }
 
       if (variant === "Filter") {
@@ -368,6 +393,31 @@ export const components: readonly ComponentEntry[] = [
         </div>
       )
     },
+  },
+  {
+    slug: "chat",
+    name: "Chat",
+    wide: true,
+    viewport: true,
+    // Drawn from Brevy Website · frame 22912:2612, the hero's chat card. The
+    // three drawn widths are the width tabs rather than variants of their
+    // own: one card in three documents. The copy is the states board's.
+    axes: [
+      {
+        label: "State",
+        values: ["Empty", "Ready to send"],
+        phrasing: {
+          Empty: "empty, waiting for a question",
+          "Ready to send": "holding a message, the send button lit",
+        },
+      },
+    ],
+    omitted: [],
+    render: (combination) => (
+      <ChatFrame
+        state={combination.State === "Ready to send" ? "ready" : undefined}
+      />
+    ),
   },
   {
     slug: "card",

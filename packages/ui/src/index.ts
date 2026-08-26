@@ -9,6 +9,7 @@ export { Badge, badgeVariants } from "./components/badge.js"
 export type { BadgeProps } from "./components/badge.js"
 export { Button, buttonVariants } from "./components/button.js"
 export type { ButtonProps } from "./components/button.js"
+export { Chat } from "./components/chat.js"
 export { Chip, chipVariants } from "./components/chip.js"
 export type { ChipProps } from "./components/chip.js"
 export {

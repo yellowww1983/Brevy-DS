@@ -665,3 +665,48 @@ primary. The shipped site renders both on `#022f1a`, a step darker, and
 nothing in the file draws that value anywhere. The system follows the file;
 the production shade reads as a build-time drift, not a decision. Please
 confirm `#023620` so the two sides converge.
+
+### 47. The chat mixes both greens in one component
+
+**website**, the hero chat card, against the shipped site
+
+Entry 46's pair, now inside a single component. The file draws the send
+button's arrow and its active fill both on `#023620`. The shipped site
+renders the resting arrow on `#022f1a` and the active fill on `#023620`, so
+the two shades sit a state change apart in the same 48px circle. The system
+draws both from the one primary token; please confirm `#023620` so
+production can too.
+
+### 48. The chat arrow is drawn at 1.5 and shipped at 2
+
+**website**, the send button's arrow, against the shipped site
+
+The file draws the arrow's vectors at a stroke of 1.5 on the 24 grid, which
+is the weight every icon in the file draws. The shipped site renders the
+same arrow at 2, lucide's presentation default, so the one icon inside the
+hero is heavier than the system around it. The system ships the drawn 1.5.
+
+### 49. The chat placeholder exists in three versions
+
+**website**, the hero chat and the chat states board, against the shipped
+site
+
+The states board writes "What can I help you with today?", the hero
+instances write "Hi! I can help you check your eligibility in under 3
+minutes. What state do you live in?", and the shipped site writes "What can
+we help you with today?", which matches neither. The catalog carries the
+states board's line. Please settle one voice per surface so the copy stops
+drifting.
+
+### 50. The suggestion chips wear a third outline, and more of entry 45
+
+**website**, the rows under the hero chat, against the shipped site
+
+The file draws the hero's suggestion chips with no stroke at all: two inner
+shadows and a 1px halo stand in for the thread every other chip wears. The
+shipped site gives the same chips the old half-black blur ring that entry 45
+already flagged, plus its own arithmetic: padding 6/12 on a 20 line where
+the file draws 8/12 on 24, centred rows at a gap of 8 where the file draws
+left-aligned rows at 16, and a 16 gap under the card where the file draws 8.
+Same height, different everything else. One chip, one outline: the system's
+`hairline`, per entry 45.

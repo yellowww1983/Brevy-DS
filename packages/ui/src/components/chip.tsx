@@ -15,7 +15,11 @@ const chipVariants = cva(
     variants: {
       variant: {
         eyebrow: "h-6 gap-1 px-2 text-sm font-normal text-primary",
-        suggestion: "h-8 gap-2 px-3 text-sm font-normal text-foreground",
+        /** The one shape drawn twice: pointed at, the gradient's foot steps
+         *  from neutral-100 to neutral-200 and nothing else moves. Worn only
+         *  here, because it is the only chip the design draws a hover for. */
+        suggestion:
+          "h-8 gap-2 px-3 text-sm font-normal text-foreground hover:to-neutral-200",
         filter: "h-8 gap-2 px-3 text-base font-medium text-zinc-700",
       },
     },

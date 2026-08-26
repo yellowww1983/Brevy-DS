@@ -31,6 +31,7 @@ test("a component offers one prompt per real choice, not per state", async ({
     "Use the Brevy Button: soft green, with a text label.",
     "Use the Brevy Button: ghost, with a text label.",
     "Use the Brevy Button: ghost, with an icon and no label.",
+    "Use the Brevy Button: the chat's round send, an arrow and no label.",
   ])
 })
 
