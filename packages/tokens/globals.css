@@ -236,6 +236,12 @@
   --breakpoint-tablet: 810px;
   --breakpoint-desktop: 1440px;
 
+  /* The width at which the content column reaches its cap: the same 75rem as
+     --content-width, and it must move with it. A layout that needs the full
+     1200 column, like the FAQ's pair of columns, switches here rather than at
+     the drawn desktop, so a 1280 laptop is not handed the stacked layout. */
+  --breakpoint-content: 75rem;
+
   /* Roles, not sizes. The three headings are fluid because the website is; the
      other five never change width to width, in Figma or in the browser.
 

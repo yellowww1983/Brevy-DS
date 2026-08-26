@@ -3,6 +3,7 @@
 import { cn } from "@brevy/ui"
 import {
   ChevronDown,
+  CircleHelp,
   Columns3,
   Move,
   PanelTop,
@@ -49,6 +50,7 @@ const FOUNDATIONS: readonly Entry[] = [
 
 const BLOCKS: readonly Entry[] = [
   { label: "Navbar", icon: PanelTop, href: "/blocks/navbar" },
+  { label: "FAQ", icon: CircleHelp, href: "/blocks/faq" },
 ]
 
 function Section({ title, children }: { title: string; children: ReactNode }) {

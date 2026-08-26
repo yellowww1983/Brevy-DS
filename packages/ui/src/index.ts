@@ -34,6 +34,8 @@ export {
 export { Input, inputVariants } from "./components/input.js"
 export type { InputProps } from "./components/input.js"
 export { Label } from "./components/label.js"
+export { Faq } from "./blocks/faq.js"
+export type { FaqContact, FaqItem } from "./blocks/faq.js"
 export { Navbar } from "./blocks/navbar.js"
 export type { NavbarCta, NavbarLink } from "./blocks/navbar.js"
 export { cn } from "./lib/utils.js"

@@ -13,6 +13,7 @@ const PAGES = [
   ["/getting-started/icons", "Icons", "foundation"],
   ["/getting-started/layout", "Layout", "foundation"],
   ["/blocks/navbar", "Navbar", "block"],
+  ["/blocks/faq", "FAQ", "block"],
 ] as const
 
 for (const [path, name, kind] of PAGES) {

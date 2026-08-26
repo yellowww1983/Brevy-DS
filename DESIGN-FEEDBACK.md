@@ -654,3 +654,14 @@ bottom, painted as a masked overlay so it takes no pixel out of the layout
 and holds the full round of a pill. The chips move with it, a step lighter
 than the half black ring they were drawn with. Please align the drawings the
 other way too, so all three places show the one hairline the system ships.
+
+### 46. The primary green ships darker than it is drawn
+
+**website**, the FAQ contact card's button and the navbar's call to action,
+against the shipped site
+
+The file draws both on `#023620`, which is the token the system binds as
+primary. The shipped site renders both on `#022f1a`, a step darker, and
+nothing in the file draws that value anywhere. The system follows the file;
+the production shade reads as a build-time drift, not a decision. Please
+confirm `#023620` so the two sides converge.
