@@ -743,3 +743,36 @@ say the row is meant to mix.
 
 The hover is the one thing that already agrees: both sides turn the outline
 `#023620` and change nothing else.
+
+### 52. The footer's newsletter ships six steps away from the drawing
+
+**website**, the footer, against the shipped site
+
+The footer is drawn 25 times across the file and every page draws the same
+one. The band, the container, the rule, the legal line and the brand links
+all ship as drawn. The newsletter does not: six of its properties differ,
+and one of them is entry 46 for the third time.
+
+| property       | drawn                   | shipped                 |
+| -------------- | ----------------------- | ----------------------- |
+| Subscribe fill | `#023620`               | `#022f1a`               |
+| field radius   | 8                       | 16                      |
+| field outline  | `#d4d4d4` (neutral-300) | `#e5e5e5` (neutral-200) |
+| field shadow   | `0 1 2` at 5%           | none                    |
+| field padding  | 4 / 12                  | 12 / 16                 |
+| placeholder    | `#71717a` (zinc-500)    | zinc-600                |
+| card width     | 592                     | 568                     |
+
+The green is the same drift entry 46 records on the FAQ's contact button
+and the navbar's call to action; this is its third home, and the pattern is
+now firm enough to be worth one decision rather than three.
+
+Everything the field differs on, the system's own `Input` at its tall size
+already draws correctly: 48 tall, radius 8, `#d4d4d4`, `shadow-xs`, 12 of
+horizontal padding, a zinc-500 placeholder. So the block built from our
+parts lands on the file, and it is production that has drifted.
+
+The legal links carry no hover in the file and `hover:underline` in
+production. Nothing else in the footer draws a link, so there is no second
+drawing to check it against: please confirm whether the underline is
+intended, in which case the file should show it.

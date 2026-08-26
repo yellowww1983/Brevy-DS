@@ -14,6 +14,7 @@ const PAGES = [
   ["/getting-started/layout", "Layout", "foundation"],
   ["/blocks/navbar", "Navbar", "block"],
   ["/blocks/faq", "FAQ", "block"],
+  ["/blocks/footer", "Footer", "block"],
 ] as const
 
 for (const [path, name, kind] of PAGES) {

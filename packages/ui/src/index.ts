@@ -39,6 +39,12 @@ export type { InputProps } from "./components/input.js"
 export { Label } from "./components/label.js"
 export { Faq } from "./blocks/faq.js"
 export type { FaqContact, FaqItem } from "./blocks/faq.js"
+export { Footer } from "./blocks/footer.js"
+export type {
+  FooterLink,
+  FooterNewsletter,
+  FooterSocial,
+} from "./blocks/footer.js"
 export { Navbar } from "./blocks/navbar.js"
 export type { NavbarCta, NavbarLink } from "./blocks/navbar.js"
 export { cn } from "./lib/utils.js"

@@ -6,6 +6,7 @@ import {
   CircleHelp,
   Columns3,
   Move,
+  PanelBottom,
   PanelTop,
   Layers,
   Palette,
@@ -51,6 +52,7 @@ const FOUNDATIONS: readonly Entry[] = [
 const BLOCKS: readonly Entry[] = [
   { label: "Navbar", icon: PanelTop, href: "/blocks/navbar" },
   { label: "FAQ", icon: CircleHelp, href: "/blocks/faq" },
+  { label: "Footer", icon: PanelBottom, href: "/blocks/footer" },
 ]
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
