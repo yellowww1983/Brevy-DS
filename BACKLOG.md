@@ -163,6 +163,24 @@ were brought to the values it draws: a card is `--card`, a page is
 over `--muted-foreground`. The third did not, because it is not a surface
 question.
 
+**The primary's green is the one thing still open, and it reaches further than
+the label.** Once the primary stopped painting `--background` over its own
+ground — it now lets the ground through, so a hover on a card shows the card
+rather than a page-coloured rectangle — its hover became a green outline read
+directly against whatever it stands on. That green is the same brand-vivid the
+label sits on. Measured with the pointer on it:
+
+| ground                       | light   | dark       |
+| ---------------------------- | ------- | ---------- |
+| the page                     | 13.54:1 | **4.49:1** |
+| the FAQ's olive card         | 10.21:1 | **3.32:1** |
+| the footer's newsletter card | 12.14:1 | **4.06:1** |
+
+Light is comfortable everywhere. Dark is under the 4.5 a label needs on every
+surface, and furthest under it on the olive, because brand-vivid is chosen
+against `neutral-950` and every other surface is lighter than that. One token,
+one decision: nothing here is fixed by touching a block.
+
 **Also worth keeping from the detour.** A rule was once derived from the
 website file and applied — light objects declaring themselves light so they
 keep their colours on a dark page — and it was reverted: pinning every such
