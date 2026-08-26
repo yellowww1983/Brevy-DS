@@ -79,14 +79,19 @@ the page crashed or the test was early, and guessing. That artefact is why the
 first race was found in one pass and why this one stayed open.
 
 **Caught on the third occurrence, because the artefact was finally read
-first.** The reduced-motion preloader spec: `clock.runFor` could outrun
-hydration, advancing a frozen clock before the effect that arms the dismiss
-timers had run, after which a timer scheduled against already-spent time
-never fires and the overlay stays up for good. Every clock advance in the
-suite now waits for the session flag those same effects write. Measured: 75
-runs of the spec and three full suites clean after the fix. The two swallowed
-failures cannot be identified in hindsight, but both wore this signature: a
-`toHaveCount` on the first run after a restart, when hydration is slowest.
+first.** The reduced-motion preloader spec. The first diagnosis blamed
+`runFor` outrunning hydration and guarded every advance behind the session
+flag; the failure came back anyway, and instrumenting the page found the
+real mechanism, two layers down. Installing Playwright's clock does not stop
+it: time keeps flowing until `pauseAt`, so the suite's frozen-clock premise
+had silently never been true, the overlay's timers fired on the machine's
+schedule, and advancing the flowing clock jumped the page's wall time, which
+the app answers by remounting, resurrecting the overlay a test had already
+watched leave. The suite now pauses the clock before every navigation and
+advances it in nudges until the overlay is gone, because the removal timer
+is armed by an effect React schedules outside the fake clock. Measured: 120
+runs of the spec clean after the fix. The hydration guard from the first
+diagnosis stays, because it closes a real, if narrower, race of its own.
 
 ---
 
