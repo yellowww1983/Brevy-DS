@@ -18,7 +18,11 @@ import { Button } from "./button.js"
  *  the file draws no cap.
  *
  *  The send button reads the field: empty, it rests on the soft olive, and
- *  with anything to send it turns the drawn green. */
+ *  with anything to send it turns the drawn green — the app file leaves a
+ *  brand surface alone in the dark, so the glow is untouched.
+ *
+ *  The card paints `--card`, white in the light and neutral-900 in the dark,
+ *  and its text follows: on the ramp it read at 2.56 to 1 there. */
 function Chat({
   placeholder,
   sendLabel,
@@ -49,7 +53,7 @@ function Chat({
     <div
       data-slot="chat"
       className={cn(
-        "hairline flex flex-col gap-2 rounded-2xl bg-background pt-4 pr-2 pb-2 pl-4 shadow-lg",
+        "hairline flex flex-col gap-2 rounded-2xl bg-card pt-4 pr-2 pb-2 pl-4 shadow-lg",
         className,
       )}
     >
@@ -62,7 +66,7 @@ function Chat({
         onChange={(event) => {
           setValue(event.target.value)
         }}
-        className="max-h-50 w-full resize-none text-base/6 text-zinc-800 outline-none placeholder:text-zinc-600"
+        className="max-h-50 w-full resize-none text-base/6 text-zinc-800 outline-none placeholder:text-zinc-600 dark:text-foreground dark:placeholder:text-muted-foreground"
       />
       <Button
         variant="send"

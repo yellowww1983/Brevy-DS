@@ -148,15 +148,61 @@ With that, the gradient and the band can move to tokens (`from-card`,
 is where they wanted to be. Until then the system ships a light object on a
 dark page on purpose.
 
-The same conversation should settle three pairs that no drawing describes
-either. They are the mirror of the same mixture: ramp text on a surface that
-_is_ a token, so the surface turns and the text does not. None is invisible,
-all three are below the 3:1 a large label needs:
+The same conversation should settle the pairs no drawing describes: ramp text
+on a surface that _is_ a token, so the surface turns and the text does not.
 
-| pair                                                                   | dark contrast         |
-| ---------------------------------------------------------------------- | --------------------- |
-| accordion answer and chevron, `zinc-700` on `bg-background`            | 1.9:1                 |
-| chat placeholder and value, `zinc-600` / `zinc-800` on `bg-background` | 2.56:1                |
-| primary button label, `--primary-foreground` on the dark `--primary`   | pixel spread 108 → 49 |
+| pair                                                                   | then                  | now                 |
+| ---------------------------------------------------------------------- | --------------------- | ------------------- |
+| accordion answer and chevron, `zinc-700` on `bg-background`            | 1.9:1                 | **6.94:1**, closed  |
+| chat placeholder and value, `zinc-600` / `zinc-800` on `bg-background` | 2.56:1                | **17.18:1**, closed |
+| primary button label, `--primary-foreground` on the dark `--primary`   | pixel spread 108 → 49 | **open**            |
 
-Measured with CDP pixel sampling inside each text's own box, light beside dark.
+The first two closed when dark mode was read off the app file and the surfaces
+were brought to the values it draws: a card is `--card`, a page is
+`--background`, an outline is flat white at 10%, and text is `--foreground`
+over `--muted-foreground`. The third did not, because it is not a surface
+question.
+
+**Also worth keeping from the detour.** A rule was once derived from the
+website file and applied — light objects declaring themselves light so they
+keep their colours on a dark page — and it was reverted: pinning every such
+object is switching dark mode off rather than designing it. The reading behind
+it still stands. That file draws no dark mode at all (no `dark`-named node on
+any of its five pages, every dark surface in it is the brand `#023620`), it
+draws the chip on that dark green with the same white gradient it wears on
+white and only its text turned (`22616:8593`), and it draws a thread on a dark
+ground in that ground's own ramp stepped one lighter (`22616:8603`). The app
+file is the better source for dark and is what the surfaces now follow.
+
+## `text-body-lg` is a ratio the file does not draw
+
+The token sets `--text-body-lg--line-height: 1.45`, so 20px body text renders
+on a 29px line. Measured across the design file, **1121 of the 1151** 20px text
+nodes draw on 28, a ratio of 1.4; the remaining 30 draw on 30. Nothing in the
+file draws 29, and the shipped site renders its own `text-body-lg` at 20/28.
+
+It costs a pixel a line, which is why nothing caught it before: the footer
+misses the drawn heights by 2 to 6px, all of it this. Moving the token to 1.4
+would also move the FAQ's description and the navbar's menu links, which is why
+it is written here rather than changed in passing.
+
+## `.light` pins the tokens but not the `dark:` utilities — done
+
+The token file offers `.light` so a subtree can be held in one theme while the
+page is in the other, and the footer needs it: the file draws no dark footer.
+It worked for anything reading a custom property and stopped at anything keyed
+on the class itself, so `@custom-variant dark (&:is(.dark *))` still matched
+inside a pinned subtree and the Input's `dark:bg-input/30` turned the
+newsletter field translucent on a dark page.
+
+Fixed at the root rather than in the block: the variant now reads
+`&:is(.dark *):not(.light *)`, so a pin stops the variant as well as the
+palette, and the workaround the footer carried is gone. Every other user of
+`.light` was checked first — the shadow stage and the colour swatches — and
+neither had a `dark:` utility inside the pin, so nothing depended on the leak.
+
+One simplification is written into the comment beside it: a pin now wins
+wherever it appears, where the palette obeys the nearest theme class, so
+`.dark` nested inside `.light` would resolve dark tokens with `dark:` utilities
+off. Nothing nests them, and CSS cannot express "nearest wins" here without
+`:has`.

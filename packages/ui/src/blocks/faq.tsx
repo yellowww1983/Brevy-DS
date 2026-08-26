@@ -38,8 +38,13 @@ type FaqContact = {
  *  heading included. The band itself cannot turn dark, so nothing on it may:
  *  the heading was on a token and went near-white on a dark page while the
  *  beige stayed beige, measured at 1.07 to 1. `#27272a` is what the file
- *  draws. What this section looks like in the dark is a drawing nobody has
- *  made. */
+ *  draws.
+ *
+ *  In the dark the band drops the beige entirely and paints `--background`,
+ *  which is the ground the app file gives a page (`#0a0a0a`); the questions
+ *  are cards on it and paint `--card`. The contact card is the exception the
+ *  token file already carries: `--surface-olive` is deliberately the same
+ *  olive in both themes, so the card does not turn. */
 function Faq({
   heading,
   description,
@@ -55,7 +60,10 @@ function Faq({
   defaultOpen?: string
 }) {
   return (
-    <section data-slot="faq" className="bg-linear-to-b from-beige-500 to-white">
+    <section
+      data-slot="faq"
+      className="bg-linear-to-b from-beige-500 to-white dark:bg-background dark:bg-none"
+    >
       <Container className="py-24">
         <div className="flex flex-col gap-12 content:grid content:grid-cols-12 content:gap-4">
           <div
@@ -63,8 +71,12 @@ function Faq({
             className="flex flex-col gap-6 content:col-span-4"
           >
             <div className="flex flex-col gap-2">
-              <h2 className="font-serif text-h2 text-zinc-800">{heading}</h2>
-              <p className="text-body-lg text-zinc-700">{description}</p>
+              <h2 className="font-serif text-h2 text-zinc-800 dark:text-foreground">
+                {heading}
+              </h2>
+              <p className="text-body-lg text-zinc-700 dark:text-muted-foreground">
+                {description}
+              </p>
             </div>
 
             {/* The green card: a row that goes upright below the tablet

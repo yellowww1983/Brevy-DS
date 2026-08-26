@@ -34,8 +34,10 @@ type FooterNewsletter = {
  *  is left over and the two sides do not ask for the same amount: that came
  *  out 568 against 616 where the file draws 592 twice.
  *
- *  The band is painted white and its own colours are ramp colours, because
- *  that is what the file draws: it has no dark version of this section.
+ *  The band is white where the file draws it white and `--background` in the
+ *  dark, which is the ground the app file gives a page. The newsletter is a
+ *  card on it and paints `--card`; the field and the button are the system's
+ *  own and were already right in both. Nothing here is pinned to one theme.
  *
  *  There is no padding above. The file starts the lockup flush against the top
  *  of the frame and leans on whatever section precedes it, so a page that ends
@@ -58,7 +60,7 @@ function Footer({
   copyright?: string
 }) {
   return (
-    <footer data-slot="footer" className="bg-white">
+    <footer data-slot="footer" className="bg-white dark:bg-background">
       <Container className="pb-6">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-8 content:grid content:grid-cols-2 content:gap-4">
@@ -72,7 +74,7 @@ function Footer({
                 {logo}
               </div>
 
-              <p className="text-body-lg whitespace-pre-line text-zinc-700">
+              <p className="text-body-lg whitespace-pre-line text-zinc-700 dark:text-muted-foreground">
                 {tagline}
               </p>
 
@@ -94,13 +96,13 @@ function Footer({
 
             <form
               data-slot="footer-newsletter"
-              className="flex flex-col gap-6 rounded-2xl bg-beige-500 p-6"
+              className="flex flex-col gap-6 rounded-2xl bg-beige-500 p-6 dark:bg-card"
             >
               <div className="flex flex-col gap-2">
-                <p className="text-body-lg font-semibold text-zinc-800">
+                <p className="text-body-lg font-semibold text-zinc-800 dark:text-foreground">
                   {newsletter.heading}
                 </p>
-                <p className="text-body-lg text-zinc-700">
+                <p className="text-body-lg text-zinc-700 dark:text-muted-foreground">
                   {newsletter.description}
                 </p>
               </div>
@@ -121,14 +123,14 @@ function Footer({
 
           <div
             data-slot="footer-rule"
-            className="h-px bg-neutral-200"
+            className="h-px bg-neutral-200 dark:bg-border"
           />
 
           <div
             data-slot="footer-legal"
             className="flex flex-col gap-6 tablet:flex-row"
           >
-            <p className="text-zinc-700 tablet:flex-1">
+            <p className="text-zinc-700 tablet:flex-1 dark:text-muted-foreground">
               {copyright}
             </p>
 
@@ -136,7 +138,7 @@ function Footer({
               <a
                 key={link.label}
                 href={link.href}
-                className="w-fit text-zinc-700 hover:underline"
+                className="w-fit text-zinc-700 hover:underline dark:text-muted-foreground"
               >
                 {link.label}
               </a>

@@ -1,4 +1,18 @@
-@custom-variant dark (&:is(.dark *));
+/* A `dark:` utility is keyed on an ancestor class rather than on a value, so
+   without the second clause it fires inside a subtree pinned by `.light` and
+   contradicts the tokens around it: that is how the footer's field, pinned
+   light, still took `dark:bg-input/30` and turned translucent on a dark page.
+   A pin now stops the variant as well as the palette.
+
+   Both clauses are needed: `.light *` is only what a pin contains, so the
+   element carrying the class would otherwise still take the variant itself.
+
+   One simplification is written into this: a pin wins wherever it appears,
+   where the palette below obeys the nearest theme class instead. `.dark`
+   nested inside `.light` therefore resolves dark tokens while `dark:`
+   utilities stay off. Nothing nests them today, and CSS cannot express
+   "nearest wins" here without :has. */
+@custom-variant dark (&:is(.dark *):not(.light *):not(.light));
 
 /* `static` because a design system ships its palette whether or not this build
    happens to use it. Left to itself Tailwind emits only the variables some
@@ -331,9 +345,26 @@
    An overlay does sit above the element's own inset shadows, so a drawing
    whose stroke belongs *under* an inner glow cannot use this. The send
    button is the one such case and draws its stroke in `background` instead;
-   the reason it may is written beside it. */
+   the reason it may is written beside it.
+
+   On a dark ground the thread stops being a gradient. The app file draws
+   every dark outline as flat white at low alpha — the card at 10%
+   (`17085:178010`), the field at 15% (`17086:205826`), the separator at 10%
+   (`17086:208057`) — and no gradient among them. The dark branch below is
+   that: `--border`, which is exactly the 10% the cards wear. */
 @utility hairline {
   position: relative;
+  --hairline-paint: linear-gradient(
+    to bottom,
+    var(--color-neutral-200),
+    var(--color-neutral-300)
+  );
+
+  /* The dark variant's own selector, so a pinned subtree keeps the light
+     thread the same way it keeps light tokens. */
+  &:is(.dark *):not(.light *):not(.light) {
+    --hairline-paint: linear-gradient(var(--border), var(--border));
+  }
 
   &::before {
     content: "";
@@ -342,11 +373,7 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(
-      to bottom,
-      var(--color-neutral-200),
-      var(--color-neutral-300)
-    );
+    background: var(--hairline-paint);
     mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);

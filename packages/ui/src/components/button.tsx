@@ -60,11 +60,14 @@ const buttonVariants = cva(
         send: `rounded-full border border-olive-600 bg-surface-olive text-primary shadow-send data-active:border-transparent data-active:text-primary-foreground data-active:shadow-send-active ${SEND_ACTIVE_RING}`,
         /** The footer's brand links. Every colour on it is a ramp colour: the
          *  thread it wears cannot turn dark, so nothing on it may, the way the
-         *  chip is pinned. Pointed at, the thread goes out and the border
-         *  comes on — the overlay cannot simply change colour, and the border
-         *  is free here because the face is flat white rather than the chip's
-         *  gradient. */
-        social: `hairline rounded-md border border-transparent bg-white text-zinc-700 shadow-xs hover:border-emerald-500 hover:before:hidden`,
+         *  face is `--card`, so it is white where the file draws it white and
+         *  neutral-900 on a dark page, and the thread comes down with it.
+         *  Pointed at, the thread goes out and the border comes on — the
+         *  overlay cannot simply change colour, and the border is free here
+         *  because the face is flat rather than the chip's gradient. The dark
+         *  ring is the olive rather than the drawn green, which disappears
+         *  against neutral-900. */
+        social: `hairline rounded-md border border-transparent bg-card text-zinc-700 shadow-xs hover:border-emerald-500 hover:before:hidden dark:text-foreground dark:hover:border-olive-500`,
       },
       /** The height a button stands at, with the padding, the space beside an
        *  icon and the icon itself that go with it. `compact` is the navbar's

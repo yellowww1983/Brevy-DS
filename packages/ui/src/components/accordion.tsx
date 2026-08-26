@@ -37,7 +37,12 @@ function Accordion({ className, ...props }: AccordionProps) {
  *  from the middle.
  *
  *  Keyboard focus is shown here rather than on the trigger, so the one line
- *  the card wears stays the only line around the question. */
+ *  the card wears stays the only line around the question.
+ *
+ *  It paints `--card` rather than `--background`, which is the same white in
+ *  the light and the neutral-900 the app file draws for a card in the dark
+ *  (`17085:178010`). The answer moves with it: on the ramp it read at 1.9 to
+ *  1 against that ground. */
 function AccordionItem({
   className,
   ...props
@@ -46,7 +51,7 @@ function AccordionItem({
     <AccordionPrimitive.Item
       data-slot="accordion-item"
       className={cn(
-        "hairline rounded-2xl bg-background px-6 shadow-xs outline-ring/50 has-focus-visible:outline-2 has-focus-visible:outline-offset-2",
+        "hairline rounded-2xl bg-card px-6 shadow-xs outline-ring/50 has-focus-visible:outline-2 has-focus-visible:outline-offset-2",
         className,
       )}
       {...props}
@@ -77,7 +82,7 @@ function AccordionTrigger({
             it level, and a question that wraps still keeps it on the first
             line rather than the middle of three. */}
         <ChevronDown
-          className="mt-0.5 size-6 shrink-0 icon-stroke text-zinc-700 transition-transform duration-200"
+          className="mt-0.5 size-6 shrink-0 icon-stroke text-zinc-700 transition-transform duration-200 dark:text-muted-foreground"
           aria-hidden
         />
       </AccordionPrimitive.Trigger>
@@ -96,7 +101,12 @@ function AccordionContent({
       className="overflow-hidden"
       {...props}
     >
-      <div className={cn("pb-6 text-xl font-normal text-zinc-700", className)}>
+      <div
+        className={cn(
+          "pb-6 text-xl font-normal text-zinc-700 dark:text-muted-foreground",
+          className,
+        )}
+      >
         {children}
       </div>
     </AccordionPrimitive.Content>
