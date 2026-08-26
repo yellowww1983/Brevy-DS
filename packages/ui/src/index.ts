@@ -1,4 +1,10 @@
 export {
+  Avatar,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarImage,
+} from "./components/avatar.js"
+export {
   Accordion,
   AccordionContent,
   AccordionItem,
