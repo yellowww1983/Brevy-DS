@@ -99,3 +99,32 @@ failures cannot be identified in hindsight, but both wore this signature: a
   `button-web-primary-*` show the six-variant grid that no longer exists.
 - **`DESIGN-FEEDBACK.md` handoff.** 17 findings, 3 of them blocking, still to be
   walked through with the designer.
+
+## Two light objects have no dark drawing, and three pairs have no drawing at all
+
+The chip and the FAQ band paint themselves in ramp colours, so they stay light
+whatever the page does. Their labels used to be on theme tokens and turned with
+the page, which put near-white text on a white pill and on a beige band: 1.04
+and 1.07 to 1, against 14.89 and 13.36 in the light. Both are now pinned to the
+ramp, so the objects are light through and through and simply sit bright on a
+dark page.
+
+That is the honest half-measure. **What is missing is the drawing**: what a
+suggestion pill and what the FAQ's beige-to-white band look like in dark mode.
+With that, the gradient and the band can move to tokens (`from-card`,
+`to-background` and kin) and the labels can go back to `text-foreground`, which
+is where they wanted to be. Until then the system ships a light object on a
+dark page on purpose.
+
+The same conversation should settle three pairs that no drawing describes
+either. They are the mirror of the same mixture: ramp text on a surface that
+_is_ a token, so the surface turns and the text does not. None is invisible,
+all three are below the 3:1 a large label needs:
+
+| pair                                                                   | dark contrast         |
+| ---------------------------------------------------------------------- | --------------------- |
+| accordion answer and chevron, `zinc-700` on `bg-background`            | 1.9:1                 |
+| chat placeholder and value, `zinc-600` / `zinc-800` on `bg-background` | 2.56:1                |
+| primary button label, `--primary-foreground` on the dark `--primary`   | pixel spread 108 → 49 |
+
+Measured with CDP pixel sampling inside each text's own box, light beside dark.

@@ -32,7 +32,14 @@ type FaqContact = {
  *  over the list. The file also draws it pinned to the foot of the column on
  *  the older pages; that drawing is not this block. The 96 above and below is
  *  the Caregiving and partner drawing; the home pages draw 0 at the top and
- *  lean on the section before them, which a block standing alone cannot. */
+ *  lean on the section before them, which a block standing alone cannot.
+ *
+ *  Every colour in the band is a ramp colour rather than a theme token, the
+ *  heading included. The band itself cannot turn dark, so nothing on it may:
+ *  the heading was on a token and went near-white on a dark page while the
+ *  beige stayed beige, measured at 1.07 to 1. `#27272a` is what the file
+ *  draws. What this section looks like in the dark is a drawing nobody has
+ *  made. */
 function Faq({
   heading,
   description,
@@ -56,7 +63,7 @@ function Faq({
             className="flex flex-col gap-6 content:col-span-4"
           >
             <div className="flex flex-col gap-2">
-              <h2 className="font-serif text-h2 text-foreground">{heading}</h2>
+              <h2 className="font-serif text-h2 text-zinc-800">{heading}</h2>
               <p className="text-body-lg text-zinc-700">{description}</p>
             </div>
 
