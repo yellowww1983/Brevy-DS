@@ -47,6 +47,12 @@ export type { InputProps } from "./components/input.js"
 export { Label } from "./components/label.js"
 export { Faq } from "./blocks/faq.js"
 export type { FaqContact, FaqItem } from "./blocks/faq.js"
+export { HeroCentered } from "./blocks/hero-centered.js"
+export type {
+  HeroCenteredAction,
+  HeroCenteredImage,
+  HeroCenteredIntro,
+} from "./blocks/hero-centered.js"
 export { Footer } from "./blocks/footer.js"
 export type {
   FooterLink,

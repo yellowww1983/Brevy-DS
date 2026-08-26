@@ -408,6 +408,34 @@
      sharing a number today is not the same as one thing measuring the other.
      If the file ever moves one of them, only one of these should follow. */
   --chat-width: 49.625rem;
+
+  /* The centred hero. Its copy column is the same 794 the pill and the chat
+     card stand at, written separately for the reason given above them: three
+     things sharing a number today is not three things measuring each other.
+
+     The heights are the drawn canvas rather than the content: the file fixes
+     670, and 757 below the tablet where the row of faces breaks in two and
+     the suggestions go one under the other. They are floors, not ceilings —
+     a heading longer than the drawn one grows the section instead of
+     spilling out of it.
+
+     The band is 426 at every width. What changes inside it is the artwork,
+     not the frame. */
+  --hero-copy: 49.625rem;
+
+  /* The line under the heading is not the column. The file gives the heading
+     the full 794 and hand-sizes the line narrower on every page it draws:
+     586 on the home pages at both wide breakpoints, 588 on the partner page,
+     626 and 636 on For Organizations. Those are drags, not a decision, and
+     they cluster: two of the three pages sit within two pixels of 588, which
+     is the one taken here.
+
+     It only binds where the column is wider than it is, so at mobile the line
+     fills the 358 the way the file draws it and this never applies. */
+  --hero-lede: 36.75rem;
+  --hero-height: 41.875rem;
+  --hero-height-narrow: 47.3125rem;
+  --hero-band: 26.625rem;
 }
 
 @media (width >= theme(--breakpoint-tablet)) {

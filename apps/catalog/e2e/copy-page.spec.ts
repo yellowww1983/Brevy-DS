@@ -13,6 +13,7 @@ const PAGES = [
   ["/getting-started/icons", "Icons", "foundation"],
   ["/getting-started/layout", "Layout", "foundation"],
   ["/blocks/navbar", "Navbar", "block"],
+  ["/blocks/hero/centered", "HeroCentered", "block"],
   ["/blocks/faq", "FAQ", "block"],
   ["/blocks/footer", "Footer", "block"],
 ] as const
