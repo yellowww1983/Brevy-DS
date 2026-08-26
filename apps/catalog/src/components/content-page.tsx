@@ -19,7 +19,7 @@ export function ContentPage({
   children: ReactNode
 }) {
   return (
-    <div className="mx-auto max-w-6xl">
+    <div>
       <div className="flex gap-10">
         <article
           className={

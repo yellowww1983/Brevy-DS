@@ -78,6 +78,13 @@
   --color-green-900: #356242;
   --color-green-950: #1e3d28;
 
+  /* The send button's effect colours, exact from the file. Not ramps: each is
+     the single stop the drawing reaches for, and all three live in the
+     button's glow and edge light rather than on any surface. */
+  --color-lime-500: #aee177;
+  --color-lime-600: #33d925;
+  --color-celadon-500: #b2c8bf;
+
   --color-orange-50: #fff6ef;
   --color-orange-100: #fde9db;
   --color-orange-200: #fbd2b8;
@@ -236,6 +243,12 @@
   --breakpoint-tablet: 810px;
   --breakpoint-desktop: 1440px;
 
+  /* The width at which the content column reaches its cap: the same 75rem as
+     --content-width, and it must move with it. A layout that needs the full
+     1200 column, like the FAQ's pair of columns, switches here rather than at
+     the drawn desktop, so a 1280 laptop is not handed the stacked layout. */
+  --breakpoint-content: 75rem;
+
   /* Roles, not sizes. The three headings are fluid because the website is; the
      other five never change width to width, in Figma or in the browser.
 
@@ -286,6 +299,21 @@
   --font-sans: "Rethink Sans", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Hedvig Letters Serif", ui-serif, Georgia, serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* The send button's two shadow stacks, named here so Tailwind mints
+     `shadow-send` and `shadow-send-active`. Three layers each, measured from
+     the file: a wide glow, a 1.3px edge light, and an inner shadow that
+     rounds the face. The drawing carries a fourth, fully transparent drop;
+     it paints nothing and is not kept. */
+  --shadow-send:
+    0 0 26px 0 color-mix(in srgb, var(--color-lime-500) 30%, transparent),
+    0 -1.3px 1.3px 0 rgb(0 0 0 / 0.1),
+    inset 2.6px -5.2px 6.5px 0 var(--color-olive-600);
+  --shadow-send-active:
+    0 0 26px 0 var(--color-celadon-500),
+    0 1.3px 1.3px 0 rgb(255 255 255 / 0.85), 0 -1.3px 1.3px 0 rgb(0 0 0 / 0.1),
+    inset 2.6px -5.2px 6.5px 0
+      color-mix(in srgb, var(--color-lime-600) 35%, transparent);
 }
 
 /* The hairline: the thin grey thread the design draws around a chip, a FAQ
@@ -298,7 +326,12 @@
    background shorthand, and the chip paints a gradient of its own there. A
    box-shadow cannot carry a gradient at all. The overlay touches none of
    that: it inherits the corner, sits inside the edge, and leaves both the
-   background and every shadow slot to the element. */
+   background and every shadow slot to the element.
+
+   An overlay does sit above the element's own inset shadows, so a drawing
+   whose stroke belongs *under* an inner glow cannot use this. The send
+   button is the one such case and draws its stroke in `background` instead;
+   the reason it may is written beside it. */
 @utility hairline {
   position: relative;
 
@@ -341,6 +374,13 @@
      for it. Below that it takes what the column gives it, which is what the
      design draws at tablet and mobile. */
   --navbar-width: 49.625rem;
+
+  /* The chat card stands at the same 794 as the pill above it, and for the
+     same reason: it is the hero's content width, not the column's. Written
+     separately rather than borrowed from the navbar, because two things
+     sharing a number today is not the same as one thing measuring the other.
+     If the file ever moves one of them, only one of these should follow. */
+  --chat-width: 49.625rem;
 }
 
 @media (width >= theme(--breakpoint-tablet)) {

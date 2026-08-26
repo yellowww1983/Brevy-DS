@@ -2,36 +2,32 @@
 
 import { useEffect, useRef, useState } from "react"
 
-import { heightFor } from "@/navbar"
-
 import { useFrameTheme } from "./frame-theme"
 import { useViewport } from "./viewport-frame"
 
-/** The block is a page header, so it only means anything at the top of a page.
- *  The frame is a document of its own at the chosen width, tall enough to read
- *  as a screen rather than a strip, and the numbers beside it are read back out
- *  of it rather than written down.
+/** The card at the chosen width, in a document of its own. The card carries no
+ *  breakpoints, so a frame is not what makes it lay out; it is what makes the
+ *  width honest. Inside the frame the container resolves the gutters the
+ *  document is owed and the card takes the hero's 794 or the column, whichever
+ *  is smaller, so the drawn 794, 762 and 358 are measured here rather than
+ *  written down.
  *
- *  It is live. Opening the menu in it is the menu, not a picture of one, which
- *  is why the mobile frame is a phone's height: the menu covers the screen, and
- *  a frame shorter than a screen would cut it off. */
-export function NavbarFrame() {
+ *  Never scaled, the way the block frames are never scaled: where the nominal
+ *  width does not fit the column the frame takes the column's width, which
+ *  leaves everything inside at its own size.
+ *
+ *  The height follows the content, because typing into it grows the field. */
+export function ChatFrame({ state }: { state?: "ready" }) {
   const nominal = useViewport()
-  const height = heightFor(nominal)
   const frame = useRef<HTMLIFrameElement>(null)
   const column = useRef<HTMLDivElement>(null)
   const [room, setRoom] = useState(0)
-  /** The width the frame was last read at. The tabs switch faster than the
-   *  frame relays out, so readiness is tied to the width it was read at,
-   *  which is what the suite's measured() helper waits on. */
+  const [height, setHeight] = useState(160)
+  /** The width the frame was last read at, which is what the suite's
+   *  measured() helper waits on across tab switches. */
   const [readAt, setReadAt] = useState<number | null>(null)
   const [loads, setLoads] = useState(0)
 
-  /** Never wider than the column it sits in, and never scaled. A desktop bar
-   *  shown at three quarters is a bar nobody can judge, and one that runs off
-   *  the side has to be dragged into view to be read at all. Narrowing the
-   *  screen leaves everything in it at its own size, which is what matters:
-   *  the pill is 794 whether the screen around it is 1440 or 1040. */
   const width = room > 0 ? Math.min(nominal, room) : nominal
 
   useFrameTheme(frame, loads)
@@ -67,14 +63,12 @@ export function NavbarFrame() {
     }
 
     const read = () => {
-      const bar = document_.querySelector("[data-slot='navbar']")
-      const pill = document_.querySelector("[data-slot='navbar-pill']")
-
-      if (!bar || !pill) {
+      if (!document_.querySelector("[data-slot='chat']")) {
         return
       }
 
       setReadAt(width)
+      setHeight(Math.ceil(document_.body.getBoundingClientRect().height))
     }
 
     read()
@@ -93,17 +87,17 @@ export function NavbarFrame() {
       data-measures
       data-measured={readAt === width ? "" : undefined}
       data-viewport={String(nominal)}
-      className="mt-6"
+      className="w-full"
     >
-      <div ref={column} className="mt-3">
+      <div ref={column}>
         <div
           style={{ width, height }}
           className="overflow-hidden rounded-xl border border-border"
         >
           <iframe
             ref={frame}
-            src="/specimens/navbar"
-            title={`Navbar at ${String(width)}px`}
+            src={state ? `/specimens/chat?state=${state}` : "/specimens/chat"}
+            title={`Chat at ${String(nominal)}px`}
             style={{ width, height }}
             onLoad={() => {
               setLoads((count) => count + 1)

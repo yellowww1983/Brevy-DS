@@ -116,3 +116,73 @@ test("the chip family draws its three shapes on the gradient", async ({
     expect(chip.count).toBe("16 rgb(215, 228, 201)")
   }
 })
+
+test("the suggestion chip darkens under the pointer and nothing else moves", async ({
+  page,
+}) => {
+  await page.goto("/components/chip")
+
+  const suggestion = page
+    .locator("main [data-slot='chip']")
+    .filter({ hasText: "How do I get paid?" })
+
+  const read = async () =>
+    suggestion.evaluate((node) => {
+      const style = getComputedStyle(node)
+      const box = node.getBoundingClientRect()
+
+      return {
+        gradient: style.backgroundImage,
+        ring: getComputedStyle(node, "::before").backgroundImage,
+        color: style.color,
+        shadow: style.boxShadow,
+        width: Math.round(box.width),
+        height: Math.round(box.height),
+      }
+    })
+
+  const resting = await read()
+  /** neutral-100 at the foot, which is what the file draws at rest. */
+  expect(resting.gradient).toContain("oklch(0.97 0 none)")
+
+  await suggestion.hover()
+  await expect
+    .poll(async () => (await read()).gradient, {
+      message: "pointed at, the foot steps to neutral-200",
+    })
+    .toContain("oklch(0.922 0 none)")
+
+  const hovered = await read()
+  expect(
+    {
+      ring: hovered.ring,
+      color: hovered.color,
+      shadow: hovered.shadow,
+      width: hovered.width,
+      height: hovered.height,
+    },
+    "the file redraws the gradient and leaves the rest alone",
+  ).toEqual({
+    ring: resting.ring,
+    color: resting.color,
+    shadow: resting.shadow,
+    width: resting.width,
+    height: resting.height,
+  })
+
+  /** The hover belongs to the one shape the file draws it for. */
+  const others = await page
+    .locator("main [data-slot='chip']")
+    .filter({ hasNotText: "How do I get paid?" })
+    .evaluateAll((nodes) =>
+      nodes.map((node) => getComputedStyle(node).backgroundImage),
+    )
+
+  expect(others.length).toBeGreaterThan(0)
+  for (const gradient of others) {
+    expect(
+      gradient,
+      "an eyebrow and a filter are drawn at rest only",
+    ).toContain("oklch(0.97 0 none)")
+  }
+})

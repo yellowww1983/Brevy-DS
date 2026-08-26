@@ -20,7 +20,7 @@ export default async function ComponentPage({
   }
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div>
       <div className="mb-5">
         <Breadcrumbs />
       </div>

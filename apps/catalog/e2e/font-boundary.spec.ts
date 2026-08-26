@@ -124,3 +124,84 @@ test("client-side navigation keeps the app alive", async ({ page }) => {
     "a soft navigation threw. Hard page loads hide errors that only fire when React renders on the client",
   ).toEqual([])
 })
+
+test("every framed specimen renders in the product's faces, not the catalog's", async ({
+  page,
+}) => {
+  /** The frames are found by crawling rather than listed here, so a specimen
+   *  added later is covered the moment a page frames it. */
+  await page.goto("/components")
+
+  const pages = await page
+    .locator("aside nav a")
+    .evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute("href") ?? ""),
+    )
+
+  const offenders: string[] = []
+  let frames = 0
+  let inspected = 0
+
+  for (const path of [...new Set(pages)].filter(Boolean)) {
+    await page.goto(path)
+
+    const sources = await page
+      .locator("iframe")
+      .evaluateAll((nodes) =>
+        nodes.map((node) => node.getAttribute("src") ?? ""),
+      )
+
+    for (const source of [...new Set(sources)].filter(Boolean)) {
+      await page.goto(source)
+      frames += 1
+
+      const families = await page
+        .locator("[data-slot], textarea, input")
+        .evaluateAll((nodes) =>
+          nodes.map((node) => ({
+            what: node.getAttribute("data-slot") ?? node.tagName.toLowerCase(),
+            family: getComputedStyle(node).fontFamily,
+          })),
+        )
+
+      inspected += families.length
+
+      for (const { what, family } of families) {
+        if (firstFamily(family) === CATALOG_FACE) {
+          offenders.push(`${source} → ${what} renders in ${CATALOG_FACE}`)
+        }
+      }
+    }
+  }
+
+  expect(
+    frames,
+    "no framed specimens were found: the crawl is wrong",
+  ).toBeGreaterThan(0)
+  expect(inspected).toBeGreaterThan(0)
+  expect(
+    offenders,
+    `A specimen is the product, not the catalog. Anything inside a frame that ` +
+      `resolves to ${CATALOG_FACE} is inheriting the catalog's body face.`,
+  ).toEqual([])
+})
+
+test("the catalog's code face is a real one", async ({ page }) => {
+  await page.goto("/blocks/faq")
+
+  const code = page.locator("main code").first()
+  await expect(code).toBeVisible()
+
+  const family = await code.evaluate(
+    (node) => getComputedStyle(node).fontFamily,
+  )
+
+  expect(
+    firstFamily(family),
+    "the token names Geist Mono, so the catalog has to load it or the browser falls back to Courier",
+  ).toBe("Geist Mono")
+  expect(
+    await page.evaluate(() => document.fonts.check("14px 'Geist Mono'")),
+    "and it has to be loaded, not merely named",
+  ).toBe(true)
+})

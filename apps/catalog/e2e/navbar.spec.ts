@@ -213,13 +213,9 @@ const TABS = [
   { name: "Mobile", width: 390 },
 ] as const
 
-test("the frame reports what its own bar renders, at every tab", async ({
-  page,
-}) => {
+test("the frame draws the bar true at every tab", async ({ page }) => {
   await page.goto(PAGE)
   await measured(page)
-
-  const wrong = []
 
   for (const tab of TABS) {
     await page.getByRole("button", { name: tab.name, exact: true }).click()
@@ -228,6 +224,9 @@ test("the frame reports what its own bar renders, at every tab", async ({
     const shell = page.locator(`[data-viewport="${String(tab.width)}"]`)
     await expect(shell).toHaveCount(1)
 
+    /** Measured straight off the frame's document. The frame renders at the
+     *  smaller of the tab's width and the column's, so what the bar owes is
+     *  derived from the width it actually stands at. */
     const read = await shell
       .locator("iframe")
       .contentFrame()
@@ -236,6 +235,7 @@ test("the frame reports what its own bar renders, at every tab", async ({
         const pill = header.querySelector("[data-slot='navbar-pill']")
 
         return {
+          frame: window.innerWidth,
           bar: Math.round(header.getBoundingClientRect().height),
           pill: pill ? Math.round(pill.getBoundingClientRect().width) : 0,
           links: [
@@ -244,16 +244,18 @@ test("the frame reports what its own bar renders, at every tab", async ({
         }
       })
 
-    const said = await shell.locator("[data-reading]").innerText()
-    const shown = read.links === 0 ? "an icon" : `${String(read.links)} links`
-    const owed = `band ${String(read.bar)}px · pill ${String(read.pill)}px · ${shown}`
+    const gutter = read.frame >= 1440 ? 120 : read.frame >= 810 ? 24 : 16
+    const owedPill = Math.min(794, read.frame - 2 * gutter)
 
-    if (said !== owed) {
-      wrong.push(`${tab.name}: ${said} against ${owed}`)
-    }
+    expect(read.bar, `${tab.name}: the band always stands 112`).toBe(112)
+    expect(read.pill, `${tab.name}: the pill takes what the width gives`).toBe(
+      owedPill,
+    )
+    expect(
+      read.links,
+      `${tab.name}: links above the tablet width, an icon below`,
+    ).toBe(read.frame >= 810 ? 2 : 0)
   }
-
-  expect(wrong).toEqual([])
 })
 
 test("the open menu fits the frame it is shown in", async ({ page }) => {

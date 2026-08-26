@@ -49,10 +49,6 @@ export function heightFor(width: number) {
   return entryFor(width).height
 }
 
-export function labelFor(width: number) {
-  return entryFor(width).label
-}
-
 export const CTA: NavbarCta = {
   label: "New chat",
   href: "#chat",

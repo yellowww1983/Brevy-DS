@@ -12,6 +12,17 @@ const STAGE = "[data-preloader-stage]"
  *  timer the component sets, rather than repeating their exact durations. */
 const PAST_EVERY_TIMER = 5_000
 
+/** Installing the clock does not stop it: time keeps flowing at real speed
+ *  until pauseAt, and a flowing clock let the overlay's own timers fire on
+ *  the machine's schedule, which is the race this suite exists to prevent.
+ *  Worse, advancing a flowing clock jumps the page's wall time, and the app
+ *  reacts to a five second jump by remounting, which resurrects the overlay
+ *  a test had already watched leave. Pause first, always. */
+async function frozen(page: import("@playwright/test").Page) {
+  await page.clock.install()
+  await page.clock.pauseAt(Date.now())
+}
+
 /** The flag and every timer are armed by the same effect, so the flag landing
  *  proves the timers exist. Advancing a frozen clock before that proves
  *  nothing: a timer scheduled afterwards is measured against time that has
@@ -22,6 +33,20 @@ async function hydrated(page: import("@playwright/test").Page) {
     .toBe("seen")
 }
 
+/** Advances the clock until the overlay is gone. One big advance is not
+ *  enough: the removal timer is armed by a React effect, and React schedules
+ *  its render through a channel the fake clock does not drive, so under load
+ *  the effect can land after a single runFor has already returned. Nudging
+ *  keeps time moving until whatever was armed late has fired. */
+async function cleared(page: import("@playwright/test").Page) {
+  await expect
+    .poll(async () => {
+      await page.clock.runFor(500)
+      return page.locator(OVERLAY).count()
+    })
+    .toBe(0)
+}
+
 /** This build of Playwright does not type reducedMotion/colorScheme as test
  *  options, so the emulated contexts are built by hand. */
 async function visit(
@@ -30,7 +55,7 @@ async function visit(
 ) {
   const context = await browser.newContext(options)
   const page = await context.newPage()
-  await page.clock.install()
+  await frozen(page)
   await page.goto("/components")
 
   return { page, context }
@@ -39,7 +64,7 @@ async function visit(
 test("the first visit plays the animation and clears itself", async ({
   page,
 }) => {
-  await page.clock.install()
+  await frozen(page)
   await page.goto("/components")
 
   await expect(page.locator(`${STAGE} svg`)).toBeVisible()
@@ -48,14 +73,13 @@ test("the first visit plays the animation and clears itself", async ({
   await hydrated(page)
 
   await page.clock.runFor(PAST_EVERY_TIMER)
-
-  await expect(page.locator(OVERLAY)).toHaveCount(0)
+  await cleared(page)
 })
 
 test("a reload in the same session never shows a frame of it", async ({
   page,
 }) => {
-  await page.clock.install()
+  await frozen(page)
   await page.goto("/components")
 
   /** The flag is written by an effect, so it lands some time after the
@@ -75,7 +99,7 @@ test("a reload in the same session never shows a frame of it", async ({
 })
 
 test("Escape takes it down", async ({ page }) => {
-  await page.clock.install()
+  await frozen(page)
   await page.goto("/components")
 
   await expect(page.locator(OVERLAY)).toBeVisible()
@@ -85,8 +109,7 @@ test("Escape takes it down", async ({ page }) => {
 
   await page.keyboard.press("Escape")
   await page.clock.runFor(PAST_EVERY_TIMER)
-
-  await expect(page.locator(OVERLAY)).toHaveCount(0)
+  await cleared(page)
 })
 
 test("reduced motion gets the static logo and never fetches the player", async ({
@@ -101,11 +124,10 @@ test("reduced motion gets the static logo and never fetches the player", async (
   await hydrated(page)
 
   await page.clock.runFor(PAST_EVERY_TIMER)
-
-  await expect(
-    page.locator(OVERLAY),
-    "without a transition to listen to, the overlay has to come down on a timer",
-  ).toHaveCount(0)
+  /** Still on a timer, never on the machine's speed: cleared() only ever
+   *  advances the frozen clock, so the overlay coming down here proves the
+   *  reduced motion timer fired rather than a transition. */
+  await cleared(page)
 
   const fetched = await page.evaluate(() =>
     performance
