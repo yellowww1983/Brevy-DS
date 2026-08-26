@@ -58,6 +58,13 @@ const buttonVariants = cva(
          *  is worn; disabled is the base's half opacity, which is what the
          *  file draws. */
         send: `rounded-full border border-olive-600 bg-surface-olive text-primary shadow-send data-active:border-transparent data-active:text-primary-foreground data-active:shadow-send-active ${SEND_ACTIVE_RING}`,
+        /** The footer's brand links. Every colour on it is a ramp colour: the
+         *  thread it wears cannot turn dark, so nothing on it may, the way the
+         *  chip is pinned. Pointed at, the thread goes out and the border
+         *  comes on — the overlay cannot simply change colour, and the border
+         *  is free here because the face is flat white rather than the chip's
+         *  gradient. */
+        social: `hairline rounded-md border border-transparent bg-white text-zinc-700 shadow-xs hover:border-emerald-500 hover:before:hidden`,
       },
       /** The height a button stands at, with the padding, the space beside an
        *  icon and the icon itself that go with it. `compact` is the navbar's
@@ -81,6 +88,13 @@ const buttonVariants = cva(
         variant: "send",
         size: "default",
         class: "w-12 px-0",
+      },
+      /** The social's square, for the reason written above the send's, one
+       *  size down: 36 with a 16 mark leaves the drawn 10 on each side. */
+      {
+        variant: "social",
+        size: "compact",
+        class: "w-9 px-0",
       },
     ],
     defaultVariants: {
