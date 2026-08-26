@@ -3,10 +3,21 @@ import { cn } from "../lib/utils.js"
 import { Avatar, AvatarFallback, AvatarGroup, AvatarImage } from "./avatar.js"
 
 /** The row four of the website's five heroes carry in the same form: a stack
- *  of faces, five stars, and a line of reassurance. It is a component rather
- *  than a piece of each hero because it is drawn identically in all four —
- *  same 32 avatars overlapping by 8, same five 16 by 15 stars 6 apart, same 12
- *  between the three parts, all centred on one another (`20919:10393`).
+ *  of faces, five stars, and a line of reassurance — 32 avatars overlapping by
+ *  8, five 16 by 15 stars 6 apart, 12 between the parts, all centred on one
+ *  another (`20919:10393`).
+ *
+ *  It does not stay a row. The file keeps all three inline down to the tablet
+ *  (`22624:7399`, still 555 by 32 with the sentence beside the stars) and
+ *  breaks it at mobile (`22626:8745`): the faces and the stars stay together on
+ *  one line, the sentence drops beneath them 12 away, and it drops a size with
+ *  it, from 18/28 to 14/24. Everything centres there, where the wide row is
+ *  packed to the start. Both other mobile heroes that carry the row break it
+ *  the same way (`22657:480`, `23402:998`), so it is the breakpoint's doing
+ *  rather than one page's.
+ *
+ *  The break is written as one column that becomes a row at the tablet, so the
+ *  12 is the same gap doing both jobs rather than two numbers that could drift.
  *
  *  Nothing about the claim is baked in. The faces and the sentence arrive as
  *  props, because "Join 2,000+ caregivers already using Brevy" is this site's
@@ -66,28 +77,35 @@ function SocialProof({
   return (
     <div
       data-slot="social-proof"
-      className={cn("flex items-center gap-3", className)}
+      className={cn(
+        "flex flex-col items-center gap-3 tablet:flex-row",
+        className,
+      )}
     >
-      <AvatarGroup>
-        {people.map((person) => (
-          <Avatar key={person.name}>
-            {person.photo ? (
-              <AvatarImage src={person.photo} alt={person.name} />
-            ) : null}
-            <AvatarFallback>{person.initials}</AvatarFallback>
-          </Avatar>
-        ))}
-      </AvatarGroup>
+      {/* The faces and the stars never part at any width, so they are one
+          thing the sentence sits beside or beneath. */}
+      <div data-slot="social-proof-faces" className="flex items-center gap-3">
+        <AvatarGroup>
+          {people.map((person) => (
+            <Avatar key={person.name}>
+              {person.photo ? (
+                <AvatarImage src={person.photo} alt={person.name} />
+              ) : null}
+              <AvatarFallback>{person.initials}</AvatarFallback>
+            </Avatar>
+          ))}
+        </AvatarGroup>
 
-      <div data-slot="social-proof-rating" className={RATING} aria-hidden>
-        {STARS.map((index) => (
-          <Star key={index} />
-        ))}
+        <div data-slot="social-proof-rating" className={RATING} aria-hidden>
+          {STARS.map((index) => (
+            <Star key={index} />
+          ))}
+        </div>
       </div>
 
       <p
         data-slot="social-proof-label"
-        className="text-lg text-beige-900 dark:text-muted-foreground"
+        className="text-center text-sm/6 text-beige-900 tablet:text-lg dark:text-muted-foreground"
       >
         {label}
       </p>

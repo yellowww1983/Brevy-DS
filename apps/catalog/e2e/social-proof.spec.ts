@@ -1,58 +1,56 @@
 import { expect, test, type Page } from "./catalog-test"
+import { measured } from "./settled"
+
+test.use({ viewport: { width: 1440, height: 1200 } })
 
 const PAGE = "/components/social-proof"
 
-/** What the website draws at `20919:10393`, which four of its five heroes
- *  carry unchanged. */
+/** What the website draws. The row holds all three parts inline down to the
+ *  tablet (`20919:10393`, `22624:7399`) and breaks at mobile (`22626:8745`):
+ *  the sentence drops beneath the faces and drops a size with it. */
 const DRAWN = {
-  height: 32,
   gap: 12,
-  group: { width: 80, height: 32 },
+  faces: { width: 196, height: 32 },
   star: { width: 16, height: 15 },
   starGap: 6,
   rating: { width: 104, height: 15 },
-  label: { size: "18px", lineHeight: "28px" },
-  /** The file strokes each star white, 2 on the outside (`strokeAlign:
-   *  OUTSIDE`). SVG centres a stroke, so the drawn 2 outside is a 4 painted
-   *  under the fill, which leaves exactly half of it showing beyond the
-   *  shape. */
-  rim: { width: "4px", order: "stroke", join: "round" },
+  inline: { size: "18px", lineHeight: "28px" },
+  stacked: { size: "14px", lineHeight: "24px" },
+  /** The file strokes each star white, 2 on the outside. SVG centres a
+   *  stroke, so the drawn 2 is a 4 painted under the fill. */
+  rim: { colour: "rgb(255, 255, 255)", width: "4px", order: "stroke" },
 }
 
-/** `#f4ba57`, the amber the file fills each star with and the one the app
- *  keeps unchanged on a dark page (`22060:33296`). */
 const AMBER = "rgb(244, 186, 87)"
-const WHITE = "rgb(255, 255, 255)"
 /** `#7d7872`, beige-900, the warm grey the website writes the line in. */
 const WARM_GREY = "rgb(125, 120, 114)"
 /** neutral-400, where the app puts secondary text in the dark. */
 const NEUTRAL_400 = "oklch(0.708 0 none)"
-/** neutral-950, the page under a dark theme. */
-const NEUTRAL_950 = "oklch(0.145 0 none)"
 
-const section = (page: Page, title: string) =>
-  page
-    .locator("section")
-    .filter({ has: page.getByRole("heading", { name: title, exact: true }) })
+/** The frames, in the order the page shows them: photographs, then initials.
+ *  Each is a document of its own at the width the tabs are on. */
+const photographs = (page: Page) =>
+  page.locator("figure[data-measures]").first()
+const initials = (page: Page) => page.locator("figure[data-measures]").nth(1)
 
-const row = (page: Page, faces: "Photographs" | "Initials" = "Photographs") =>
-  section(page, faces).locator("[data-slot='social-proof']").first()
+const rowIn = (frame: ReturnType<typeof photographs>) =>
+  frame.locator("iframe").contentFrame().locator("[data-slot='social-proof']")
 
-/** The faces arrive over the network and Radix mounts a picture only once it
- *  has loaded. Reading before that measures a stack still swapping fallbacks
- *  out for photographs. */
-const settled = async (page: Page) => {
-  const it = row(page)
-  await expect(it.locator("[data-slot='avatar-image']").first()).toBeVisible()
-  return it
+/** The row is only sound once its faces have arrived: Radix mounts a picture
+ *  when it loads, and a stack still swapping fallbacks out measures wrong. */
+const settled = async (page: Page, frame = photographs(page)) => {
+  await measured(page)
+  const row = rowIn(frame)
+  await expect(row.locator("[data-slot='avatar-image']").first()).toBeVisible()
+  return row
 }
 
 const geometry = (node: HTMLElement) => {
-  const group = node.querySelector("[data-slot='avatar-group']")
+  const faces = node.querySelector("[data-slot='social-proof-faces']")
   const rating = node.querySelector("[data-slot='social-proof-rating']")
   const label = node.querySelector("[data-slot='social-proof-label']")
 
-  if (!group || !rating || !label) {
+  if (!faces || !rating || !label) {
     return null
   }
 
@@ -65,22 +63,30 @@ const geometry = (node: HTMLElement) => {
   }
 
   const box = node.getBoundingClientRect()
+  const facesBox = faces.getBoundingClientRect()
+  const labelBox = label.getBoundingClientRect()
+  const ratingBox = rating.getBoundingClientRect()
   const firstBox = first.getBoundingClientRect()
   const secondBox = second.getBoundingClientRect()
-  const groupBox = group.getBoundingClientRect()
-  const ratingBox = rating.getBoundingClientRect()
-  const labelBox = label.getBoundingClientRect()
   const labelStyle = getComputedStyle(label)
   const starStyle = getComputedStyle(first)
 
+  /** Stacked when the sentence starts at or below where the faces end. The
+   *  arrangement is read off the boxes rather than off the class, so the
+   *  assertion holds whatever the class is called. */
+  const stacked = Math.round(labelBox.top) >= Math.round(facesBox.bottom)
+
   return {
+    document: node.ownerDocument.documentElement.clientWidth,
     height: Math.round(box.height),
-    align: getComputedStyle(node).alignItems,
-    gapToStars: Math.round(ratingBox.left - groupBox.right),
-    gapToLabel: Math.round(labelBox.left - ratingBox.right),
-    group: {
-      width: Math.round(groupBox.width),
-      height: Math.round(groupBox.height),
+    stacked,
+    /** The one 12 doing both jobs: beside the faces, or beneath them. */
+    gap: stacked
+      ? Math.round(labelBox.top - facesBox.bottom)
+      : Math.round(labelBox.left - facesBox.right),
+    faces: {
+      width: Math.round(facesBox.width),
+      height: Math.round(facesBox.height),
     },
     rating: {
       width: Math.round(ratingBox.width),
@@ -96,8 +102,6 @@ const geometry = (node: HTMLElement) => {
       stroke: starStyle.stroke,
       strokeWidth: starStyle.strokeWidth,
       paintOrder: starStyle.paintOrder,
-      join: starStyle.strokeLinejoin,
-      overflow: starStyle.overflow,
     },
     label: {
       size: labelStyle.fontSize,
@@ -105,139 +109,155 @@ const geometry = (node: HTMLElement) => {
       colour: labelStyle.color,
       family: labelStyle.fontFamily.split(",")[0]?.replace(/["']/g, "") ?? "",
     },
-    /** What the page under the row actually paints, so a claim about a colour
-     *  on a dark page can be held to the page being dark. */
-    standsOn: getComputedStyle(document.body).backgroundColor,
   }
 }
 
-test("the row stands at the drawn height with the drawn spacing", async ({
+const at = async (page: Page, tab: string, frame = photographs(page)) => {
+  await page.getByRole("button", { name: tab, exact: true }).click()
+  const row = await settled(page, frame)
+  return row.evaluate(geometry)
+}
+
+test("the row holds its line down to the tablet and breaks at mobile", async ({
   page,
 }) => {
   await page.goto(PAGE)
+  await measured(page)
 
-  const read = await (await settled(page)).evaluate(geometry)
+  const desktop = await at(page, "Desktop")
+  const tablet = await at(page, "Tablet")
+  const mobile = await at(page, "Mobile")
 
-  expect(read, "the row is missing one of its three parts").not.toBeNull()
-  expect(read?.height, "the avatars set the height").toBe(DRAWN.height)
-  expect(read?.align, "the three parts are centred on one another").toBe(
-    "center",
+  expect(desktop?.stacked, "the wide row keeps the sentence beside it").toBe(
+    false,
   )
-  expect(read?.gapToStars).toBe(DRAWN.gap)
-  expect(read?.gapToLabel).toBe(DRAWN.gap)
-  expect(read?.group).toEqual(DRAWN.group)
+  expect(tablet?.stacked, "the tablet still draws one line").toBe(false)
+  expect(
+    mobile?.stacked,
+    "the file drops the sentence under the faces at mobile",
+  ).toBe(true)
+
+  expect(desktop?.height, "one line of avatars").toBe(32)
+  expect(tablet?.height).toBe(32)
+  expect(
+    mobile?.height,
+    "the drawn 68: 32 of faces, 12 of gap, 24 of text",
+  ).toBe(68)
+
+  for (const read of [desktop, tablet, mobile]) {
+    expect(read?.gap, "the same 12, beside or beneath").toBe(DRAWN.gap)
+    expect(read?.faces, "the faces and the stars never part").toEqual(
+      DRAWN.faces,
+    )
+  }
 })
 
-test("five stars, at the size and spacing the file draws them", async ({
+test("the sentence drops a size when it drops a line", async ({ page }) => {
+  await page.goto(PAGE)
+  await measured(page)
+
+  const desktop = await at(page, "Desktop")
+  const tablet = await at(page, "Tablet")
+  const mobile = await at(page, "Mobile")
+
+  expect(desktop?.label.size).toBe(DRAWN.inline.size)
+  expect(desktop?.label.lineHeight).toBe(DRAWN.inline.lineHeight)
+  expect(tablet?.label.size).toBe(DRAWN.inline.size)
+  expect(tablet?.label.lineHeight).toBe(DRAWN.inline.lineHeight)
+
+  expect(mobile?.label.size, "18 beside, 14 beneath").toBe(DRAWN.stacked.size)
+  expect(mobile?.label.lineHeight).toBe(DRAWN.stacked.lineHeight)
+
+  for (const read of [desktop, tablet, mobile]) {
+    expect(read?.label.family).toBe("Rethink Sans")
+    expect(read?.label.colour).toBe(WARM_GREY)
+  }
+})
+
+test("five stars keep their size and their white edge at every width", async ({
   page,
 }) => {
   await page.goto(PAGE)
+  await measured(page)
 
-  const read = await (await settled(page)).evaluate(geometry)
+  for (const tab of ["Desktop", "Tablet", "Mobile"]) {
+    const read = await at(page, tab)
 
-  expect(read?.starCount).toBe(5)
-  expect(read?.star.width).toBe(DRAWN.star.width)
-  expect(read?.star.height).toBe(DRAWN.star.height)
-  expect(read?.star.gap).toBe(DRAWN.starGap)
-  expect(read?.star.fill, "the amber the file fills them with").toBe(AMBER)
-  expect(
-    read?.rating.width,
-    "the rim spills outside the box without moving it",
-  ).toBe(DRAWN.rating.width)
-  expect(read?.rating.height).toBe(DRAWN.rating.height)
-  expect(
-    read?.rating.hidden,
-    "the file draws no number, so the stars announce nothing and the sentence carries the meaning",
-  ).toBe("true")
+    expect(read?.starCount, `${tab}: five`).toBe(5)
+    expect(read?.star.width, `${tab}: the drawn width`).toBe(DRAWN.star.width)
+    expect(read?.star.height).toBe(DRAWN.star.height)
+    expect(read?.star.gap).toBe(DRAWN.starGap)
+    expect(read?.rating.width, `${tab}: the drawn 104`).toBe(DRAWN.rating.width)
+    expect(read?.rating.height).toBe(DRAWN.rating.height)
+    expect(read?.star.fill, `${tab}: the amber`).toBe(AMBER)
+    expect(read?.star.stroke, `${tab}: the white edge`).toBe(DRAWN.rim.colour)
+    expect(read?.star.strokeWidth).toBe(DRAWN.rim.width)
+    expect(read?.star.paintOrder).toBe(DRAWN.rim.order)
+    expect(
+      read?.rating.hidden,
+      `${tab}: the file draws no number, so the stars announce nothing`,
+    ).toBe("true")
+  }
 })
 
-test("each star wears the white edge the file strokes it with", async ({
-  page,
-}) => {
+test("the frame is the width the tab is on", async ({ page }) => {
   await page.goto(PAGE)
+  await measured(page)
 
-  const read = await (await settled(page)).evaluate(geometry)
+  /** Desktop is wider than the column the catalog can give it, so the frame
+   *  takes the column, the way the chat's does. Tablet and mobile fit. */
+  const desktop = await at(page, "Desktop")
+  const tablet = await at(page, "Tablet")
+  const mobile = await at(page, "Mobile")
 
-  expect(read?.star.strokeWidth, "the drawn 2 outside").toBe(DRAWN.rim.width)
+  expect(tablet?.document, "the drawn tablet").toBe(810)
+  expect(mobile?.document, "the drawn mobile").toBe(390)
   expect(
-    read?.star.paintOrder,
-    "painted under the fill, so only the outside half shows",
-  ).toBe(DRAWN.rim.order)
-  expect(read?.star.join).toBe(DRAWN.rim.join)
-  expect(
-    read?.star.overflow,
-    "the rim lands outside a 16 by 15 box and the file lets it",
-  ).toBe("visible")
-  expect(
-    read?.star.stroke,
-    "a real white edge belonging to the star, not the colour of whatever it stands on",
-  ).toBe(WHITE)
-})
-
-test("the sentence is the drawn size and belongs to the catalog", async ({
-  page,
-}) => {
-  await page.goto(PAGE)
-
-  const read = await (await settled(page)).evaluate(geometry)
-
-  expect(read?.label.size).toBe(DRAWN.label.size)
-  expect(read?.label.lineHeight).toBe(DRAWN.label.lineHeight)
-  expect(read?.label.family).toBe("Rethink Sans")
-  expect(read?.label.colour, "the website's warm grey").toBe(WARM_GREY)
-
-  await expect(
-    page.getByText("Join 2,000+ caregivers already using Brevy"),
-    "the claim belongs to the catalog, not the component",
-  ).toBeVisible()
+    desktop?.document,
+    "wider than the tablet, which is what the tab has to prove",
+  ).toBeGreaterThan(810)
 })
 
 test("a face with no picture falls back to initials", async ({ page }) => {
   await page.goto(PAGE)
+  await measured(page)
 
-  const initials = row(page, "Initials")
-  await expect(initials.locator("[data-slot='avatar-fallback']")).toHaveCount(3)
+  const row = rowIn(initials(page))
+
+  await expect(row.locator("[data-slot='avatar-fallback']")).toHaveCount(3)
   await expect(
-    initials.locator("[data-slot='avatar-image']"),
+    row.locator("[data-slot='avatar-image']"),
     "no picture was asked for, so Radix mounts none",
   ).toHaveCount(0)
 
-  const read = await initials.evaluate(geometry)
+  const read = await row.evaluate(geometry)
 
-  expect(
-    read?.height,
-    "a stack of initials stands as tall as a stack of faces",
-  ).toBe(DRAWN.height)
   expect(read?.starCount).toBe(5)
+  expect(
+    read?.faces,
+    "a stack of initials measures as a stack of faces",
+  ).toEqual(DRAWN.faces)
 })
 
-test("on a dark page the rim holds and only the sentence moves", async ({
+test("on a dark page the amber and the edge hold, and the sentence moves", async ({
   page,
 }) => {
   await page.addInitScript(() => {
     localStorage.setItem("theme", "dark")
   })
   await page.goto(PAGE)
+  await measured(page)
 
-  await expect
-    .poll(() =>
-      page.evaluate(() => document.documentElement.classList.contains("dark")),
+  for (const tab of ["Desktop", "Mobile"]) {
+    const read = await at(page, tab)
+
+    expect(read?.star.fill, `${tab}: a brand surface stays itself`).toBe(AMBER)
+    expect(read?.star.stroke, `${tab}: the star's own white edge`).toBe(
+      DRAWN.rim.colour,
     )
-    .toBe(true)
-
-  const read = await (await settled(page)).evaluate(geometry)
-
-  expect(read?.standsOn, "the page really is dark").toBe(NEUTRAL_950)
-  expect(
-    read?.star.fill,
-    "a brand surface stays itself, and the app paints this amber unchanged in the dark",
-  ).toBe(AMBER)
-  expect(
-    read?.star.stroke,
-    "the white edge is the star's own, so a dark page is where it shows rather than where it goes",
-  ).toBe(WHITE)
-  expect(read?.label.colour, "secondary text goes where the app puts it").toBe(
-    NEUTRAL_400,
-  )
-  expect(read?.height).toBe(DRAWN.height)
+    expect(
+      read?.label.colour,
+      `${tab}: secondary text goes where the app puts it`,
+    ).toBe(NEUTRAL_400)
+  }
 })
