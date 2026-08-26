@@ -41,6 +41,8 @@ export {
   useFormField,
 } from "./components/form.js"
 export { Input, inputVariants } from "./components/input.js"
+export { SocialProof } from "./components/social-proof.js"
+export type { SocialProofPerson } from "./components/social-proof.js"
 export type { InputProps } from "./components/input.js"
 export { Label } from "./components/label.js"
 export { Faq } from "./blocks/faq.js"

@@ -22,6 +22,7 @@ import {
   Instagram,
   Label,
   LinkedIn,
+  SocialProof,
   TikTok,
   type BadgeProps,
   type ButtonProps,
@@ -37,6 +38,7 @@ import {
 import type { ReactNode } from "react"
 
 import { MISSING_PHOTO, PEOPLE } from "./avatar"
+import { LABEL, LABEL_PARTIAL } from "./social-proof"
 import { ChatFrame } from "./components/chat-frame"
 import { EmailField } from "./components/email-field"
 
@@ -483,6 +485,46 @@ export const components: readonly ComponentEntry[] = [
           <AvatarImage src={source} alt={person.name} />
           <AvatarFallback>{person.initials}</AvatarFallback>
         </Avatar>
+      )
+    },
+  },
+  {
+    slug: "social-proof",
+    name: "Social proof",
+    // The row is 555 wide where it is drawn and its sentence is one line; a
+    // grid cell folds it into a column, which is a different object.
+    wide: true,
+    // Drawn from Brevy Website · the row at `20919:10393`, carried in the same
+    // form by four of the file's five heroes. The file draws only the
+    // photographs form; initials are the same fallback the Avatar already has,
+    // shown here because a stack of faces is rarely complete.
+    //
+    // The star wears the white edge the file strokes it with, so it reads on a
+    // dark page and disappears into a pale one. That is the light theme being
+    // what it is, not something for the preview to work around.
+    axes: [
+      {
+        label: "Faces",
+        values: ["Photographs", "Initials"],
+        phrasing: {
+          Photographs: "with the pictures we have",
+          Initials: "with initials, for people whose picture never arrived",
+        },
+      },
+    ],
+    omitted: [],
+    render: (combination) => {
+      const withPhotos = combination.Faces === "Photographs"
+
+      return (
+        <SocialProof
+          people={PEOPLE.map((person) => ({
+            name: person.name,
+            initials: person.initials,
+            photo: withPhotos ? person.photo : undefined,
+          }))}
+          label={withPhotos ? LABEL : LABEL_PARTIAL}
+        />
       )
     },
   },
