@@ -1,7 +1,7 @@
 import { Navbar } from "@brevy/ui"
 import { MessageCircleHeart } from "lucide-react"
 
-import { BrevyLockup } from "@/components/brevy-logo"
+import { BrevyWordmark } from "@/components/brevy-logo"
 import { CTA, LINKS } from "@/navbar"
 
 /** Rendered inside a frame on the navbar page. It lives outside the catalog
@@ -15,7 +15,7 @@ export default function NavbarSpecimenPage() {
   return (
     <div className="min-h-dvh bg-background">
       <Navbar
-        logo={<BrevyLockup />}
+        logo={<BrevyWordmark />}
         links={LINKS}
         cta={{ ...CTA, icon: <MessageCircleHeart aria-hidden /> }}
       />
