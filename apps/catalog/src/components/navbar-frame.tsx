@@ -2,20 +2,10 @@
 
 import { useEffect, useRef, useState } from "react"
 
-import { heightFor, labelFor } from "@/navbar"
+import { heightFor } from "@/navbar"
 
 import { useFrameTheme } from "./frame-theme"
 import { useViewport } from "./viewport-frame"
-
-type Reading = {
-  /** The width this was read at. The tabs switch faster than the frame
-   *  relaid out, and a caption carrying the previous width's numbers is a
-   *  caption that has stopped describing the picture beside it. */
-  width: number
-  bar: number
-  pill: number
-  links: number
-}
 
 /** The block is a page header, so it only means anything at the top of a page.
  *  The frame is a document of its own at the chosen width, tall enough to read
@@ -31,7 +21,10 @@ export function NavbarFrame() {
   const frame = useRef<HTMLIFrameElement>(null)
   const column = useRef<HTMLDivElement>(null)
   const [room, setRoom] = useState(0)
-  const [reading, setReading] = useState<Reading | null>(null)
+  /** The width the frame was last read at. The tabs switch faster than the
+   *  frame relays out, so readiness is tied to the width it was read at,
+   *  which is what the suite's measured() helper waits on. */
+  const [readAt, setReadAt] = useState<number | null>(null)
   const [loads, setLoads] = useState(0)
 
   /** Never wider than the column it sits in, and never scaled. A desktop bar
@@ -81,18 +74,7 @@ export function NavbarFrame() {
         return
       }
 
-      setReading({
-        width,
-        bar: Math.round(bar.getBoundingClientRect().height),
-        pill: Math.round(pill.getBoundingClientRect().width),
-        /** Counted by what the frame draws rather than by what is in its
-         *  markup: below the tablet width the links are still there and take up
-         *  no room, and a caption saying two of them is a caption that has
-         *  stopped describing the picture beside it. */
-        links: [
-          ...document_.querySelectorAll("nav[aria-label='Main'] a"),
-        ].filter((link) => link.getBoundingClientRect().width > 0).length,
-      })
+      setReadAt(width)
     }
 
     read()
@@ -106,35 +88,13 @@ export function NavbarFrame() {
     }
   }, [loads, width])
 
-  const current = reading && reading.width === width ? reading : null
-  const shown = current
-    ? current.links === 0
-      ? "an icon"
-      : `${String(current.links)} links`
-    : ""
-
   return (
     <figure
       data-measures
-      data-measured={current ? "" : undefined}
+      data-measured={readAt === width ? "" : undefined}
       data-viewport={String(nominal)}
       className="mt-6"
     >
-      <figcaption className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-        <span className="text-sm font-medium">{labelFor(nominal)}</span>
-        <span className="font-mono text-xs text-muted-foreground">
-          {width}px
-        </span>
-        {current ? (
-          <span
-            data-reading
-            className="font-mono text-xs text-muted-foreground"
-          >
-            {`band ${String(current.bar)}px · pill ${String(current.pill)}px · ${shown}`}
-          </span>
-        ) : null}
-      </figcaption>
-
       <div ref={column} className="mt-3">
         <div
           style={{ width, height }}

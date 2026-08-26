@@ -100,6 +100,33 @@ failures cannot be identified in hindsight, but both wore this signature: a
 - **`DESIGN-FEEDBACK.md` handoff.** 17 findings, 3 of them blocking, still to be
   walked through with the designer.
 
+## The product's face is not the default one
+
+The catalog's `body` carries `font-catalog`, the chrome's Inter, and the
+system's own face arrives only where something asks for it: the class on the
+preview box in `component-view`, one wrapper in `specimen.tsx`, and now
+`app/specimens/layout.tsx`. That is the wrong way round. The catalog exists to
+show the product, so the product's face should be the default and the chrome
+should be the exception that names itself.
+
+The symptom this treated: every component text inside a frame that carried no
+face of its own rendered in Inter, measured through CDP
+`CSS.getPlatformFontsForNode` at 15 of 68 text elements — the navbar's three
+buttons, the FAQ's questions, answers, description and contact card, and the
+chat's placeholder. The specimens layout fixes those. It does not fix the
+arrangement that allowed them.
+
+The trap left behind, for whoever picks this up: an inline preview keeps the
+system face **through the box around it**, and a registry entry carrying the
+`viewport` flag has no box, because a framed preview draws no second border.
+Such an entry is safe today only because its content lives in a frame, which
+the specimens layout covers. An entry with the flag rendered inline would fall
+through both and come out in Inter, and nothing would fail.
+
+The real fix is to flip the default: `font-sans` on the body, `font-catalog`
+on the chrome shell. It touches every catalog page, which is why it is written
+here rather than done in passing.
+
 ## Two light objects have no dark drawing, and three pairs have no drawing at all
 
 The chip and the FAQ band paint themselves in ramp colours, so they stay light

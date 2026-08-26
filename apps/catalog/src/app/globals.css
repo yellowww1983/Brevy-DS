@@ -20,6 +20,7 @@
 @theme inline {
   --font-sans: var(--font-rethink-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-hedvig), ui-serif, Georgia, serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
   --font-catalog: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
   --color-catalog-hover: var(--catalog-hover);
