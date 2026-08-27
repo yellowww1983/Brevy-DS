@@ -252,6 +252,22 @@
 
   --icon-stroke-width: 1.5;
 
+  /* The shape the split hero's photograph is cut to: the Union of the two
+     mirrored vectors the file masks it with (`22653:4876`), read off its
+     flattened geometry at the size the file draws it.
+
+     It is the brand mark and it is not the lockup's path. The two are drawn
+     rather than scaled from each other, and the separators are what differ:
+     the lockup parts its quadrants by 11.1% of its width and this parts them
+     by 5.1%, because a gap that reads at 40px is a canyon at 592. Cutting a
+     photograph with the lockup's path leaves a white band down the middle of
+     it and pushes the right half off its own edge. So this is its own path,
+     and the two are meant to be kept in step by eye rather than by code.
+
+     `preserveAspectRatio='none'`, so the viewBox is the drawn 592 by 601.953
+     and the shape stretches to whatever box it is put in. */
+  --mask-brevy-mark: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 592 601.953' preserveAspectRatio='none'><path fill='white' d='M184.912 0 C237.931 0.000214411 280.912 42.9808 280.912 96 L280.912 505.953 C280.912 558.972 237.931 601.953 184.912 601.953 L0 601.953 L0 419.632 C0.000170585 366.613 42.9808 323.632 96 323.632 L189.265 323.632 L189.265 291.697 L96 291.697 C42.9807 291.697 0 248.717 0 195.697 L0 0 L184.912 0 Z M592 195.698 C592 248.717 549.019 291.698 496 291.698 L402.735 291.698 L402.735 323.633 L496 323.633 C549.019 323.633 592 366.613 592 419.633 L592 601.953 L407.088 601.953 C354.069 601.953 311.088 558.972 311.088 505.953 L311.088 96 C311.088 42.9808 354.069 0.000214411 407.088 0 L592 0 L592 195.698 Z'/></svg>");
+
   /* The three widths the website is drawn at. Mobile is 390 and needs no
      breakpoint, because it is where the page starts. */
   --breakpoint-tablet: 810px;
@@ -297,8 +313,16 @@
   --text-h3--line-height: 1.45;
   --text-h3--font-weight: 600;
 
+  /* The file tracks its body copy at -0.9%: every Rethink Sans paragraph on
+     the Caregiving page carries it, and the only text at 0 is chrome inherited
+     from shadcn — form labels, an input's description, a `Subscribe`. Written
+     here rather than per-block because it is a property of the role, and
+     because leaving it off changes where lines break: the split hero's promise
+     needs 375.5px to break in two at a width the file gives 374, so it broke
+     in three. */
   --text-body-lg: 1.25rem;
   --text-body-lg--line-height: 1.45;
+  --text-body-lg--letter-spacing: -0.009em;
 
   --text-body: 1rem;
   --text-body--line-height: 1.5;
@@ -352,6 +376,25 @@
    (`17085:178010`), the field at 15% (`17086:205826`), the separator at 10%
    (`17086:208057`) — and no gradient among them. The dark branch below is
    that: `--border`, which is exactly the 10% the cards wear. */
+/* The Brevy mark, as a mask rather than a drawing. The file cuts the split
+   hero's photograph to this shape with a boolean union of two mirrored
+   vectors (`22653:4876`). It is the brand mark but not the lockup's path —
+   the reason the two are separate is written beside `--mask-brevy-mark`.
+
+   A mask rather than a `clipPath` element: a clip path needs an id, and a
+   fixed id collides the moment a page carries two of whatever uses it, which
+   is the reason the lockup dropped Figma's own. `preserveAspectRatio='none'`
+   lets the square mark stretch to whatever box it is put on.
+
+   It is a utility rather than a component because the file uses this shape
+   twenty times over outside any hero — every `Photo` in the home pages'
+   content sections wears it. When one of those is built, it has this. */
+@utility mask-brevy-mark {
+  mask-image: var(--mask-brevy-mark);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
 @utility hairline {
   position: relative;
   --hairline-paint: linear-gradient(
@@ -433,6 +476,31 @@
      It only binds where the column is wider than it is, so at mobile the line
      fills the 358 the way the file draws it and this never applies. */
   --hero-lede: 36.75rem;
+
+  /* The split hero. The copy column, the picture beside it and the promise
+     card that overlaps them both, all drawn once on the Caregiving page
+     (`22653:4849`). 576 + 32 of gutter + 592 is the 1200 the row measures.
+
+     The card's two offsets are where it hangs off the picture: 184 to the
+     left of the picture's edge and 107 above its foot, which is what puts a
+     third of it on the gradient and the rest on the photograph. */
+  --hero-split-copy: 36rem;
+  /* Inside the 576 column the file sets its text to 491 and holds the line
+     under the heading to 391, the way the centred hero holds its lede
+     narrower than its heading (`22653:4858`, `22653:4861`). */
+  --hero-split-text: 30.6875rem;
+  --hero-split-lede: 24.4375rem;
+  --hero-split-picture: 37rem;
+  --hero-split-picture-height: 37.625rem;
+  --hero-split-card: 26.375rem;
+
+  /* Where the floating card sits, anchored to the middle of the page rather
+     than either edge: the row is a centred 1200, so half of it plus the
+     card's own offset is the only anchor that holds at more than one width.
+     176 left of centre puts its left edge on the drawn 544 at 1440, and 141
+     is its foot above the section's. */
+  --hero-split-card-x: 11rem;
+  --hero-split-card-bottom: 8.8125rem;
   --hero-height: 41.875rem;
   --hero-height-narrow: 47.3125rem;
   --hero-band: 26.625rem;
@@ -500,6 +568,21 @@
   --destructive: var(--color-red-500);
   --destructive-foreground: var(--color-red-50);
   --border: var(--color-neutral-300);
+  /* The line along the top of a band that sits against the foot of a section.
+     Flat black at 10%, which is what the file strokes the split hero's promise
+     with where it stops floating and becomes a band (`22657:503`,
+     `22657:508`): one side, `strokeAlign: INSIDE`, no shadow, and pointedly
+     not the gradient thread the cards wear — a band has no bottom edge to run
+     a gradient towards.
+
+     It is the same black on a dark page, which is the one place this parts
+     from `--border` above. The rule there — every dark outline is flat white
+     at 10% — is a rule about surfaces that darken. This edge sits on a brand
+     surface: violet-50 holds in both themes, the way olive and amber do, so
+     the edge holds with it. An outline follows the thing it is drawn on, not
+     the theme the page is in, and white at 10% over violet-50 composites to
+     violet-50 — a line that measures as no line at all. */
+  --band-edge: rgb(0 0 0 / 0.1);
   --input: var(--color-neutral-300);
   --ring: var(--color-neutral-400);
   --ring-offset: var(--color-white);
@@ -587,6 +670,7 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
+  --color-band-edge: var(--band-edge);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset: var(--ring-offset);
