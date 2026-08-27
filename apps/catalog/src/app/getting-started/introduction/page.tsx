@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 
 import {
@@ -7,6 +8,11 @@ import {
   LINK,
 } from "@/components/content-page"
 import type { Section } from "@/components/table-of-contents"
+
+/** One sentence for both drawings: whichever the page is showing, it is the
+ *  same picture of the same thing. */
+const OVERVIEW_ALT =
+  "Two hands assembling a page out of the system's parts: a card, a search field, a status list, a row of colours and a pager, laid out among leaves"
 
 const SECTIONS: readonly Section[] = [
   { id: "who-this-is-for", title: "Who this is for" },
@@ -26,9 +32,37 @@ export default function IntroductionPage() {
         without writing code from scratch.
       </p>
 
-      <ImageSlot>
-        Hero: catalog overview showing components and blocks side by side
-      </ImageSlot>
+      {/* The first picture the catalog carries, so it is the first to answer
+          how one is served: `next/image` rather than a bare tag, which is what
+          the framework's own rule asks for and what turns one file into the
+          formats and widths a reader's browser actually wants.
+
+          Two pictures rather than one tinted. The file draws the dark page as
+          its own artwork — dark cards, dark foliage, the same hands — so this
+          is a second drawing, not the first one dimmed. Both are cut out, and
+          the ground under them is the page's own.
+
+          Swapped by class rather than by `<picture media>`, because the theme
+          here is a class on the root and a media query would answer the
+          reader's system instead of the toggle. */}
+      <figure className="my-10">
+        <Image
+          src="/catalog/overview-light.webp"
+          alt={OVERVIEW_ALT}
+          width={1417}
+          height={1110}
+          sizes="(min-width: 48rem) 48rem, 100vw"
+          className="w-full dark:hidden"
+        />
+        <Image
+          src="/catalog/overview-dark.webp"
+          alt={OVERVIEW_ALT}
+          width={1410}
+          height={1115}
+          sizes="(min-width: 48rem) 48rem, 100vw"
+          className="hidden w-full dark:block"
+        />
+      </figure>
 
       <h2 id="who-this-is-for" className={HEADING}>
         Who this is for
