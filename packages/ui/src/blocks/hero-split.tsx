@@ -65,10 +65,12 @@ type HeroSplitCard = {
  *  photograph inside it; the shape is the identity, and a hero wearing
  *  somebody else's silhouette is not this hero.
  *
- *  Kept as its own piece here rather than inlined, because the file uses this
- *  treatment twenty times over outside any hero — every `Photo` in the home
- *  pages' content sections wears it — so the day one of those is built, this
- *  lifts out whole. */
+ *  Kept as its own piece here rather than inlined, because it is not this
+ *  hero's alone. Counted across the file: fifteen nodes, which collapse to two
+ *  drawings — the home pages' `Your superhuman social worker` (four seasons by
+ *  three breakpoints) and this hero — plus the Open Graph image. Two places,
+ *  not twenty, and the second of them is a content section rather than a hero.
+ *  So the day that section is built, this lifts out whole. */
 function ShapedPicture({ src, alt }: { src: string; alt: string }) {
   return (
     <div
