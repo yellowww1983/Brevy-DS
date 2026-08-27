@@ -11,6 +11,7 @@ import {
   Palette,
   PanelBottom,
   PanelTop,
+  Signpost,
   Shapes,
   Squircle,
   Type,
@@ -71,6 +72,7 @@ const BLOCKS: readonly (Entry | Family)[] = [
     ],
   },
   { label: "FAQ", icon: CircleHelp, href: "/blocks/faq" },
+  { label: "CTA Band", icon: Signpost, href: "/blocks/cta" },
   { label: "Footer", icon: PanelBottom, href: "/blocks/footer" },
 ]
 
