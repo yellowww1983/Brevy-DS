@@ -27,11 +27,19 @@ const WARM_GREY = "rgb(125, 120, 114)"
 /** neutral-400, where the app puts secondary text in the dark. */
 const NEUTRAL_400 = "oklch(0.708 0 none)"
 
-/** The frames, in the order the page shows them: photographs, then initials.
- *  Each is a document of its own at the width the tabs are on. */
-const photographs = (page: Page) =>
-  page.locator("figure[data-measures]").first()
-const initials = (page: Page) => page.locator("figure[data-measures]").nth(1)
+/** The frames, chosen by what they show rather than by where they sit. Each
+ *  is a document of its own at the width the tabs are on, and the page now
+ *  crosses two axes, so a position is not an identity: adding the layout axis
+ *  moved the initials from second place to third. The query string each frame
+ *  loads is the thing that does not move. */
+const frameFor = (page: Page, query: string) =>
+  page.locator(
+    `figure[data-measures]:has(iframe[src$="/specimens/social-proof${query}"])`,
+  )
+
+const photographs = (page: Page) => frameFor(page, "")
+const initials = (page: Page) => frameFor(page, "?faces=initials")
+const stackedFrame = (page: Page) => frameFor(page, "?layout=stacked")
 
 const rowIn = (frame: ReturnType<typeof photographs>) =>
   frame.locator("iframe").contentFrame().locator("[data-slot='social-proof']")
@@ -149,6 +157,31 @@ test("the row holds its line down to the tablet and breaks at mobile", async ({
     expect(read?.faces, "the faces and the stars never part").toEqual(
       DRAWN.faces,
     )
+  }
+})
+
+test("the stacked layout stacks at every width, 4 under the faces", async ({
+  page,
+}) => {
+  await page.goto(PAGE)
+  await measured(page)
+
+  const frame = stackedFrame(page)
+  const reads = []
+
+  for (const tab of ["Desktop", "Tablet", "Mobile"]) {
+    reads.push([tab, await at(page, tab, frame)] as const)
+  }
+
+  for (const [tab, read] of reads) {
+    expect(read?.stacked, `${tab}: the sentence stays under the faces`).toBe(
+      true,
+    )
+    expect(read?.gap, `${tab}: the drawn 4, not the inline 12`).toBe(4)
+    expect(read?.faces, `${tab}: the faces and the stars never part`).toEqual(
+      DRAWN.faces,
+    )
+    expect(read?.height, `${tab}: 32 of faces, 4 of gap, 24 of text`).toBe(60)
   }
 })
 

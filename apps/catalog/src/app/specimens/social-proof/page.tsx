@@ -14,10 +14,11 @@ import { LABEL, LABEL_PARTIAL } from "@/social-proof"
 export default async function SocialProofSpecimenPage({
   searchParams,
 }: {
-  searchParams: Promise<{ faces?: string }>
+  searchParams: Promise<{ faces?: string; layout?: string }>
 }) {
-  const { faces } = await searchParams
+  const { faces, layout } = await searchParams
   const withPhotos = faces !== "initials"
+  const stacked = layout === "stacked"
 
   return (
     <Container className="py-4">
@@ -28,6 +29,7 @@ export default async function SocialProofSpecimenPage({
           photo: withPhotos ? person.photo : undefined,
         }))}
         label={withPhotos ? LABEL : LABEL_PARTIAL}
+        layout={stacked ? "stacked" : "inline"}
       />
     </Container>
   )
