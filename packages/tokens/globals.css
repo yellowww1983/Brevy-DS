@@ -266,6 +266,33 @@
 
      `preserveAspectRatio='none'`, so the viewBox is the drawn 592 by 601.953
      and the shape stretches to whatever box it is put in. */
+  /* The mark as the lockup draws it, for painting rather than cutting: the CTA
+     band opens with it at 128, filled with a gradient rather than a flat
+     green (`22615:8408`). Its own token beside `--mask-brevy-mark` because
+     the two are different drawings of one mark and the difference is
+     measurable — this one parts its quadrants by 11.1% of its width, that one
+     by 5.1%. Read off the band's own flattened geometry, which came back at
+     14.21 in 127.99: the lockup's proportions, not the photograph cut's.
+
+     A mask rather than an SVG with a `linearGradient` inside, because a
+     gradient needs an id and a fixed id collides the moment a page carries
+     two bands. The gradient is then an ordinary background the mask reveals.
+
+     No `preserveAspectRatio='none'` here: the mark is square and painting it
+     stretched would be a distorted logo rather than a cropped photograph. */
+  /* The leaf the deep band tucks into two of its corners (`25297:4633`,
+     `25297:4635`). Read off the flattened geometry at the 168 it is drawn at:
+     two opposite corners at 67.2, one at 16 — the card's own radius, which is
+     what lets it sit flush in the corner — and the fourth square, which is the
+     one that points inward.
+
+     One path rather than two. The second leaf is this one turned 180°, so the
+     square corner and the 16 swap ends; `rotate-180` says that and a second
+     copy would not. */
+  --mask-brevy-leaf: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 168 168'><path fill='white' d='M0 67.2 C0 30.0864 30.0866 0 67.2 0 L168 0 L168 100.8 C168 137.913 137.913 168 100.8 168 L16 168 C7.16344 168 0 160.837 0 152 L0 67.2 Z'/></svg>");
+
+  --mask-brevy-lockup-mark: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><path fill='white' d='M17.7803 17.7783V22.2227H17.7773V32.8887C17.7773 36.8159 14.5942 39.9998 10.667 40H0V29.333C0.000102451 25.4057 3.18403 22.2217 7.11133 22.2217H13.3359V17.7783H17.7803ZM26.6631 22.2217H32.8857C36.8129 22.2219 39.996 25.4059 39.9961 29.333V40H29.3301C25.4027 40 22.2188 36.816 22.2188 32.8887V17.7783H26.6631V22.2217ZM10.667 0C14.5942 0.000175659 17.7773 3.18408 17.7773 7.11133V17.7773H7.11133C3.18408 17.7773 0.000175662 14.5942 0 10.667V0H10.667ZM39.9961 10.667C39.9959 14.5941 36.8128 17.7772 32.8857 17.7773H22.2188V7.11133C22.2188 3.18397 25.4027 0 29.3301 0H39.9961V10.667Z'/></svg>");
+
   --mask-brevy-mark: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 592 601.953' preserveAspectRatio='none'><path fill='white' d='M184.912 0 C237.931 0.000214411 280.912 42.9808 280.912 96 L280.912 505.953 C280.912 558.972 237.931 601.953 184.912 601.953 L0 601.953 L0 419.632 C0.000170585 366.613 42.9808 323.632 96 323.632 L189.265 323.632 L189.265 291.697 L96 291.697 C42.9807 291.697 0 248.717 0 195.697 L0 0 L184.912 0 Z M592 195.698 C592 248.717 549.019 291.698 496 291.698 L402.735 291.698 L402.735 323.633 L496 323.633 C549.019 323.633 592 366.613 592 419.633 L592 601.953 L407.088 601.953 C354.069 601.953 311.088 558.972 311.088 505.953 L311.088 96 C311.088 42.9808 354.069 0.000214411 407.088 0 L592 0 L592 195.698 Z'/></svg>");
 
   /* The three widths the website is drawn at. Mobile is 390 and needs no
@@ -392,6 +419,18 @@
    breakpoints, and the split hero — plus the Open Graph image. Two places
    rather than twenty, and one of them is a content section. When that section
    is built, it has this. */
+@utility mask-brevy-leaf {
+  mask-image: var(--mask-brevy-leaf);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
+@utility mask-brevy-lockup-mark {
+  mask-image: var(--mask-brevy-lockup-mark);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
 @utility mask-brevy-mark {
   mask-image: var(--mask-brevy-mark);
   mask-size: 100% 100%;
@@ -487,6 +526,18 @@
      The card's two offsets are where it hangs off the picture: 184 to the
      left of the picture's edge and 107 above its foot, which is what puts a
      third of it on the gradient and the rest on the photograph. */
+  /* The CTA band. 560 is a floor rather than the drawn fixed height: the file
+     sets each band's height by hand and centres the copy in it, so 96 above
+     and below is what the subtraction left over. Written as padding instead,
+     it reproduces the drawn 560 (Caregiving) and 640 (For Organizations)
+     exactly, and lets a longer line grow the band rather than overflow it.
+
+     586 is the width the file gives the heading in four bands out of four.
+     The line under it is drawn narrower on three of them and wider on one, so
+     the heading's is the measure both take. */
+  --cta-height: 35rem;
+  --cta-copy: 36.625rem;
+
   --hero-split-copy: 36rem;
   /* Inside the 576 column the file sets its text to 491 and holds the line
      under the heading to 391, the way the centred hero holds its lede
