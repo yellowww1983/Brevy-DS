@@ -2,52 +2,27 @@
 
 import { useEffect, useRef, useState } from "react"
 
+import { FrameWindow } from "./frame-window"
 import { useFrameTheme } from "./frame-theme"
 import { useViewport } from "./viewport-frame"
 
 /** The block at the chosen width, in a document of its own: it paints a full
  *  width band and its gutters follow the document, so a width can only be
  *  shown by giving it one. Never scaled, the way the navbar's frame is never
- *  scaled; where the nominal width does not fit the column it takes the
- *  column's width, which leaves everything inside at its own size.
+ *  Never scaled, the way every block frame is never scaled, and never
+ *  shrunk to the catalog's column either: see `FrameWindow`.
  *
  *  The height follows the content, because opening a question grows it. */
 export function FaqFrame() {
-  const nominal = useViewport()
+  const width = useViewport()
   const frame = useRef<HTMLIFrameElement>(null)
-  const column = useRef<HTMLDivElement>(null)
-  const [room, setRoom] = useState(0)
   const [height, setHeight] = useState(600)
   /** The width the frame was last read at, which is what the suite's
    *  measured() helper waits on across tab switches. */
   const [readAt, setReadAt] = useState<number | null>(null)
   const [loads, setLoads] = useState(0)
 
-  const width = room > 0 ? Math.min(nominal, room) : nominal
-
   useFrameTheme(frame, loads)
-
-  useEffect(() => {
-    const element = column.current
-
-    if (!element) {
-      return
-    }
-
-    const fit = () => {
-      setRoom(element.clientWidth)
-    }
-
-    fit()
-
-    const observer = new ResizeObserver(fit)
-
-    observer.observe(element)
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [])
 
   useEffect(() => {
     const document_ = frame.current?.contentDocument
@@ -85,26 +60,21 @@ export function FaqFrame() {
     <figure
       data-measures
       data-measured={readAt === width ? "" : undefined}
-      data-viewport={String(nominal)}
+      data-viewport={String(width)}
       className="mt-6"
     >
-      <div ref={column} className="mt-3">
-        <div
+      <FrameWindow width={width} height={height} className="mt-3">
+        <iframe
+          ref={frame}
+          src="/specimens/faq"
+          title={`FAQ at ${String(width)}px`}
           style={{ width, height }}
-          className="overflow-hidden rounded-xl border border-border"
-        >
-          <iframe
-            ref={frame}
-            src="/specimens/faq"
-            title={`FAQ at ${String(nominal)}px`}
-            style={{ width, height }}
-            onLoad={() => {
-              setLoads((count) => count + 1)
-            }}
-            className="block border-0 bg-background"
-          />
-        </div>
-      </div>
+          onLoad={() => {
+            setLoads((count) => count + 1)
+          }}
+          className="block border-0 bg-background"
+        />
+      </FrameWindow>
     </figure>
   )
 }

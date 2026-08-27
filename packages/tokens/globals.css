@@ -386,9 +386,12 @@
    is the reason the lockup dropped Figma's own. `preserveAspectRatio='none'`
    lets the square mark stretch to whatever box it is put on.
 
-   It is a utility rather than a component because the file uses this shape
-   twenty times over outside any hero — every `Photo` in the home pages'
-   content sections wears it. When one of those is built, it has this. */
+   It is a utility rather than a component because the shape outlives this one
+   hero. Counted across the file: fifteen nodes collapsing to two drawings —
+   the home pages' `Your superhuman social worker`, at four seasons by three
+   breakpoints, and the split hero — plus the Open Graph image. Two places
+   rather than twenty, and one of them is a content section. When that section
+   is built, it has this. */
 @utility mask-brevy-mark {
   mask-image: var(--mask-brevy-mark);
   mask-size: 100% 100%;
