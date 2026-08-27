@@ -518,12 +518,28 @@ export const components: readonly ComponentEntry[] = [
           Initials: "with initials, for people whose picture never arrived",
         },
       },
+      {
+        label: "Layout",
+        values: ["Inline", "Stacked"],
+        phrasing: {
+          Inline:
+            "the sentence beside the faces, dropping under them where the row runs out of room",
+          Stacked:
+            "the sentence under the faces at every width, for a hero that has a picture beside its copy",
+        },
+      },
     ],
     omitted: [],
     render: (combination) => {
       const withPhotos = combination.Faces === "Photographs"
+      const stacked = combination.Layout === "Stacked"
 
-      return <SocialProofFrame faces={withPhotos ? undefined : "initials"} />
+      return (
+        <SocialProofFrame
+          faces={withPhotos ? undefined : "initials"}
+          layout={stacked ? "stacked" : undefined}
+        />
+      )
     },
   },
   {

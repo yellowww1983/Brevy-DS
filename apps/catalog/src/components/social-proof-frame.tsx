@@ -17,7 +17,23 @@ import { useViewport } from "./viewport-frame"
  *  width does not fit the column the frame takes the column's width, which
  *  leaves everything inside at its own size. The height follows the content,
  *  because the row is one line wide and two lines narrow. */
-export function SocialProofFrame({ faces }: { faces?: "initials" }) {
+/** The two axes as a query string, empty where both are the default. */
+function query(faces?: string, layout?: string) {
+  const parts = [
+    ...(faces ? [`faces=${faces}`] : []),
+    ...(layout ? [`layout=${layout}`] : []),
+  ]
+
+  return parts.length > 0 ? `?${parts.join("&")}` : ""
+}
+
+export function SocialProofFrame({
+  faces,
+  layout,
+}: {
+  faces?: "initials"
+  layout?: "stacked"
+}) {
   const nominal = useViewport()
   const frame = useRef<HTMLIFrameElement>(null)
   const column = useRef<HTMLDivElement>(null)
@@ -96,11 +112,7 @@ export function SocialProofFrame({ faces }: { faces?: "initials" }) {
         >
           <iframe
             ref={frame}
-            src={
-              faces
-                ? `/specimens/social-proof?faces=${faces}`
-                : "/specimens/social-proof"
-            }
+            src={`/specimens/social-proof${query(faces, layout)}`}
             title={`Social proof at ${String(nominal)}px`}
             style={{ width, height }}
             onLoad={() => {

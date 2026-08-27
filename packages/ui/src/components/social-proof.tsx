@@ -44,6 +44,28 @@ type SocialProofPerson = {
 
 const STARS = [0, 1, 2, 3, 4]
 
+/** How the sentence sits against the faces.
+ *
+ *  `inline` is the row four heroes carry: beside the stars where there is
+ *  room, beneath them below the tablet, and a size smaller once it drops.
+ *
+ *  `stacked` is that lower form held at every width, which is what the split
+ *  hero draws (`22653:4862`) — the picture beside it leaves no room for a
+ *  555 row at any breakpoint.
+ *
+ *  Stacked takes no alignment of its own. It lays out as a block with the
+ *  faces inline, so `text-align` carries both the sentence and the row, and
+ *  whoever places it decides: the split hero writes to the left where the
+ *  picture stands beside the copy and centres below that, which is one
+ *  decision about the picture rather than a second prop about the faces.
+ *
+ *  The file stacks with 4 here and 12 on the home pages' mobile. Four is the
+ *  one taken: twelve has the count, but this is the page that draws the
+ *  arrangement at the size it is meant to be read at, and at 12 the sentence
+ *  reads as a second thing rather than a caption on the row above it.
+ *  DESIGN-FEEDBACK 55 asks whether the home pages' 12 is an oversight. */
+type SocialProofLayout = "inline" | "stacked"
+
 /** The white edge each star wears, exactly as the file strokes it: 2 on the
  *  outside (`20919:10396`, `strokeAlign: OUTSIDE`). It is a real edge that
  *  belongs to the star — what the shape looks like on the hero's amber
@@ -68,23 +90,40 @@ const RATING =
 function SocialProof({
   people,
   label,
+  layout = "inline",
   className,
 }: {
   people: readonly SocialProofPerson[]
   label: string
+  layout?: SocialProofLayout
   className?: string
 }) {
+  const stacked = layout === "stacked"
+
   return (
     <div
       data-slot="social-proof"
+      data-layout={layout}
       className={cn(
-        "flex flex-col items-center gap-3 tablet:flex-row",
+        stacked ? "block" : "flex flex-col items-center gap-3 tablet:flex-row",
         className,
       )}
     >
       {/* The faces and the stars never part at any width, so they are one
           thing the sentence sits beside or beneath. */}
-      <div data-slot="social-proof-faces" className="flex items-center gap-3">
+      <div
+        data-slot="social-proof-faces"
+        className={cn(
+          "items-center gap-3",
+          /* Inline so the parent's `text-align` carries the row as well as the
+             sentence, which is how the stacked layout stays neutral about
+             which way it points. Bottom-aligned because an inline box sits on
+             the baseline by default and the line box keeps a descender's worth
+             of room under it — 7px that is not a margin and cannot be tuned
+             away, and that would make the drawn 4 measure 11. */
+          stacked ? "inline-flex align-bottom" : "flex",
+        )}
+      >
         <AvatarGroup>
           {people.map((person) => (
             <Avatar key={person.name}>
@@ -105,7 +144,10 @@ function SocialProof({
 
       <p
         data-slot="social-proof-label"
-        className="text-center text-sm/6 text-beige-900 tablet:text-lg dark:text-muted-foreground"
+        className={cn(
+          "text-sm/6 text-beige-900 dark:text-muted-foreground",
+          stacked ? "mt-1" : "text-center tablet:text-lg",
+        )}
       >
         {label}
       </p>
@@ -114,4 +156,4 @@ function SocialProof({
 }
 
 export { SocialProof }
-export type { SocialProofPerson }
+export type { SocialProofLayout, SocialProofPerson }

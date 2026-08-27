@@ -816,3 +816,37 @@ mobile than on desktop.
 The block fits the picture to the page instead, because a client's image
 carries none of these hand-placed layers. Please confirm whether the drawn
 crop is deliberate framing or a frame nobody resized.
+
+### 55. The stacked social proof uses two different gaps
+
+**website**, the row of faces where it stacks, on four pages
+
+The row of faces, stars and a claim stacks — faces and stars on one line, the
+sentence beneath — in two places, and the two are drawn 8px apart from each
+other.
+
+| where                        | node         | gap |
+| ---------------------------- | ------------ | --- |
+| Home, mobile                 | `22626:8697` | 12  |
+| For Organizations, mobile    | `23402:998`  | 12  |
+| Caregiving, all three widths | `22653:4862` | 4   |
+
+Everything else about the two is identical: the same 80 by 32 stack overlapping
+by 8, the same five 16 by 15 stars 6 apart, the same 12 between the faces and
+the stars, the same 14/24 sentence underneath.
+
+Caregiving is also the only page that stacks at every width rather than only
+where the row runs out of room, which is its own answer — the picture beside
+the copy leaves no space for the 555 the wide row measures. That part is clear.
+The 4 is not.
+
+The system ships 4. Three samples draw 12 and one draws 4, so the count points
+the other way — but Caregiving is the page that draws this arrangement at the
+size it is meant to be read at, beside a picture and inside a hero, and at 12
+the sentence reads as a second thing rather than as a caption on the row above
+it. The other three stack only because a narrow page ran out of room for the
+wide row, which makes them the incidental case rather than the drawn one.
+
+Please confirm the other direction from the one we first asked: is the 12 on
+Home and For Organizations mobile an oversight, or is the looser pairing meant
+where the stack is a fallback rather than the intended arrangement?
