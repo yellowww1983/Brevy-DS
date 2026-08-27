@@ -65,7 +65,10 @@ const BLOCKS: readonly (Entry | Family)[] = [
   {
     label: "Hero",
     icon: Megaphone,
-    variants: [{ label: "Centered", href: "/blocks/hero/centered" }],
+    variants: [
+      { label: "Centered", href: "/blocks/hero/centered" },
+      { label: "Split", href: "/blocks/hero/split" },
+    ],
   },
   { label: "FAQ", icon: CircleHelp, href: "/blocks/faq" },
   { label: "Footer", icon: PanelBottom, href: "/blocks/footer" },
