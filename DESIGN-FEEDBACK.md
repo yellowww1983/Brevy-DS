@@ -850,3 +850,76 @@ wide row, which makes them the incidental case rather than the drawn one.
 Please confirm the other direction from the one we first asked: is the 12 on
 Home and For Organizations mobile an oversight, or is the looser pairing meant
 where the stack is a fallback rather than the intended arrangement?
+
+### 56. The closing band's button changes its words between breakpoints
+
+**website**, For Organizations, the CTA band
+
+| where   | node         | label           |
+| ------- | ------------ | --------------- |
+| Desktop | `23205:1817` | `Try Brevy now` |
+| Tablet  | `23402:2782` | `Get Started`   |
+| Mobile  | `23402:2822` | `Get Started`   |
+
+Same button, same destination, same page. The other three bands keep one label
+across every width they are drawn at.
+
+The system ships one label as a prop, because a button whose words depend on
+the width of the screen is a promise the reader cannot carry between devices.
+Please confirm which of the two is meant.
+
+### 57. The closing band's button is drawn at a fixed width
+
+**website**, all four CTA bands
+
+The button is 146 wide on the two pale bands and 264 on the two deep ones,
+with `paddingLeft` and `paddingRight` both set to 24 — but the frame is fixed
+rather than hugging, so the padding is not what the label actually gets.
+
+| band              | label width | padding the frame leaves |
+| ----------------- | ----------- | ------------------------ |
+| Caregiving        | 87          | 30 / 29                  |
+| For Organizations | 103         | 22 / 21                  |
+| partner page      | 182         | 41 / 41                  |
+| Mobile App        | 86          | 89 / 89                  |
+
+For Organizations is the one that shows the cost: its label outgrew the box
+and squeezed the padding below the 24 the file asks for. The system's `Button`
+hugs its label and keeps 24 on both sides at every length, so it ships that
+way. Please confirm the fixed widths were incidental rather than intended.
+
+### 58. The band's six photographs carry four different shadows
+
+**website**, the CTA band on Caregiving and For Organizations
+
+Six figures, placed in mirrored pairs, wearing:
+
+| figure   | shadow                           |
+| -------- | -------------------------------- |
+| 96 left  | `0 25 50 -12` at 25% (`2xl`)     |
+| 96 right | `0 2 4 -2` + `0 4 6 -1` (`md`)   |
+| 72 left  | none                             |
+| 72 right | `2xl`                            |
+| 60 left  | `0 4 6 -4` + `0 10 15 -3` (`lg`) |
+| 60 right | `2xl`                            |
+
+They are Tailwind's own scale, so nothing here is invented — but the pairs are
+mirrored in size and position and not in depth, which reads as drift rather
+than intent. The system ships `2xl` on all six, being three of the six. Please
+confirm, or name the one that was meant.
+
+### 59. The note under the closing band's button sits at two distances
+
+**website**, the CTA bands that carry a note
+
+| band         | gap |
+| ------------ | --- |
+| partner page | 12  |
+| Mobile App   | 12  |
+
+Both drawn notes sit 12 below the button. A third note exists on For
+Organizations at 8, but it is switched off in the file (`23205:1817`, the
+12/16 text node is not visible) and does not appear at the tablet or mobile
+width at all — so it reads as a leftover rather than a third case.
+
+The system ships 12. Please confirm the hidden one can be deleted.
