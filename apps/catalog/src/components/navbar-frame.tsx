@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 
 import { heightFor } from "@/navbar"
 
+import { FrameWindow } from "./frame-window"
 import { useFrameTheme } from "./frame-theme"
 import { useViewport } from "./viewport-frame"
 
@@ -16,47 +17,16 @@ import { useViewport } from "./viewport-frame"
  *  is why the mobile frame is a phone's height: the menu covers the screen, and
  *  a frame shorter than a screen would cut it off. */
 export function NavbarFrame() {
-  const nominal = useViewport()
-  const height = heightFor(nominal)
+  const width = useViewport()
+  const height = heightFor(width)
   const frame = useRef<HTMLIFrameElement>(null)
-  const column = useRef<HTMLDivElement>(null)
-  const [room, setRoom] = useState(0)
   /** The width the frame was last read at. The tabs switch faster than the
    *  frame relays out, so readiness is tied to the width it was read at,
    *  which is what the suite's measured() helper waits on. */
   const [readAt, setReadAt] = useState<number | null>(null)
   const [loads, setLoads] = useState(0)
 
-  /** Never wider than the column it sits in, and never scaled. A desktop bar
-   *  shown at three quarters is a bar nobody can judge, and one that runs off
-   *  the side has to be dragged into view to be read at all. Narrowing the
-   *  screen leaves everything in it at its own size, which is what matters:
-   *  the pill is 794 whether the screen around it is 1440 or 1040. */
-  const width = room > 0 ? Math.min(nominal, room) : nominal
-
   useFrameTheme(frame, loads)
-
-  useEffect(() => {
-    const element = column.current
-
-    if (!element) {
-      return
-    }
-
-    const fit = () => {
-      setRoom(element.clientWidth)
-    }
-
-    fit()
-
-    const observer = new ResizeObserver(fit)
-
-    observer.observe(element)
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [])
 
   useEffect(() => {
     const document_ = frame.current?.contentDocument
@@ -92,26 +62,21 @@ export function NavbarFrame() {
     <figure
       data-measures
       data-measured={readAt === width ? "" : undefined}
-      data-viewport={String(nominal)}
+      data-viewport={String(width)}
       className="mt-6"
     >
-      <div ref={column} className="mt-3">
-        <div
+      <FrameWindow width={width} height={height} className="mt-3">
+        <iframe
+          ref={frame}
+          src="/specimens/navbar"
+          title={`Navbar at ${String(width)}px`}
           style={{ width, height }}
-          className="overflow-hidden rounded-xl border border-border"
-        >
-          <iframe
-            ref={frame}
-            src="/specimens/navbar"
-            title={`Navbar at ${String(width)}px`}
-            style={{ width, height }}
-            onLoad={() => {
-              setLoads((count) => count + 1)
-            }}
-            className="block border-0 bg-background"
-          />
-        </div>
-      </div>
+          onLoad={() => {
+            setLoads((count) => count + 1)
+          }}
+          className="block border-0 bg-background"
+        />
+      </FrameWindow>
     </figure>
   )
 }

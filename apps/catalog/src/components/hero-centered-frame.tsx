@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 
+import { FrameWindow } from "./frame-window"
 import { useFrameTheme } from "./frame-theme"
 import { useViewport } from "./viewport-frame"
 
@@ -12,9 +13,8 @@ import { useViewport } from "./viewport-frame"
  *  narrowed element on this page would leave every query answering the
  *  reader's window and none of the turns would show.
  *
- *  Never scaled, the way the other block frames are never scaled; where the
- *  nominal width does not fit the column the frame takes the column's width,
- *  which leaves everything inside at its own size. The height follows the
+ *  Never scaled, the way the other block frames are never scaled; where the width the tab names does not fit the
+ *  catalog's column, the column scrolls: see `FrameWindow`. The height follows the
  *  content, because the hero is 670 tall and 757 narrow and grows past both if
  *  the copy asks for it. */
 export function HeroCenteredFrame({
@@ -24,17 +24,13 @@ export function HeroCenteredFrame({
   action?: "button"
   image?: "off"
 }) {
-  const nominal = useViewport()
+  const width = useViewport()
   const frame = useRef<HTMLIFrameElement>(null)
-  const column = useRef<HTMLDivElement>(null)
-  const [room, setRoom] = useState(0)
   const [height, setHeight] = useState(670)
   /** The width the frame was last read at, which is what the suite's
    *  measured() helper waits on across tab switches. */
   const [readAt, setReadAt] = useState<number | null>(null)
   const [loads, setLoads] = useState(0)
-
-  const width = room > 0 ? Math.min(nominal, room) : nominal
 
   const query = new URLSearchParams()
 
@@ -49,28 +45,6 @@ export function HeroCenteredFrame({
   const search = query.toString()
 
   useFrameTheme(frame, loads)
-
-  useEffect(() => {
-    const element = column.current
-
-    if (!element) {
-      return
-    }
-
-    const fit = () => {
-      setRoom(element.clientWidth)
-    }
-
-    fit()
-
-    const observer = new ResizeObserver(fit)
-
-    observer.observe(element)
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [])
 
   useEffect(() => {
     const document_ = frame.current?.contentDocument
@@ -104,30 +78,25 @@ export function HeroCenteredFrame({
     <figure
       data-measures
       data-measured={readAt === width ? "" : undefined}
-      data-viewport={String(nominal)}
+      data-viewport={String(width)}
       className="mt-8 w-full"
     >
-      <div ref={column}>
-        <div
+      <FrameWindow width={width} height={height}>
+        <iframe
+          ref={frame}
+          src={
+            search
+              ? `/specimens/hero-centered?${search}`
+              : "/specimens/hero-centered"
+          }
+          title={`HeroCentered at ${String(width)}px`}
           style={{ width, height }}
-          className="overflow-hidden rounded-xl border border-border"
-        >
-          <iframe
-            ref={frame}
-            src={
-              search
-                ? `/specimens/hero-centered?${search}`
-                : "/specimens/hero-centered"
-            }
-            title={`HeroCentered at ${String(nominal)}px`}
-            style={{ width, height }}
-            onLoad={() => {
-              setLoads((count) => count + 1)
-            }}
-            className="block border-0 bg-background"
-          />
-        </div>
-      </div>
+          onLoad={() => {
+            setLoads((count) => count + 1)
+          }}
+          className="block border-0 bg-background"
+        />
+      </FrameWindow>
     </figure>
   )
 }

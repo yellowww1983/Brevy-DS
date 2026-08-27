@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 
+import { FrameWindow } from "./frame-window"
 import { useFrameTheme } from "./frame-theme"
 import { useViewport } from "./viewport-frame"
 
@@ -12,9 +13,8 @@ import { useViewport } from "./viewport-frame"
  *  A narrowed element on this page would leave every query answering the
  *  reader's window and none of those would show.
  *
- *  Never scaled, the way the other block frames are never scaled. Where the
- *  nominal width does not fit the catalog's column this one keeps it anyway
- *  and lets the column scroll, for the reason written above `width`. The
+ *  Never scaled, the way the other block frames are never scaled. Where the width the tab names does not fit
+ *  the catalog's column, the column scrolls: see `FrameWindow`. The
  *  height follows the content. */
 export function HeroSplitFrame({
   image,
@@ -23,22 +23,13 @@ export function HeroSplitFrame({
   image?: "off"
   card?: "off"
 }) {
-  const nominal = useViewport()
+  const width = useViewport()
   const frame = useRef<HTMLIFrameElement>(null)
-  const column = useRef<HTMLDivElement>(null)
   const [height, setHeight] = useState(670)
   /** The width the frame was last read at, which is what the suite's
    *  measured() helper waits on across tab switches. */
   const [readAt, setReadAt] = useState<number | null>(null)
   const [loads, setLoads] = useState(0)
-
-  /** The other block frames shrink to the column when the tab is wider than
-   *  it. This one cannot: the catalog's column is 1056 and the row needs
-   *  1200, so shrinking would show the stacked form under every tab and the
-   *  split — the whole block — would never appear. It keeps the tab's width
-   *  and the column scrolls, which is the same refusal to scale the others
-   *  make, answered the other way. */
-  const width = nominal
 
   const query = new URLSearchParams()
 
@@ -86,30 +77,23 @@ export function HeroSplitFrame({
     <figure
       data-measures
       data-measured={readAt === width ? "" : undefined}
-      data-viewport={String(nominal)}
+      data-viewport={String(width)}
       className="mt-8 w-full"
     >
-      <div ref={column} className="overflow-x-auto">
-        <div
+      <FrameWindow width={width} height={height}>
+        <iframe
+          ref={frame}
+          src={
+            search ? `/specimens/hero-split?${search}` : "/specimens/hero-split"
+          }
+          title={`HeroSplit at ${String(width)}px`}
           style={{ width, height }}
-          className="overflow-hidden rounded-xl border border-border"
-        >
-          <iframe
-            ref={frame}
-            src={
-              search
-                ? `/specimens/hero-split?${search}`
-                : "/specimens/hero-split"
-            }
-            title={`HeroSplit at ${String(nominal)}px`}
-            style={{ width, height }}
-            onLoad={() => {
-              setLoads((count) => count + 1)
-            }}
-            className="block border-0 bg-background"
-          />
-        </div>
-      </div>
+          onLoad={() => {
+            setLoads((count) => count + 1)
+          }}
+          className="block border-0 bg-background"
+        />
+      </FrameWindow>
     </figure>
   )
 }

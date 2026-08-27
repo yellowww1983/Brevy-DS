@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 
+import { FrameWindow } from "./frame-window"
 import { useFrameTheme } from "./frame-theme"
 import { useViewport } from "./viewport-frame"
 
@@ -13,9 +14,8 @@ import { useViewport } from "./viewport-frame"
  *  answering the reader's window, so the row would keep its wide form at every
  *  tab and the mobile break would never show.
  *
- *  Never scaled, the way the block frames are never scaled; where the nominal
- *  width does not fit the column the frame takes the column's width, which
- *  leaves everything inside at its own size. The height follows the content,
+ *  Never scaled, the way every block frame is never scaled, and never
+ *  shrunk to the catalog's column either: see `FrameWindow`. The height follows the content,
  *  because the row is one line wide and two lines narrow. */
 /** The two axes as a query string, empty where both are the default. */
 function query(faces?: string, layout?: string) {
@@ -34,41 +34,15 @@ export function SocialProofFrame({
   faces?: "initials"
   layout?: "stacked"
 }) {
-  const nominal = useViewport()
+  const width = useViewport()
   const frame = useRef<HTMLIFrameElement>(null)
-  const column = useRef<HTMLDivElement>(null)
-  const [room, setRoom] = useState(0)
   const [height, setHeight] = useState(80)
   /** The width the frame was last read at, which is what the suite's
    *  measured() helper waits on across tab switches. */
   const [readAt, setReadAt] = useState<number | null>(null)
   const [loads, setLoads] = useState(0)
 
-  const width = room > 0 ? Math.min(nominal, room) : nominal
-
   useFrameTheme(frame, loads)
-
-  useEffect(() => {
-    const element = column.current
-
-    if (!element) {
-      return
-    }
-
-    const fit = () => {
-      setRoom(element.clientWidth)
-    }
-
-    fit()
-
-    const observer = new ResizeObserver(fit)
-
-    observer.observe(element)
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [])
 
   useEffect(() => {
     const document_ = frame.current?.contentDocument
@@ -102,26 +76,21 @@ export function SocialProofFrame({
     <figure
       data-measures
       data-measured={readAt === width ? "" : undefined}
-      data-viewport={String(nominal)}
+      data-viewport={String(width)}
       className="w-full"
     >
-      <div ref={column}>
-        <div
+      <FrameWindow width={width} height={height}>
+        <iframe
+          ref={frame}
+          src={`/specimens/social-proof${query(faces, layout)}`}
+          title={`Social proof at ${String(width)}px`}
           style={{ width, height }}
-          className="overflow-hidden rounded-xl border border-border"
-        >
-          <iframe
-            ref={frame}
-            src={`/specimens/social-proof${query(faces, layout)}`}
-            title={`Social proof at ${String(nominal)}px`}
-            style={{ width, height }}
-            onLoad={() => {
-              setLoads((count) => count + 1)
-            }}
-            className="block border-0 bg-background"
-          />
-        </div>
-      </div>
+          onLoad={() => {
+            setLoads((count) => count + 1)
+          }}
+          className="block border-0 bg-background"
+        />
+      </FrameWindow>
     </figure>
   )
 }
