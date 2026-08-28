@@ -923,3 +923,67 @@ Organizations at 8, but it is switched off in the file (`23205:1817`, the
 width at all — so it reads as a leftover rather than a third case.
 
 The system ships 12. Please confirm the hidden one can be deleted.
+
+### 60. The steps heading is a different green on one page
+
+**website**, the steps section, four pages
+
+| page              | node         | heading colour |
+| ----------------- | ------------ | -------------- |
+| Caregiving        | `22614:7577` | emerald-500    |
+| For Organizations | `23259:576`  | zinc-800       |
+| partner page      | `25276:3615` | zinc-800       |
+| Mobile App        | `24974:4784` | zinc-800       |
+
+The same role in the same position under the same chip. Everything else about
+the header matches across the four: the serif at 36/48, the 12 above it, the
+centring.
+
+The system ships zinc-800, being three of the four. Please confirm Caregiving's
+green was not the intent.
+
+### 61. The numbered disc is drawn at two sizes, and the larger one is off
+
+**website**, the steps section
+
+| page              | size  | numeral | drawn               |
+| ----------------- | ----- | ------- | ------------------- |
+| For Organizations | 36×36 | 20/28   | shown               |
+| partner page      | 36×36 | 20/28   | shown               |
+| Caregiving        | 40×40 | 20/30   | `visible: false` ×3 |
+
+Caregiving carries a disc in every one of its three cards, at every one of its
+three breakpoints, and every one of them is switched off. The two that are
+shown agree with each other at 36.
+
+The system ships 36, being the size that is actually drawn. Please confirm.
+
+### 62. The two step lists sit at different distances
+
+**website**, the steps section
+
+| page              | node         | gap between steps |
+| ----------------- | ------------ | ----------------- |
+| For Organizations | `23259:576`  | 8                 |
+| partner page      | `25276:3615` | 0                 |
+
+Same arrangement — a numbered list beside a single illustration — and the same
+step: a disc, a title at 20/28 and a line under it. The partner page's steps
+touch, and separate themselves with a 1px rule underneath instead.
+
+The system ships 8. Please confirm whether the 0 and its rule are a second
+treatment or a drift.
+
+### 63. Are the Caregiving discs meant to be off?
+
+**website**, Caregiving steps, `22614:7570` and its two narrow frames
+
+Related to 61 but a different question. The three cards each carry a numbered
+disc positioned in the corner of their illustration, and all nine — three
+cards by three breakpoints — are switched off. The section is titled
+`How it works` under a chip reading `3 Easy Steps`, so the steps are counted
+in the chip and then not numbered in the cards.
+
+The block ships them as a prop with both states, defaulting to off for this
+page because that is what the drawing renders. Please confirm the cards are
+meant to go unnumbered, or say which of the two the page should show.
