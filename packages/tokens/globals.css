@@ -293,6 +293,15 @@
 
   --mask-brevy-lockup-mark: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><path fill='white' d='M17.7803 17.7783V22.2227H17.7773V32.8887C17.7773 36.8159 14.5942 39.9998 10.667 40H0V29.333C0.000102451 25.4057 3.18403 22.2217 7.11133 22.2217H13.3359V17.7783H17.7803ZM26.6631 22.2217H32.8857C36.8129 22.2219 39.996 25.4059 39.9961 29.333V40H29.3301C25.4027 40 22.2188 36.816 22.2188 32.8887V17.7783H26.6631V22.2217ZM10.667 0C14.5942 0.000175659 17.7773 3.18408 17.7773 7.11133V17.7773H7.11133C3.18408 17.7773 0.000175662 14.5942 0 10.667V0H10.667ZM39.9961 10.667C39.9959 14.5941 36.8128 17.7772 32.8857 17.7773H22.2188V7.11133C22.2188 3.18397 25.4027 0 29.3301 0H39.9961V10.667Z'/></svg>");
 
+  /* The display quotation mark the testimonial cards carry behind their copy:
+     one drawn vector, 321 by 265, repeated three times a section and once more
+     in the stats section beside it. Beige-300 on white, bled off the card's
+     left edge and clipped by its radius, which is why it is a mask on a
+     painted box rather than a glyph — the type's own " is a different shape at
+     a different weight and would have to be scaled past any size the ramp
+     carries to reach 265 tall. */
+  --mask-brevy-quote: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 321 265'><path fill='white' d='M0 177.445 C0 171.219 0.389091 164.214 1.16727 156.432 C8.17091 100.396 34.6291 48.2526 80.5418 0 L105.055 17.511 C104.276 18.2893 103.109 19.4567 101.553 21.0132 C73.5382 50.5874 59.5309 76.2702 59.5309 98.0617 C60.3091 109.736 69.6473 118.297 87.5455 123.744 C91.4364 124.523 95.7164 125.69 100.385 127.247 C129.956 139.699 144.742 161.49 144.742 192.621 C144.742 202.739 142.796 212.856 138.905 222.974 C126.455 250.991 105.444 265 75.8727 265 C68.0909 265 60.3091 263.833 52.5273 261.498 C17.5091 251.38 0 223.363 0 177.445 Z M175.091 177.445 C175.091 170.441 175.48 163.436 176.258 156.432 C183.262 100.396 210.109 48.2526 256.8 0 L281.313 17.511 C280.535 18.2893 279.367 19.4567 277.811 21.0132 C249.018 51.3656 234.622 77.0485 234.622 98.0617 C235.4 109.736 245.127 118.297 263.804 123.744 C267.695 124.523 271.975 125.69 276.644 127.247 C306.215 139.699 321 161.49 321 192.621 C321 203.517 318.665 214.413 313.996 225.308 C301.545 251.769 280.924 265 252.131 265 C242.793 265 233.844 263.443 225.284 260.33 C191.822 249.435 175.091 221.806 175.091 177.445 Z'/></svg>");
+
   --mask-brevy-mark: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 592 601.953' preserveAspectRatio='none'><path fill='white' d='M184.912 0 C237.931 0.000214411 280.912 42.9808 280.912 96 L280.912 505.953 C280.912 558.972 237.931 601.953 184.912 601.953 L0 601.953 L0 419.632 C0.000170585 366.613 42.9808 323.632 96 323.632 L189.265 323.632 L189.265 291.697 L96 291.697 C42.9807 291.697 0 248.717 0 195.697 L0 0 L184.912 0 Z M592 195.698 C592 248.717 549.019 291.698 496 291.698 L402.735 291.698 L402.735 323.633 L496 323.633 C549.019 323.633 592 366.613 592 419.633 L592 601.953 L407.088 601.953 C354.069 601.953 311.088 558.972 311.088 505.953 L311.088 96 C311.088 42.9808 354.069 0.000214411 407.088 0 L592 0 L592 195.698 Z'/></svg>");
 
   /* The three widths the website is drawn at. Mobile is 390 and needs no
@@ -360,6 +369,27 @@
   --text-label: 0.75rem;
   --text-label--line-height: 1.333;
   --text-label--font-weight: 500;
+
+  /* A headline figure and the unit beside it, which the file draws as one
+     object: 60 on 60 and 24 on 24, both bold, both in the body's own -0.9%.
+     Counted across the site, 26 of each — the testimonial mosaic's stat card
+     and the stats section that has not been built yet, and nowhere else.
+
+     Not `display`, which is 60 at its widest but sits on 72. A figure with a
+     third of its own height in leading under it is a heading in a column of
+     prose; this one is a number in a box, and the file sets its leading to
+     the size so the box is the digits. Two roles that happen to meet at one
+     font size, which is why this is a token of its own rather than `display`
+     borrowed and corrected at the call site. */
+  --text-stat: 3.75rem;
+  --text-stat--line-height: 1;
+  --text-stat--font-weight: 700;
+  --text-stat--letter-spacing: -0.009em;
+
+  --text-stat-unit: 1.5rem;
+  --text-stat-unit--line-height: 1;
+  --text-stat-unit--font-weight: 700;
+  --text-stat-unit--letter-spacing: -0.009em;
 
   --font-sans: "Rethink Sans", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Hedvig Letters Serif", ui-serif, Georgia, serif;
@@ -439,16 +469,20 @@
 
 @utility hairline {
   position: relative;
-  --hairline-paint: linear-gradient(
+  --hairline-default: linear-gradient(
     to bottom,
     var(--color-neutral-200),
     var(--color-neutral-300)
   );
 
   /* The dark variant's own selector, so a pinned subtree keeps the light
-     thread the same way it keeps light tokens. */
+     thread the same way it keeps light tokens.
+
+     It moves the default rather than the paint, so a companion utility can
+     name a thread of its own at plain specificity and keep it in both themes.
+     A brand surface has one thread, not a light one and a dark one. */
   &:is(.dark *):not(.light *):not(.light) {
-    --hairline-paint: linear-gradient(var(--border), var(--border));
+    --hairline-default: linear-gradient(var(--border), var(--border));
   }
 
   &::before {
@@ -458,7 +492,7 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: var(--hairline-paint);
+    background: var(--hairline-paint, var(--hairline-default));
     mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
@@ -573,11 +607,46 @@
   --hero-height: 41.875rem;
   --hero-height-narrow: 47.3125rem;
   --hero-band: 26.625rem;
+
+  /* The testimonial mosaic.
+
+     The header runs narrower than the column and the line under it runs wider
+     than the heading, which is the reverse of every hero in the file: 468 and
+     618, hand-placed inside a 592 group that neither of them fits.
+
+     The photograph is a band anchored to the top rather than a layer behind
+     everything. The file scales the picture so the same 47.3% of it shows at
+     all three widths, which lands on 736, 640 and 486 — three numbers rather
+     than one ratio, because the frame narrows faster than the picture does.
+
+     The card floor is the drawn 270. It is a floor and not a height: the
+     desktop's white cards grow to 292 on their own copy and the file lets
+     them. Below the tablet the file drops it — the mobile cards measure 292,
+     208 and 320, so a short quote is allowed to be short there — and the stat
+     card keeps it at every width, being the one card whose content could not
+     otherwise fill it. */
+  --testimonials-heading: 29.25rem;
+  --testimonials-lede: 38.625rem;
+  --testimonials-photo: 30.375rem;
+  --testimonials-portrait: 16.375rem;
+  --testimonials-card: 16.875rem;
+  --testimonials-mark: 20.0625rem;
+  --testimonials-mark-tall: 16.5625rem;
+  --testimonials-mark-top: 4.375rem;
+  --testimonials-shade: 31.8125rem;
+  --testimonials-header: 16.6875rem;
 }
 
 @media (width >= theme(--breakpoint-tablet)) {
   :root {
     --content-gutter: 1.5rem;
+    --testimonials-photo: 40rem;
+  }
+}
+
+@media (width >= theme(--breakpoint-content)) {
+  :root {
+    --testimonials-photo: 46rem;
   }
 }
 
@@ -590,6 +659,31 @@
 /* Below the cap the column is the screen less both gutters. At and above it the
    column stops at 1200 and the room left over goes to the margins, so the text
    never widens past what the design draws however large the window is. */
+/* Two threads for the cards that are not white. The mosaic strokes every card
+   with its own fill one step darker — olive-500 carries olive-600 flat, taupe-500
+   runs to taupe-600 — where the white card carries the neutral pair `hairline`
+   already has. They stay put in the dark for the reason the olive button does:
+   the surface is the brand's, not the page's. */
+@utility hairline-olive {
+  --hairline-paint: linear-gradient(
+    var(--color-olive-600),
+    var(--color-olive-600)
+  );
+}
+
+@utility hairline-taupe {
+  --hairline-paint: linear-gradient(
+    var(--color-taupe-500),
+    var(--color-taupe-600)
+  );
+}
+
+@utility mask-brevy-quote {
+  mask-image: var(--mask-brevy-quote);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
 @utility container-content {
   width: calc(100% - 2 * var(--content-gutter));
   max-width: var(--content-width);
