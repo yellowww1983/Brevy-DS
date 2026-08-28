@@ -526,6 +526,15 @@
      The card's two offsets are where it hangs off the picture: 184 to the
      left of the picture's edge and 107 above its foot, which is what puts a
      third of it on the gradient and the rest on the photograph. */
+  /* The steps section. 468 is the box the file gives the heading and the line
+     under it on three of the four pages that draw one; 290 is the height of a
+     card's illustration at every width; the panel beside a step list is 680
+     wide and narrow, and 492 where the column narrows to a phone. */
+  --steps-lede: 29.25rem;
+  --steps-figure: 18.125rem;
+  --steps-panel: 42.5rem;
+  --steps-panel-narrow: 30.75rem;
+
   /* The CTA band. 560 is a floor rather than the drawn fixed height: the file
      sets each band's height by hand and centres the copy in it, so 96 above
      and below is what the subtraction left over. Written as padding instead,

@@ -51,6 +51,13 @@ export { Label } from "./components/label.js"
 export { CtaBand } from "./blocks/cta-band.js"
 export type { CtaBandButton, CtaBandTone } from "./blocks/cta-band.js"
 export { Faq } from "./blocks/faq.js"
+export { Steps } from "./blocks/steps.js"
+export type {
+  Step,
+  StepsGround,
+  StepsLayout,
+  StepsTail,
+} from "./blocks/steps.js"
 export type { FaqContact, FaqItem } from "./blocks/faq.js"
 export { HeroSplit } from "./blocks/hero-split.js"
 export type {
