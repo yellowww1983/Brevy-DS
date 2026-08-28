@@ -1,29 +1,51 @@
 "use client"
 
+import { cva, type VariantProps } from "class-variance-authority"
 import { Avatar as AvatarPrimitive } from "radix-ui"
 import type { ComponentProps } from "react"
 
 import { cn } from "../lib/utils.js"
 
-/** A person, at the one size the design uses: 32 across, fully round. The file
- *  draws 363 of these and 252 of them are this size; the handful at 28, 40, 48
- *  and larger are the same circle asked to be bigger, which is a class at the
- *  call site rather than an axis nobody would reach for.
+/** A person, round, at one of two sizes.
  *
- *  It wears no ring. The website file draws a white one on every avatar, but
+ *  Counted across the website file: 363 avatars, of which 252 are 32 across
+ *  and 39 are 40. The 40s are not scattered — every one of them is the author
+ *  of a testimonial, which makes the second size a place rather than an
+ *  accident, and a place is what an axis is for. The remainder (28, 44, 48,
+ *  60, 90) stay a class at the call site until one of them turns out to have
+ *  a home of its own too.
+ *
+ *  The fallback's type does not move with the circle. The file draws no 40
+ *  with initials in it — every one carries a photograph — so a second type
+ *  step here would be invented rather than measured. */
+const avatarVariants = cva(
+  "relative flex shrink-0 overflow-hidden rounded-full",
+  {
+    variants: {
+      size: {
+        sm: "size-8",
+        md: "size-10",
+      },
+    },
+    defaultVariants: {
+      size: "sm",
+    },
+  },
+)
+
+/** It wears no ring. The website file draws a white one on every avatar, but
  *  the app file draws it only where avatars overlap, which is what it is for:
  *  a separator, not a rim. `AvatarGroup` adds it back for the stack. */
 function Avatar({
   className,
+  size,
   ...props
-}: ComponentProps<typeof AvatarPrimitive.Root>) {
+}: ComponentProps<typeof AvatarPrimitive.Root> &
+  VariantProps<typeof avatarVariants>) {
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
-      className={cn(
-        "relative flex size-8 shrink-0 overflow-hidden rounded-full",
-        className,
-      )}
+      className={cn(avatarVariants({ size }), className)}
       {...props}
     />
   )
@@ -67,7 +89,9 @@ function AvatarFallback({
 }
 
 /** Overlapping avatars, 8 of each covered by the next, which is the one
- *  arrangement the file draws: 35 groups and every one of them at -8.
+ *  arrangement the file draws: 35 groups and every one of them at -8. Drawn
+ *  only at 32, and the overlap is a fixed 8 rather than a quarter of the
+ *  circle, so it holds at either size.
  *
  *  The ring belongs here rather than to the avatar, and it is the colour of
  *  the ground rather than white. The app file draws it white on a white page

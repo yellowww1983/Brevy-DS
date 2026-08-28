@@ -441,6 +441,10 @@ export const components: readonly ComponentEntry[] = [
     // Drawn from Brevy Website · the avatar group at `22680:1103`, with the
     // fallback's colours taken from the app file, which localised them where
     // the website file left shadcn's own Geist and neutral-100 in place.
+    //
+    // The file draws the group only at 32, but the overlap is a fixed 8 rather
+    // than a fraction of the circle, so the larger stack is shown here rather
+    // than omitted: it is the demonstration that the two axes are square.
     axes: [
       {
         label: "Form",
@@ -449,6 +453,14 @@ export const components: readonly ComponentEntry[] = [
           Photo: "a person's picture",
           Initials: "the fallback, for when the picture does not arrive",
           Group: "several people, overlapping",
+        },
+      },
+      {
+        label: "Size",
+        values: ["32", "40"],
+        phrasing: {
+          "32": "at 32, which is 252 of the 363 the file draws",
+          "40": "at 40, which is every testimonial author and nothing else",
         },
       },
     ],
@@ -460,11 +472,13 @@ export const components: readonly ComponentEntry[] = [
         return null
       }
 
+      const size = combination.Size === "40" ? "md" : "sm"
+
       if (combination.Form === "Group") {
         return (
           <AvatarGroup>
             {PEOPLE.map((member) => (
-              <Avatar key={member.name}>
+              <Avatar key={member.name} size={size}>
                 <AvatarImage src={member.photo} alt={member.name} />
                 <AvatarFallback>{member.initials}</AvatarFallback>
               </Avatar>
@@ -480,7 +494,7 @@ export const components: readonly ComponentEntry[] = [
         combination.Form === "Initials" ? MISSING_PHOTO : person.photo
 
       return (
-        <Avatar>
+        <Avatar size={size}>
           <AvatarImage src={source} alt={person.name} />
           <AvatarFallback>{person.initials}</AvatarFallback>
         </Avatar>

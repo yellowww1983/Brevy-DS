@@ -7,7 +7,7 @@ const section = (page: Page, title: string) =>
     .locator("section")
     .filter({ has: page.getByRole("heading", { name: title, exact: true }) })
 
-test("the avatar is the one drawn size, fully round and unringed", async ({
+test("the avatar is the drawn 32, fully round and unringed", async ({
   page,
 }) => {
   await page.goto(PAGE)
@@ -47,6 +47,65 @@ test("the avatar is the one drawn size, fully round and unringed", async ({
   expect(read.ring, "no rim on a solo avatar").toBe("none")
   expect(read.image?.width, "the picture fills the circle").toBe(32)
   expect(read.image?.fit).toBe("cover")
+})
+
+test("the second size is the drawn 40 and changes nothing else", async ({
+  page,
+}) => {
+  await page.goto(PAGE)
+
+  const avatar = section(page, "Photo").locator("[data-slot='avatar']").nth(1)
+
+  await expect(avatar.locator("[data-slot='avatar-image']")).toBeVisible()
+
+  const read = await avatar.evaluate((node) => {
+    const style = getComputedStyle(node)
+    const box = node.getBoundingClientRect()
+    const image = node.querySelector("[data-slot='avatar-image']")
+
+    return {
+      width: Math.round(box.width),
+      height: Math.round(box.height),
+      radius: style.borderRadius,
+      ring: style.boxShadow,
+      image: image ? Math.round(image.getBoundingClientRect().width) : null,
+    }
+  })
+
+  /** Every 40 in the file is the author of a testimonial; nothing else about
+   *  the circle moves with it. */
+  expect(read.width, "the testimonial author's size").toBe(40)
+  expect(read.height).toBe(40)
+  expect(read.radius).toBe("9999px")
+  expect(read.ring, "still no rim on a solo avatar").toBe("none")
+  expect(read.image, "the picture still fills the circle").toBe(40)
+})
+
+test("the larger stack overlaps by the same drawn 8", async ({ page }) => {
+  await page.goto(PAGE)
+
+  const group = section(page, "Group")
+    .locator("[data-slot='avatar-group']")
+    .nth(1)
+
+  const read = await group.evaluate((node) => {
+    const members = [...node.querySelectorAll("[data-slot='avatar']")]
+    const boxes = members.map((member) => member.getBoundingClientRect())
+
+    return {
+      overlaps: boxes
+        .slice(1)
+        .map((box, index) => Math.round((boxes[index]?.right ?? 0) - box.left)),
+      widths: boxes.map((box) => Math.round(box.width)),
+      ring: getComputedStyle(members[0] ?? node).boxShadow,
+    }
+  })
+
+  /** The overlap is a fixed 8 rather than a fraction of the circle, so the
+   *  size axis and the stack are square to one another. */
+  expect(read.widths).toEqual([40, 40, 40])
+  expect(read.overlaps).toEqual([8, 8])
+  expect(read.ring).toContain("rgb(255, 255, 255) 0px 0px 0px 2px")
 })
 
 test("the fallback arrives because the picture does not", async ({ page }) => {
@@ -90,7 +149,9 @@ test("a group overlaps by the drawn 8 and separates with the ground", async ({
 }) => {
   await page.goto(PAGE)
 
-  const group = section(page, "Group").locator("[data-slot='avatar-group']")
+  const group = section(page, "Group")
+    .locator("[data-slot='avatar-group']")
+    .first()
   const avatars = group.locator("[data-slot='avatar']")
 
   await expect(avatars).toHaveCount(3)
@@ -132,6 +193,7 @@ test("on a dark page the fallback and the ring follow the ground", async ({
 
   const fallback = await section(page, "Initials")
     .locator("[data-slot='avatar-fallback']")
+    .first()
     .evaluate((node) => {
       const style = getComputedStyle(node)
       return { background: style.backgroundColor, colour: style.color }
