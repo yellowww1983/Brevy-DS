@@ -12,6 +12,7 @@ import {
   PanelBottom,
   ListOrdered,
   PanelTop,
+  Quote,
   Signpost,
   Shapes,
   Squircle,
@@ -74,6 +75,7 @@ const BLOCKS: readonly (Entry | Family)[] = [
   },
   { label: "FAQ", icon: CircleHelp, href: "/blocks/faq" },
   { label: "Steps", icon: ListOrdered, href: "/blocks/steps" },
+  { label: "Testimonials", icon: Quote, href: "/blocks/testimonials" },
   { label: "CTA Band", icon: Signpost, href: "/blocks/cta" },
   { label: "Footer", icon: PanelBottom, href: "/blocks/footer" },
 ]

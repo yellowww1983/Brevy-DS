@@ -59,6 +59,12 @@ export type {
   StepsTail,
 } from "./blocks/steps.js"
 export type { FaqContact, FaqItem } from "./blocks/faq.js"
+export { Testimonials } from "./blocks/testimonials.js"
+export type {
+  TestimonialsAuthor,
+  TestimonialsBackground,
+  TestimonialsItem,
+} from "./blocks/testimonials.js"
 export { HeroSplit } from "./blocks/hero-split.js"
 export type {
   HeroSplitAction,
