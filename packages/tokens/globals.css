@@ -534,6 +534,12 @@
   --steps-figure: 18.125rem;
   --steps-panel: 42.5rem;
   --steps-panel-narrow: 30.75rem;
+  /* The plate inside the panel does not stretch with it. The file keeps it at
+     520 and centres it: at the desktop that is the panel's width less its 36,
+     and at the tablet, where the panel runs 762, the plate stays 520 and sits
+     at 121 — which is the same centring, not a wider plate. */
+  --steps-plate: 32.5rem;
+  --steps-plate-tall: 38rem;
 
   /* The CTA band. 560 is a floor rather than the drawn fixed height: the file
      sets each band's height by hand and centres the copy in it, so 96 above
