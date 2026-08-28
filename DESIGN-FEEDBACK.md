@@ -987,3 +987,97 @@ in the chip and then not numbered in the cards.
 The block ships them as a prop with both states, defaulting to off for this
 page because that is what the drawing renders. Please confirm the cards are
 meant to go unnumbered, or say which of the two the page should show.
+
+### 64. The testimonials section has no bottom padding
+
+**website**, the testimonials section, `20919:10971` and its two narrow frames
+
+| breakpoint | `Content` padding |
+| ---------- | ----------------- |
+| desktop    | 96 / 0            |
+| tablet     | 96 / 0            |
+| mobile     | 96 / 0            |
+
+96 above and nothing below, at all three widths, on all four seasons. It works
+on the home page because the FAQ underneath brings its own 96 — and it fails
+the moment the section is placed anywhere else, where the cards would run
+straight into whatever follows. The CTA band was the same and was fixed the
+same way.
+
+The system ships 96 above and 96 below. Please confirm.
+
+### 65. The testimonial cards are pinned to a fixed y
+
+**website**, the testimonials section
+
+The header group and the card group are both `layoutPositioning: ABSOLUTE`
+inside `Content`, and the cards sit at **y = 363 at every breakpoint** — while
+the header above them measures 112, 104 and 132. Nothing pushes anything.
+
+A heading one line longer than `Voices of trust` goes underneath the cards.
+Since the heading and the line under it are copy a page supplies, that is not a
+state the block can be allowed to reach.
+
+The system flows the section instead, and reproduces the drawn 363 as a 267
+floor under the header — which lands the cards in exactly the drawn place at
+all three widths and lets a longer heading push them down. Please confirm that
+the distance from the padding to the cards is what the 363 was holding, rather
+than the coordinate itself.
+
+### 66. The wide testimonial has no attribution
+
+**website**, the testimonials section, `22624:8282`
+
+The three white cards each carry an avatar and a name. The wide taupe card —
+which holds the longest, most specific and most quantified quote in the
+section, naming a dollar figure — carries neither.
+
+The system ships it as drawn. Please confirm the missing name is deliberate,
+and if it is not, say whether the face and name belong on this card too.
+
+### 67. The stat figure is 60/60 and the display role is 60/72
+
+**website**, the testimonials section `22624:8276` and the stats section
+`20919:10826`
+
+| where          | drawn                    |
+| -------------- | ------------------------ |
+| stat figure    | Rethink Sans Bold 60/60  |
+| stat unit      | Rethink Sans Bold 24/24  |
+| `display` role | 60 at its widest, on 1.2 |
+
+The figure and the `display` heading meet at 60px and part on leading: a
+heading carries a third of its own height under it, and this number's box is
+the digits.
+
+Two further drifts in the same place: the same 60px figure is drawn **Bold**
+on `78` and `89` and **SemiBold** on `5,000+`, in the same section; and 24 is
+not a step this system's ramp carries at all.
+
+The system ships `stat` and `stat-unit` as roles of their own, at 60/60 and
+24/24, both Bold. Please confirm the weight, and say whether `5,000+` was meant
+to be lighter than the numbers beside it.
+
+### 68. The author's name is Bold on the website and SemiBold in the app
+
+**website** `22624:8286`, **app** `24974:4784`
+
+| where              | drawn                       |
+| ------------------ | --------------------------- |
+| testimonial author | Rethink Sans Bold 18/28     |
+| app, same size     | Rethink Sans SemiBold 18/28 |
+
+Same size, same leading, same role — a person's name beside their face — and
+two weights, 39 nodes against 14.
+
+The system ships Bold, being what the website draws. Please confirm.
+
+### 69. `fulll-time`
+
+**website**, the testimonials section, `22624:8282`
+
+The wide card's quote reads `Becoming a fulll-time caregiver`, with a double
+hyphen for a dash a line later and a double space where the paragraph breaks.
+
+The catalog ships it corrected, because a catalog that reproduces a typo
+teaches it. Please fix it in the file so the two stop disagreeing.
