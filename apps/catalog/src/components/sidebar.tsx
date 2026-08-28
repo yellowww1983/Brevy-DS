@@ -10,6 +10,7 @@ import {
   Move,
   Palette,
   PanelBottom,
+  ListOrdered,
   PanelTop,
   Signpost,
   Shapes,
@@ -72,6 +73,7 @@ const BLOCKS: readonly (Entry | Family)[] = [
     ],
   },
   { label: "FAQ", icon: CircleHelp, href: "/blocks/faq" },
+  { label: "Steps", icon: ListOrdered, href: "/blocks/steps" },
   { label: "CTA Band", icon: Signpost, href: "/blocks/cta" },
   { label: "Footer", icon: PanelBottom, href: "/blocks/footer" },
 ]
