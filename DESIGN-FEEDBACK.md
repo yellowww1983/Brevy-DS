@@ -1170,3 +1170,68 @@ there; only the wrapped ones show it.
 This reads as `counterAxisAlignItems: CENTER` doing the obvious thing rather
 than a decision, so the component aligns the marker to the first line at every
 length. Please confirm.
+
+### 76. The benefits heading is emerald where every other heading is not
+
+**website**, `20919:10710` against the rest
+
+| section                 | `h2` colour     |
+| ----------------------- | --------------- |
+| benefits grid (Home)    | **emerald-500** |
+| FAQ                     | zinc-800        |
+| Steps                   | zinc-800        |
+| testimonials (on beige) | zinc-800        |
+
+One section in the file sets its heading in the brand green. The CTA band does
+too, but that is a card on olive — a different register.
+
+The block ships zinc-800. Please confirm, or say the benefits section is meant
+to lead in green.
+
+### 77. The benefit card wears no thread
+
+**website**, `20919:10712`
+
+Every other card this system draws sits on a 1px neutral edge and a `0 1 2` at
+5%: the FAQ's, the panel step's, the testimonial's, the chat's. This one has
+`strokes: []` and a heavier pair — `0 2 4 -2` and `0 4 6 -1`, both at 10% —
+and stands on a coloured wash rather than a page.
+
+Read as deliberate and kept: the card floats rather than sits. Please confirm
+it is not an oversight.
+
+### 78. Every benefits section in the file is switched off
+
+**website**, `20919:10703` and 11 more
+
+All twelve — four seasons by three breakpoints — carry `visible: false`. The
+section renders empty, and its artwork cannot be exported.
+
+That is the third place this has turned up: the Caregiving page's step discs
+and the auth screen's `Forgot your password?` lines are hidden the same way. A
+reader cannot tell a section that was cut from one that is waiting to be
+switched on.
+
+The block is built from the hidden nodes' measurements, and the catalog
+composes a stand-in for the artwork out of the same measured parts. Please say
+whether this section is live, and whether hidden layers generally mean cut or
+pending.
+
+### 79. One disc, two paints
+
+**website**, `20919:10733` against `25260:3136` and `25276:3983`
+
+The same soft disc turns up three times, and the third is painted differently:
+
+| where                  | ground                | edge                  | contents       |
+| ---------------------- | --------------------- | --------------------- | -------------- |
+| step badge             | olive-100 → olive-300 | olive-300 → olive-600 | brand-500      |
+| icon list disc         | olive-100 → olive-300 | olive-300 → olive-600 | brand-500      |
+| **benefit card badge** | **white → olive-100** | **neutral**           | **near-black** |
+
+It is also 40 across where the other two are 36 and 24 — a third size that
+appears nowhere else, inside a hand-placed mock rather than as a size the
+system offers.
+
+The component ships the olive pair at 36 everywhere. Please confirm, or say
+the benefit card's badge is meant to read paler than the step's.

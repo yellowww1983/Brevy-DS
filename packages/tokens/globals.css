@@ -589,6 +589,11 @@
      586 is the width the file gives the heading in four bands out of four.
      The line under it is drawn narrower on three of them and wider on one, so
      the heading's is the measure both take. */
+  /* The benefit grid. 389 a card at the desktop, which is the 1200 column less
+     two 16 gaps in three; the copy under the panel grows and the panel does
+     not, which is what puts the drawn cards at 454 and 482 in one row. */
+  --card-grid-card: 24.3125rem;
+
   --cta-height: 35rem;
   --cta-copy: 36.625rem;
 
