@@ -589,6 +589,12 @@
      586 is the width the file gives the heading in four bands out of four.
      The line under it is drawn narrower on three of them and wider on one, so
      the heading's is the measure both take. */
+  /* The photograph cut to the mark keeps one proportion at every size it is
+     drawn: 592 by 602 on the desktop, 762 by 775 at the tablet, 358 by 364 at
+     the mobile. Every mask in the file measures 0.983 across, so the shape
+     carries its own ratio and a caller sets only the width. */
+  --aspect-brevy-mark: 592 / 602;
+
   /* The segment stack. The white card inside a segment holds 372 at every
      width the file draws, and the copy beside it is what grows. */
   --segment-illustration: 23.25rem;
@@ -607,8 +613,8 @@
      narrower than its heading (`22653:4858`, `22653:4861`). */
   --hero-split-text: 30.6875rem;
   --hero-split-lede: 24.4375rem;
+  /* The cut carries its own proportion, so only the width is named. */
   --hero-split-picture: 37rem;
-  --hero-split-picture-height: 37.625rem;
   --hero-split-card: 26.375rem;
 
   /* Where the floating card sits, anchored to the middle of the page rather
