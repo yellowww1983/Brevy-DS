@@ -31,6 +31,12 @@ export {
   FormMessage,
   useFormField,
 } from "./components/form.js"
+export {
+  IconList,
+  IconListItem,
+  iconListVariants,
+} from "./components/icon-list.js"
+export type { IconListProps } from "./components/icon-list.js"
 export { Input, inputVariants } from "./components/input.js"
 export { SocialProof } from "./components/social-proof.js"
 export type {

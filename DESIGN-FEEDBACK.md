@@ -1125,3 +1125,48 @@ where a login screen would want it.
 The label's action slot ships either way; the built screen shows the first
 line and drops the second. Please confirm whether the line is meant to be off
 on this screen, and where it should say on a returning login.
+
+### 73. The bare marks are stroked at 1, the disc's own mark at 1.5
+
+**website**, the icon lists
+
+| mark                    | where                    | stroke  |
+| ----------------------- | ------------------------ | ------- |
+| check, bare             | `23321:2569` and 36 more | **1**   |
+| arrow, bare             | `23268:2017` and 5 more  | **1**   |
+| ✕ inside the red disc   | `24966:1156`             | **1.5** |
+| ✓ inside the olive disc | `25276:3983`             | 1       |
+
+Three of the four are 1 and the fourth is 1.5, in the same file, for the same
+job. Every other icon the system draws sits at 1.5, which is what
+`--icon-stroke-width` carries and what the Button already imposes on
+everything it holds.
+
+The component ships 1.5 for all four. Please confirm, or say which weight the
+lists were meant to have.
+
+### 74. The large disc exists only in red
+
+**website**, `24966:1156` against `25276:3983`
+
+The file draws a small olive disc with a ✓ (21 rows) and a large red disc with
+a ✕ (7 rows), and nothing else — so the pair reads as one axis, tone, that
+happens to change size with it. Nothing about either shape depends on the
+other: the ramp, the ring and the shadow are the same construction.
+
+The component ships all four squares of tone × size, which means a large olive
+✓ the file has never drawn. Please confirm it is wanted, or say the two shapes
+are meant to stay welded to their sizes.
+
+### 75. A marker beside two lines floats between them
+
+**website**, `25276:3983`
+
+Measured on a wrapped row: the 24 disc sits at y=8 inside a 40-tall block of
+two lines — the middle of the pair, not beside the first line. Every
+single-line row in the file looks correct because the two readings agree
+there; only the wrapped ones show it.
+
+This reads as `counterAxisAlignItems: CENTER` doing the obvious thing rather
+than a decision, so the component aligns the marker to the first line at every
+length. Please confirm.

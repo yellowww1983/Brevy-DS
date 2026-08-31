@@ -11,6 +11,8 @@ import {
   Button,
   Chip,
   Facebook,
+  IconList,
+  IconListItem,
   Input,
   Instagram,
   Label,
@@ -20,16 +22,25 @@ import {
   type ButtonProps,
 } from "@brevy/ui"
 import {
+  ArrowRight,
   ArrowUp,
   Check,
   Clock,
   Download,
   MessageCircleHeart,
   Plus,
+  X,
 } from "lucide-react"
 import type { ReactNode } from "react"
 
 import { MISSING_PHOTO, PEOPLE } from "./avatar"
+import {
+  DETAILS,
+  PROGRAMS,
+  PROGRAMS_HEADING,
+  QUALIFY,
+  WITHOUT,
+} from "./icon-list"
 import { SocialProofFrame } from "./components/social-proof-frame"
 import { ChatFrame } from "./components/chat-frame"
 import { EmailField } from "./components/email-field"
@@ -358,6 +369,101 @@ export const components: readonly ComponentEntry[] = [
         <Chip variant="eyebrow" count={counted ? 3 : undefined}>
           Easy Steps
         </Chip>
+      )
+    },
+  },
+  {
+    slug: "icon-list",
+    name: "Icon list",
+    wide: true,
+    // Drawn from Brevy Website · 71 rows across 24 lists, in four kinds: the
+    // bare check the For Organizations page rolls its programs with
+    // (`23321:2569`), the bare arrow beside it, the small olive disc on the
+    // partner page (`25276:3983`) and the large red one on the Mobile App
+    // page (`24966:1156`).
+    //
+    // The olive disc at the large size is not drawn — the file only paints
+    // the large one in red — and is shown here because tone and size are
+    // square to one another. DESIGN-FEEDBACK 74.
+    axes: [
+      {
+        label: "Marker",
+        values: ["Check", "Arrow", "Disc olive", "Disc red"],
+        phrasing: {
+          Check: "a bare check in the text's colour",
+          Arrow: "a bare arrow in the text's colour",
+          "Disc olive": "a check in the soft olive disc",
+          "Disc red": "a cross in the soft red disc",
+        },
+      },
+      {
+        label: "Size",
+        values: ["Small", "Large"],
+        phrasing: {
+          Small: "the 24 disc, its lines at 14",
+          Large: "the 36 disc, its lines at 16",
+        },
+      },
+      {
+        label: "Rows",
+        values: ["Plain", "Divided"],
+        phrasing: {
+          Plain: "spaced apart",
+          Divided: "separated by a rule",
+        },
+      },
+    ],
+    // A bare glyph is drawn at one size only: the second size belongs to the
+    // disc, which is the only marker that grows.
+    omitted: [
+      { key: "Check/Large/Plain", note: "not drawn" },
+      { key: "Check/Large/Divided", note: "not drawn" },
+      { key: "Arrow/Large/Plain", note: "not drawn" },
+      { key: "Arrow/Large/Divided", note: "not drawn" },
+    ],
+    render: (combination) => {
+      const marker = combination.Marker ?? "Check"
+      const large = combination.Size === "Large"
+      const divided = combination.Rows === "Divided"
+
+      if (marker === "Check" || marker === "Arrow") {
+        const check = marker === "Check"
+
+        return (
+          <IconList
+            marker={check ? "check" : "arrow"}
+            divided={divided}
+            heading={check ? PROGRAMS_HEADING : undefined}
+            className="w-full max-w-72"
+          >
+            {(check ? PROGRAMS : DETAILS).map((line) => (
+              <IconListItem
+                key={line}
+                icon={check ? <Check /> : <ArrowRight />}
+              >
+                {line}
+              </IconListItem>
+            ))}
+          </IconList>
+        )
+      }
+
+      const olive = marker === "Disc olive"
+
+      return (
+        <IconList
+          marker="disc"
+          tone={olive ? "olive" : "red"}
+          size={large ? "lg" : "sm"}
+          divided={divided}
+          className="w-full max-w-118"
+        >
+          {(olive ? QUALIFY : WITHOUT).map((line) => (
+            <IconListItem key={line} icon={olive ? <Check /> : <X />}>
+              {line}
+            </IconListItem>
+          ))}
+        </IconList>
       )
     },
   },
