@@ -6,6 +6,8 @@ import { Fragment, useEffect, useState, type ReactNode } from "react"
 import { Button } from "../components/button.js"
 import { Chip } from "../components/chip.js"
 import { Container } from "../components/container.js"
+import { IllustrationPanel } from "../components/illustration-panel.js"
+import { Marker as SharedMarker } from "../components/marker.js"
 import { cn } from "../lib/utils.js"
 
 /** The two arrangements the file draws under one name.
@@ -45,28 +47,17 @@ type StepsTail = { label: string; href: string; note?: string }
 const HOLD = 3500
 const FADE = "duration-300"
 
-/** The numbered disc, at the 36 the two pages that show one draw it
- *  (`23259:576`, `25276:3615`): olive-100 to olive-300 inside a thread that
- *  runs olive-300 to olive-600, with the numeral in brand-500.
+/** The step's number, in the disc the system now owns.
  *
- *  It does not change as the list advances. The file draws it the same in every
- *  step of every frame — what moves is the card's ground and the tick.
+ *  It was written here first, with a note saying it stayed an element because
+ *  the shape recurred and the number did not. The benefit cards number
+ *  themselves the same way, which settles it — a disc carrying either a
+ *  numeral or a glyph is the component `Marker` is.
  *
- *  An element rather than a component, for now. The shape recurs — the app
- *  page's `Free care coordination` wears eight of them as icon holders — but
- *  the number does not, and a disc that carries either a numeral or an icon is
- *  a second decision nobody has had to make yet. */
+ *  It does not change as the list advances. The file draws it the same in
+ *  every step of every frame; what moves is the card's ground and the tick. */
 function Marker({ index }: { index: number }) {
-  return (
-    <span
-      data-slot="steps-marker"
-      className="inline-block size-9 shrink-0 rounded-full bg-linear-to-b from-olive-300 to-olive-600 p-px shadow-xs"
-    >
-      <span className="flex size-full items-center justify-center rounded-full bg-linear-to-b from-olive-100 to-olive-300 text-body-lg font-semibold text-brand-500">
-        {index + 1}
-      </span>
-    </span>
-  )
+  return <SharedMarker>{index + 1}</SharedMarker>
 }
 
 /** The tick at the far end of a step, which is the one part that says how far
@@ -136,27 +127,6 @@ function Tick({ reached }: { reached: boolean }) {
  *  olive-to-white gradient inside a thread of its own. The height belongs to
  *  the thread rather than what it wraps, so the frame measures the drawn 290
  *  and not 292. */
-function Figure({
-  children,
-  marker,
-}: {
-  children?: ReactNode
-  marker?: ReactNode
-}) {
-  return (
-    <div
-      data-slot="steps-figure"
-      className="h-(--steps-figure) rounded-2xl bg-linear-to-b from-olive-200 to-neutral-100 p-px"
-    >
-      <div className="relative size-full overflow-hidden rounded-2xl bg-linear-to-b from-olive-300 to-white">
-        {marker ? (
-          <div className="absolute top-2 left-2 z-10">{marker}</div>
-        ) : null}
-        {children}
-      </div>
-    </div>
-  )
-}
 
 /** What a step in the panel layout says, whether or not it can be clicked. */
 function StepBody({
@@ -378,11 +348,11 @@ function Steps({
                   data-slot="steps-step"
                   className="flex flex-col gap-6 rounded-2xl bg-white p-6 shadow-md dark:bg-card"
                 >
-                  <Figure
+                  <IllustrationPanel
                     marker={showMarkers ? <Marker index={index} /> : undefined}
                   >
                     {step.illustration}
-                  </Figure>
+                  </IllustrationPanel>
 
                   <div className="flex flex-col gap-2">
                     <h3

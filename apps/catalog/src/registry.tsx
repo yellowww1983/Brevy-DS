@@ -66,6 +66,11 @@ export type ComponentEntry = {
   /** One preview per row instead of the grid, for a component whose drawn
    *  width is wider than a grid cell. */
   wide?: true
+  /** Previews sit centred in their box, which is right for a sample that is
+   *  one object. A component whose samples are different widths reads as
+   *  ragged that way — each one starts somewhere else — so it lines them up
+   *  on the left instead. */
+  align?: "start"
   /** Shown at the three drawn widths behind the same tabs the blocks use,
    *  for a component the design draws once and places at every width. The
    *  previews then frame themselves, so each one is its own document. */
@@ -376,6 +381,10 @@ export const components: readonly ComponentEntry[] = [
     slug: "icon-list",
     name: "Icon list",
     wide: true,
+    // Every list here is a different width — 288 for the bare markers, 472
+    // for the discs — so centred they each begin somewhere else and the page
+    // reads as drift rather than as a set.
+    align: "start",
     // Drawn from Brevy Website · 71 rows across 24 lists, in four kinds: the
     // bare check the For Organizations page rolls its programs with
     // (`23321:2569`), the bare arrow beside it, the small olive disc on the
