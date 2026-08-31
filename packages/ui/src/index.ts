@@ -53,6 +53,8 @@ export type { CardGridBackground, CardGridItem } from "./blocks/card-grid.js"
 export { CtaBand } from "./blocks/cta-band.js"
 export type { CtaBandButton, CtaBandTone } from "./blocks/cta-band.js"
 export { Faq } from "./blocks/faq.js"
+export { SegmentRows } from "./blocks/segment-rows.js"
+export type { SegmentRowsItem, SegmentTone } from "./blocks/segment-rows.js"
 export { Steps } from "./blocks/steps.js"
 export type {
   Step,
