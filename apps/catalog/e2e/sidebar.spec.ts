@@ -46,16 +46,16 @@ test("every section is expanded on load and collapses on click", async ({
   await page.goto("/components/button")
 
   const sections = page.locator("aside details")
-  await expect(sections).toHaveCount(4)
+  await expect(sections).toHaveCount(5)
 
   const open = () =>
     sections.evaluateAll((nodes) =>
       nodes.map((node) => node instanceof HTMLDetailsElement && node.open),
     )
-  expect(await open()).toEqual([true, true, true, true])
+  expect(await open()).toEqual([true, true, true, true, true])
 
   await page.locator("aside details summary").first().click()
-  expect(await open()).toEqual([false, true, true, true])
+  expect(await open()).toEqual([false, true, true, true, true])
 })
 
 test("the rail marks the active component and nothing else", async ({

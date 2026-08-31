@@ -11,6 +11,7 @@ import {
   Palette,
   PanelBottom,
   ListOrdered,
+  LogIn,
   PanelTop,
   Quote,
   Signpost,
@@ -51,6 +52,14 @@ const GETTING_STARTED: readonly Entry[] = [
     href: "/getting-started/introduction",
   },
   { label: "How to use", icon: Wrench, href: "/getting-started/how-to-use" },
+]
+
+/** Application screens rather than landing sections: what a signed-in product
+ *  shows, drawn in the app file but built from this system's parts. Their own
+ *  group so a reader assembling a landing page does not reach for one by
+ *  mistake. */
+const SCREENS: readonly Entry[] = [
+  { label: "Login", icon: LogIn, href: "/screens/login" },
 ]
 
 const FOUNDATIONS: readonly Entry[] = [
@@ -264,6 +273,16 @@ export function Sidebar() {
               />
             ),
           )}
+        </Section>
+
+        <Section title="Screens">
+          {SCREENS.map((entry) => (
+            <NavEntry
+              key={entry.label}
+              {...entry}
+              active={pathname === entry.href}
+            />
+          ))}
         </Section>
 
         <Section title="Foundations">
