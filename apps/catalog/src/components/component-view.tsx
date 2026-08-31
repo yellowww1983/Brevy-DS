@@ -3,6 +3,8 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
 
+import { cn } from "@brevy/ui"
+
 import type { Axis, ComponentEntry } from "@/registry"
 import {
   bestMatch,
@@ -34,10 +36,12 @@ function caption(axes: readonly Axis[], combination: Record<string, string>) {
 function Preview({
   label,
   bare,
+  align,
   children,
 }: {
   label: string
   bare?: true
+  align?: "start"
   children: ReactNode
 }) {
   return (
@@ -47,7 +51,10 @@ function Preview({
       ) : (
         <div
           data-preview
-          className="flex min-h-24 items-center justify-center rounded-lg border border-border bg-background p-6 font-sans"
+          className={cn(
+            "flex min-h-24 items-center rounded-lg border border-border bg-background p-6 font-sans",
+            align === "start" ? "justify-start" : "justify-center",
+          )}
         >
           {children}
         </div>
@@ -211,6 +218,7 @@ export function ComponentView({ slug }: { slug: string }) {
                 <Preview
                   key={combinationKey(entry, row)}
                   bare={entry.viewport}
+                  align={entry.align}
                   label={
                     group.axes.length > 0
                       ? caption(group.axes, row)
