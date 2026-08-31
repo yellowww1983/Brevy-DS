@@ -9,13 +9,6 @@ import {
   AvatarImage,
   Badge,
   Button,
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
   Chip,
   Facebook,
   Input,
@@ -579,34 +572,6 @@ export const components: readonly ComponentEntry[] = [
       <ChatFrame
         state={combination.State === "Ready to send" ? "ready" : undefined}
       />
-    ),
-  },
-  {
-    slug: "card",
-    name: "Card",
-    axes: [],
-    omitted: [],
-    render: () => (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Visit summary</CardTitle>
-          <CardDescription>Two shifts logged this week.</CardDescription>
-          <CardAction>
-            <Badge variant="olive">
-              <Check />
-              Active
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            Hours are approved and ready for payroll.
-          </p>
-        </CardContent>
-        <CardFooter>
-          <Button variant="ghost">Open</Button>
-        </CardFooter>
-      </Card>
     ),
   },
   {
