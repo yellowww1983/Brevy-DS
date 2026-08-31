@@ -1235,3 +1235,73 @@ system offers.
 
 The component ships the olive pair at 36 everywhere. Please confirm, or say
 the benefit card's badge is meant to read paler than the step's.
+
+### 80. The segment palette is a rule kept once in three
+
+**website**, `23272:2456`
+
+The three segments suggest a rule — the ground `{ramp}-200`, the ink
+`{ramp}-900`, the bar `{ramp}-700` — and then keep it exactly once:
+
+| segment | ground         | ink             | bar            |
+| ------- | -------------- | --------------- | -------------- |
+| violet  | violet-200     | violet-900      | violet-700     |
+| amber   | **yellow**-200 | **orange**-900  | **orange**-700 |
+| olive   | olive-**300**  | **emerald-500** | olive-700      |
+
+The amber takes its ground from one ramp and its ink from another; the olive
+takes a 300 rather than a 200 and swaps its ink for the brand's green.
+
+Both departures look deliberate — the amber's yellow ground is warmer than
+orange-200 would be, and the olive is the brand — so a tone ships as a named
+triple rather than a ramp name the block expands. Please confirm, and say
+which of the three a fourth segment should be modelled on.
+
+### 81. The index reports a position the reader can no longer see
+
+**live**, brevy.com/partners
+
+The list of segment names beside the stack darkens the one you have reached
+and mutes the rest, with a 200ms colour transition. Measured against scroll:
+it changes when a card lands on the sticky stack — 0→1 as the second card
+reaches its 190 offset, 1→2 as the third reaches 250.
+
+By then the list has scrolled off the top of the window. It leaves the
+viewport around 370px into the section and first changes at 480px, so no
+reader sees it move. It is also not a link — plain paragraphs, no anchor, no
+handler — so it cannot be used to get anywhere either.
+
+Please say what it is for: a label for the first card, a scroll-spy that
+wants to be sticky, or a navigation that wants to be clickable.
+
+### 82. The card folds at two different widths
+
+**website** `23402:2229` against **live**, brevy.com/partners
+
+The drawn card keeps its two columns at the tablet (762) and folds to one at
+the mobile (390). The live page folds at 1024 — the same width the index
+appears at — so between 810 and 1024 the drawing and the site disagree about
+the whole shape of a segment.
+
+The block follows the drawing. Please confirm which is right.
+
+### 83. Two of the three segment bars are below the contrast floor
+
+**website**, `23272:2456`
+
+The little rounded bar beside a segment's line, measured against the card it
+sits on:
+
+| segment | bar                      | ratio    | 3:1 for a non-text mark |
+| ------- | ------------------------ | -------- | ----------------------- |
+| violet  | violet-700 on violet-200 | **2.39** | fails                   |
+| amber   | orange-700 on yellow-200 | 3.68     | passes                  |
+| olive   | olive-700 on olive-300   | **1.99** | fails                   |
+
+The rule the palette otherwise follows — the bar at `{ramp}-700` — only clears
+the floor on the one segment whose ground is darkest to begin with.
+
+The block steps the two failures one and two stops darker: violet-800 (3.50)
+and olive-900 (4.71); the olive's own 800 lands on 2.9999 and misses. Amber
+keeps its drawn 700. Please confirm, or say the bar is decorative enough not
+to owe a ratio.

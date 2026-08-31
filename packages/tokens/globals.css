@@ -589,6 +589,10 @@
      586 is the width the file gives the heading in four bands out of four.
      The line under it is drawn narrower on three of them and wider on one, so
      the heading's is the measure both take. */
+  /* The segment stack. The white card inside a segment holds 372 at every
+     width the file draws, and the copy beside it is what grows. */
+  --segment-illustration: 23.25rem;
+
   /* The benefit grid. 389 a card at the desktop, which is the 1200 column less
      two 16 gaps in three; the copy under the panel grows and the panel does
      not, which is what puts the drawn cards at 454 and 482 in one row. */
