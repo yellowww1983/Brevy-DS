@@ -1305,3 +1305,51 @@ The block steps the two failures one and two stops darker: violet-800 (3.50)
 and olive-900 (4.71); the olive's own 800 lands on 2.9999 and misses. Amber
 keeps its drawn 700. Please confirm, or say the bar is decorative enough not
 to owe a ratio.
+
+### 84. A second heading in emerald
+
+**website**, `20919:10794`
+
+The media section sets its `h2` in emerald-500, which makes two: this and the
+benefits grid (DESIGN-FEEDBACK 76). Every other section — the FAQ, Steps, the
+testimonial wall, the segment stack — sets it in the text colour.
+
+Both are on the home page, and both stand on an olive wash, so it may be the
+ground rather than the section that decides. Please say which: the two blocks
+ship zinc-800 for now.
+
+### 85. The stepper's rungs are dialled in by hand
+
+**website**, `20919:10809`
+
+Each rung of the ladder beside the picture is pushed down until its title
+lands beside its disc: 28, then 48, then 40 of padding above three titles that
+run one, one and two lines.
+
+It is correct for the copy it was drawn with and for nothing else — a title
+one word longer moves its own rung and nothing follows it.
+
+The block computes the offset instead, from the disc and the leading, so every
+rung takes the same number and the ladder holds at any length. Please confirm
+there is no intent in the three values that this loses.
+
+### 86. The stepper's pebbles come from three unrelated ramps
+
+**website**, `20919:10801` and its two siblings
+
+Each rung's disc holds a hand-drawn pebble — 15 by 16, irregular, in the same
+hand as the highlighter and the leaf — and the three are painted:
+
+| rung    | colour    | in the ramps                             |
+| ------- | --------- | ---------------------------------------- |
+| ask     | `#94cfa1` | green-500, to the value                  |
+| check   | `#c4beb9` | **four units off taupe-300** (`#c8bebb`) |
+| connect | `#d4c4fc` | violet-500, to the value                 |
+
+Three ramps, no series between them, and one that misses its own step. They
+read 1.80, 1.82 and 1.60 against the near-white disc they sit in — fine for a
+decoration, but there is no way to derive a fourth.
+
+The block ships the drawn three as a closed set and rounds the taupe onto its
+ramp. Please confirm the three are meant to be unrelated, and say what a
+fourth rung should be painted.

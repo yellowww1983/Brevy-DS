@@ -72,7 +72,7 @@ const geometry = (node: HTMLElement) => {
   const descriptionBox = description.getBoundingClientRect()
   const actionBox = action.getBoundingClientRect()
   const headingStyle = getComputedStyle(heading)
-  const picture = pick("hero-split-picture")
+  const picture = pick("shaped-image")
   const card = pick("hero-split-card")
   const proof = pick("social-proof")
   const pictureBox = picture?.getBoundingClientRect()

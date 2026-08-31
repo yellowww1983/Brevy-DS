@@ -2,7 +2,11 @@ import { expect, test, type Page } from "./catalog-test"
 import { slotFaces } from "./settled"
 
 const CATALOG_FACE = "Inter"
-const SYSTEM_FACE = "Rethink Sans"
+/** Both of the system's own faces. The leak this guards against is the
+ *  catalog's Inter reaching a component; a component deliberately set in the
+ *  serif — a heading, or the marker that runs under one — is not one. */
+const SYSTEM_FACES = ["Rethink Sans", "Hedvig Letters Serif"]
+const SYSTEM_FACE = SYSTEM_FACES[0] ?? "Rethink Sans"
 const FONT_FAMILY_CLASS = /\bfont-(sans|serif|mono|catalog)\b/
 
 const firstFamily = (stack: string) =>
@@ -40,7 +44,7 @@ test("every design system element renders in the system face", async ({
     inspected += families.length
 
     for (const { slot, family } of families) {
-      if (firstFamily(family) !== SYSTEM_FACE) {
+      if (!SYSTEM_FACES.includes(firstFamily(family))) {
         offenders.push(
           `${path} → [data-slot="${slot}"] resolves to ${firstFamily(family)}`,
         )
@@ -55,8 +59,9 @@ test("every design system element renders in the system face", async ({
 
   expect(
     offenders,
-    `Design system elements must inherit ${SYSTEM_FACE}. A surface that renders components ` +
-      `outside a preview frame leaks the catalog face into them.`,
+    `Design system elements must render in one of the system's own faces ` +
+      `(${SYSTEM_FACES.join(" or ")}). A surface that renders components outside ` +
+      `a preview frame leaks the catalog face into them.`,
   ).toEqual([])
 })
 

@@ -2,6 +2,7 @@ import { Button } from "../components/button.js"
 import { Chat } from "../components/chat.js"
 import { Chip } from "../components/chip.js"
 import { Container } from "../components/container.js"
+import { ShapedImage } from "../components/shaped-image.js"
 import {
   SocialProof,
   type SocialProofPerson,
@@ -51,37 +52,15 @@ type HeroSplitCard = {
   sentence: string
 }
 
-/** The photograph, cut to the Brevy mark.
+/** The photograph beside the copy, cut to the Brevy mark.
  *
- *  The file masks it with a boolean union of two mirrored vectors
- *  (`22653:4876`). That shape is the brand mark, but it is not the lockup's
- *  path: the file draws the two separately and parts this one's quadrants by
- *  half as much, which is the difference between a mark and a window cut in a
- *  photograph. The token carries the drawn geometry; see `--mask-brevy-mark`.
- *  Hard-edged: no fade, no gradient, unlike the centred hero's band —
- *  `blendMode: PASS_THROUGH`, opacity 1.
+ *  The shape is `ShapedImage`, which the media section draws too — the day
+ *  that section arrived is the day this lifted out. Only the width is set
+ *  here, because the cut carries its own proportion.
  *
- *  The mask is not a prop and is not meant to become one. A client swaps the
- *  photograph inside it; the shape is the identity, and a hero wearing
- *  somebody else's silhouette is not this hero.
- *
- *  Kept as its own piece here rather than inlined, because it is not this
- *  hero's alone. Counted across the file: fifteen nodes, which collapse to two
- *  drawings — the home pages' `Your superhuman social worker` (four seasons by
- *  three breakpoints) and this hero — plus the Open Graph image. Two places,
- *  not twenty, and the second of them is a content section rather than a hero.
- *  So the day that section is built, this lifts out whole. */
-function ShapedPicture({ src, alt }: { src: string; alt: string }) {
-  return (
-    <div
-      data-slot="hero-split-picture"
-      className="hidden h-(--hero-split-picture-height) w-(--hero-split-picture) shrink-0 mask-brevy-mark content:block"
-    >
-      <img src={src} alt={alt} className="size-full object-cover" />
-    </div>
-  )
-}
-
+ *  It is not there at all below the content breakpoint. The file draws no
+ *  picture on the tablet or the mobile frames: it does not shrink and it does
+ *  not drop under the copy, so the copy centres itself in the space. */
 /** The split hero. A column of copy with a picture beside it, and a card of
  *  reassurance hanging across the two.
  *
@@ -261,7 +240,15 @@ function HeroSplit({
             </div>
           </div>
 
-          {image ? <ShapedPicture src={image.picture} alt={image.alt} /> : null}
+          {image ? (
+            <ShapedImage className="hidden w-(--hero-split-picture) shrink-0 content:block">
+              <img
+                src={image.picture}
+                alt={image.alt}
+                className="size-full object-cover"
+              />
+            </ShapedImage>
+          ) : null}
         </div>
       </Container>
 
