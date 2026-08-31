@@ -635,6 +635,17 @@
   --testimonials-mark-top: 4.375rem;
   --testimonials-shade: 31.8125rem;
   --testimonials-header: 16.6875rem;
+
+  /* The auth screen. 360 is the column the split variant sets its copy in;
+     960 and 782 are the drawn frames, floors rather than heights. The wash
+     is the hero's own 670, hung 100 down from the tablet up and against the
+     top below it, which is where the file places the same painting at every
+     width it draws. */
+  --auth-copy: 22.5rem;
+  --auth-height: 60rem;
+  --auth-height-narrow: 48.875rem;
+  --auth-wash: 41.875rem;
+  --auth-wash-top: 6.25rem;
 }
 
 @media (width >= theme(--breakpoint-tablet)) {
