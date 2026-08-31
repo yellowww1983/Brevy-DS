@@ -6,6 +6,7 @@ import { Fragment, useEffect, useState, type ReactNode } from "react"
 import { Button } from "../components/button.js"
 import { Chip } from "../components/chip.js"
 import { Container } from "../components/container.js"
+import { IllustrationPanel } from "../components/illustration-panel.js"
 import { Marker as SharedMarker } from "../components/marker.js"
 import { cn } from "../lib/utils.js"
 
@@ -57,28 +58,6 @@ const FADE = "duration-300"
  *  every step of every frame; what moves is the card's ground and the tick. */
 function Marker({ index }: { index: number }) {
   return <SharedMarker>{index + 1}</SharedMarker>
-}
-
-function Figure({
-  children,
-  marker,
-}: {
-  children?: ReactNode
-  marker?: ReactNode
-}) {
-  return (
-    <div
-      data-slot="steps-figure"
-      className="h-(--steps-figure) rounded-2xl bg-linear-to-b from-olive-200 to-neutral-100 p-px"
-    >
-      <div className="relative size-full overflow-hidden rounded-2xl bg-linear-to-b from-olive-300 to-white">
-        {marker ? (
-          <div className="absolute top-2 left-2 z-10">{marker}</div>
-        ) : null}
-        {children}
-      </div>
-    </div>
-  )
 }
 
 /** The tick at the far end of a step, which is the one part that says how far
@@ -369,11 +348,11 @@ function Steps({
                   data-slot="steps-step"
                   className="flex flex-col gap-6 rounded-2xl bg-white p-6 shadow-md dark:bg-card"
                 >
-                  <Figure
+                  <IllustrationPanel
                     marker={showMarkers ? <Marker index={index} /> : undefined}
                   >
                     {step.illustration}
-                  </Figure>
+                  </IllustrationPanel>
 
                   <div className="flex flex-col gap-2">
                     <h3

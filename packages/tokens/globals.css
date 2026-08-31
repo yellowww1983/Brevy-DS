@@ -560,12 +560,17 @@
      The card's two offsets are where it hangs off the picture: 184 to the
      left of the picture's edge and 107 above its foot, which is what puts a
      third of it on the gradient and the rest on the photograph. */
+  /* The frame the product's artwork sits in, 290 tall at every width the
+     column gives it. Not the steps section's own any more: the benefit cards
+     on the Home pages draw the same object, 44 nodes across the two blocks. */
+  --illustration-panel: 18.125rem;
+
   /* The steps section. 468 is the box the file gives the heading and the line
-     under it on three of the four pages that draw one; 290 is the height of a
-     card's illustration at every width; the panel beside a step list is 680
-     wide and narrow, and 492 where the column narrows to a phone. */
+     under it on three of the four pages that draw one; the panel beside a step
+     list is 680 wide and narrow, and 492 where the column narrows to a
+     phone. */
   --steps-lede: 29.25rem;
-  --steps-figure: 18.125rem;
+
   --steps-panel: 42.5rem;
   --steps-panel-narrow: 30.75rem;
   /* The plate inside the panel does not stretch with it. The file keeps it at

@@ -79,7 +79,9 @@ const geometry = (node: HTMLElement) => {
   const first = steps[0]
   const second = steps[1]
   const panelItem = pick("steps-panel")
-  const figure = pick("steps-figure")
+  /** The illustration frame is its own component now — one object, two
+   *  blocks — so it answers to its own name rather than the step's. */
+  const figure = pick("illustration-panel")
   /** The disc is its own component now — three consumers, one shape — so it
    *  answers to its own name rather than the step's. */
   const marker = pick("marker")
