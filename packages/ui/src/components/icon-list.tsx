@@ -32,11 +32,22 @@ const iconListVariants = cva("flex flex-col", {
        *  most-drawn shape it has, and it wears no disc at all. */
       check: "gap-2 [&_[data-slot=icon-list-row]]:gap-2",
       arrow: "gap-2 [&_[data-slot=icon-list-row]]:gap-2",
-      /** A glyph inside a ring: a 1px gradient edge drawn as a gradient ground
-       *  with a padding ring over it, which is how the step marker already
-       *  builds the same object — the file gives both the same construction,
-       *  a gradient fill under a gradient stroke. Sized and coloured by the
-       *  two variants below, which only the disc reads. */
+      /** A glyph inside a ring. It is the `Marker` component's shape to the
+       *  value — the same two gradients, the same padding ring, the same
+       *  shadow, at the same two sizes — and it is painted here rather than
+       *  rendered from there because of how a row gets dressed, not because
+       *  the discs differ.
+       *
+       *  A row wears what the list decides: one place chooses the marker, and
+       *  a row cannot be dressed as one kind inside a list of another. A
+       *  component carrying its own props would need the list to reach it,
+       *  which means a context, which would make a static list client-only.
+       *  And the bare check and arrow share this row: rendering a `Marker`
+       *  for them would mean stripping its ring, its padding and its shadow
+       *  back off again from the parent.
+       *
+       *  So the two must be kept in step by hand. If one of the gradients
+       *  moves, it moves in both. */
       disc: cn(
         "[&_[data-slot=icon-list-disc]]:rounded-full [&_[data-slot=icon-list-disc]]:p-px [&_[data-slot=icon-list-disc]]:shadow-xs",
         "[&_[data-slot=icon-list-face]]:size-full",

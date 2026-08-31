@@ -80,7 +80,9 @@ const geometry = (node: HTMLElement) => {
   const second = steps[1]
   const panelItem = pick("steps-panel")
   const figure = pick("steps-figure")
-  const marker = pick("steps-marker")
+  /** The disc is its own component now — three consumers, one shape — so it
+   *  answers to its own name rather than the step's. */
+  const marker = pick("marker")
   const tail = pick("steps-tail")
   const style = getComputedStyle(column)
 
