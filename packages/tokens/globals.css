@@ -616,15 +616,26 @@
      586 is the width the file gives the heading in four bands out of four.
      The line under it is drawn narrower on three of them and wider on one, so
      the heading's is the measure both take. */
-  /* How far the highlighter drops below the line it marks: the file puts a 10
-     tall stroke at 41 in a 48 line, which is 3 past the foot of the box. */
-  --line-marker-drop: 0.1875rem;
-
   /* The photograph cut to the mark keeps one proportion at every size it is
      drawn: 592 by 602 on the desktop, 762 by 775 at the tablet, 358 by 364 at
      the mobile. Every mask in the file measures 0.983 across, so the shape
      carries its own ratio and a caller sets only the width. */
   --aspect-brevy-mark: 592 / 602;
+
+  /* How far the highlighter drops below the line it marks: the file puts a 10
+     tall stroke at 41 in a 48 line, which is 3 past the foot of the box. */
+  --line-marker-drop: 0.1875rem;
+
+  /* The media section. The disc on its ladder is 64, and the line under the
+     heading runs to 678 — wider than the heading's own 586, which is the one
+     place in the file a lede is given more room than the line above it. */
+  --stepper-disc: 4rem;
+  /* What lifts the first line of a rung onto the middle of its disc: half the
+     difference between the 64 disc and the 29 the title's own leading gives
+     it. One number for every rung, rather than the file's hand-dialled 28, 48
+     and 40 — see the block. */
+  --stepper-lift: 1.09375rem;
+  --media-copy-lede: 42.375rem;
 
   /* The segment stack. The white card inside a segment holds 372 at every
      width the file draws, and the copy beside it is what grows. */
