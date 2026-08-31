@@ -12,6 +12,7 @@ import {
   Chip,
   Facebook,
   IconList,
+  LineMarker,
   IconListItem,
   Input,
   Instagram,
@@ -374,6 +375,53 @@ export const components: readonly ComponentEntry[] = [
         <Chip variant="eyebrow" count={counted ? 3 : undefined}>
           Easy Steps
         </Chip>
+      )
+    },
+  },
+  {
+    slug: "line-marker",
+    name: "Line marker",
+    wide: true,
+    align: "start",
+    // Drawn from Brevy Website · 24 strokes across five pages, every one the
+    // same 1016-command drawing at a different width. One path stretched to
+    // whatever it sits under, rather than a vector per occurrence — which is
+    // what lets the width come from the word.
+    axes: [
+      {
+        label: "Marks",
+        values: ["A phrase", "One word", "A whole line"],
+        phrasing: {
+          "A phrase": "under two words of a heading",
+          "One word": "under a single word",
+          "A whole line": "under the whole heading",
+        },
+      },
+    ],
+    omitted: [],
+    render: (combination) => {
+      const marks = combination.Marks ?? "A phrase"
+
+      if (marks === "One word") {
+        return (
+          <p className="font-serif text-h2 text-zinc-800 dark:text-foreground">
+            Your <LineMarker>superhuman</LineMarker> social worker
+          </p>
+        )
+      }
+
+      if (marks === "A whole line") {
+        return (
+          <p className="font-serif text-h2 text-zinc-800 dark:text-foreground">
+            <LineMarker>Your superhuman social worker</LineMarker>
+          </p>
+        )
+      }
+
+      return (
+        <p className="font-serif text-h2 text-zinc-800 dark:text-foreground">
+          Your superhuman <LineMarker>social worker</LineMarker>
+        </p>
       )
     },
   },
