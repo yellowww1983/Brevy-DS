@@ -1081,3 +1081,47 @@ hyphen for a dash a line later and a double space where the paragraph breaks.
 
 The catalog ships it corrected, because a catalog that reproduces a typo
 teaches it. Please fix it in the file so the two stop disagreeing.
+
+### 70. The field helper is drawn in two colours
+
+**app**, the auth screens, `20786:176843`
+
+| line                                      | colour   | note                              |
+| ----------------------------------------- | -------- | --------------------------------- |
+| `This is an input description.`           | zinc-500 | shadcn's placeholder copy, hidden |
+| `Min. 8 characters. You won't need this…` | zinc-700 | the line somebody wrote           |
+
+The same role — the helper under a field — in two colours, and the paler one
+sits on a line still reading its library placeholder.
+
+The system ships one: zinc-700, being the colour of the helper somebody
+actually wrote. Please confirm.
+
+### 71. Two of the login screen's numbers sit off every ramp
+
+**app**, `20786:176843`
+
+| element                  | drawn | nearest step           |
+| ------------------------ | ----- | ---------------------- |
+| the photograph's corners | 14    | 12 or 16               |
+| the heading              | 42/60 | the h1's 42/56 (1.333) |
+
+Neither 14 nor a 60 leading on 42 exists in either file's scale. The screen
+also still carries a search icon inside a password field and a Geist footnote,
+which read as leftovers rather than intent.
+
+The system ships 16 on the photograph and the h1's own leading. Please
+confirm, or name the step 14 was meant to be.
+
+### 72. Both drawn `Forgot your password?` lines are switched off
+
+**app**, `20786:176978`
+
+The password field's label row carries `Forgot your password?` pushed to its
+right end — drawn twice, once per field, and both `visible: false`. A set-up
+screen arguably has no password to forget yet, but the line is drawn exactly
+where a login screen would want it.
+
+The label's action slot ships either way; the built screen shows the first
+line and drops the second. Please confirm whether the line is meant to be off
+on this screen, and where it should say on a returning login.

@@ -612,21 +612,63 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "form",
     name: "Form",
-    axes: [],
+    // Drawn from Brevy App · the auth screens at `20786:176842`: fields 16
+    // apart, an 8-gap column of label, control and helper inside each. The
+    // invalid state is react-hook-form actually failing, so the ring the
+    // preview shows is the Input's own aria-invalid and not a class
+    // pretending to.
+    axes: [
+      {
+        label: "State",
+        values: ["Resting", "Invalid"],
+        phrasing: {
+          Resting: "holding nothing yet, its helper under it",
+          Invalid: "refusing its value, the message under it",
+        },
+      },
+      {
+        label: "Label row",
+        values: ["Label only", "With a link"],
+        phrasing: {
+          "Label only": "the label alone over the field",
+          "With a link": "a quiet link sharing the label's row",
+        },
+      },
+    ],
     omitted: [],
-    render: () => <EmailField />,
+    render: (combination) => (
+      <EmailField
+        invalid={combination.State === "Invalid"}
+        withLink={combination["Label row"] === "With a link"}
+      />
+    ),
   },
   {
     slug: "label",
     name: "Label",
-    axes: [],
+    // Drawn from Brevy App · `Password` over the auth field (`20786:176978`):
+    // Medium 14 set solid in the page's text colour — the one corner of
+    // shadcn the file localised by agreeing with it.
+    axes: [
+      {
+        label: "Arrangement",
+        values: ["Alone", "Over a field"],
+        phrasing: {
+          Alone: "the word by itself",
+          "Over a field": "naming the field under it",
+        },
+      },
+    ],
     omitted: [],
-    render: () => (
-      <div className="grid w-full gap-2">
-        <Label htmlFor="catalog-label-demo">Email</Label>
-        <Input id="catalog-label-demo" placeholder="hello@brevy.com" />
-      </div>
-    ),
+    render: (combination) =>
+      combination.Arrangement === "Alone" ? (
+        <Label htmlFor="catalog-label-alone">Email</Label>
+      ) : (
+        <div className="grid w-full gap-2">
+          <Label htmlFor="catalog-label-demo">Email</Label>
+          <Input id="catalog-label-demo" placeholder="hello@brevy.com" />
+        </div>
+      ),
   },
 ]
 
