@@ -84,6 +84,7 @@ export type {
   FooterNewsletter,
   FooterSocial,
 } from "./blocks/footer.js"
+export { AuthSplit } from "./screens/auth-split.js"
 export { Navbar } from "./blocks/navbar.js"
 export type { NavbarCta, NavbarLink } from "./blocks/navbar.js"
 export { cn } from "./lib/utils.js"
