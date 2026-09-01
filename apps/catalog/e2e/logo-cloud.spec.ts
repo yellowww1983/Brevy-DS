@@ -102,14 +102,29 @@ test("the band scrolls, and holds under the cursor", async ({ page }) => {
   expect(animation.timing).toBe("linear")
   expect(animation.laps).toBe("infinite")
 
-  /** It is really moving, not merely declared to be. */
-  const at = () =>
-    page
-      .locator("[data-slot='logo-cloud-track']")
-      .evaluate((node) => node.getBoundingClientRect().x)
+  /** It is really moving, not merely declared to be — read off the
+   *  animation's own clock rather than the track's box.
+   *
+   *  A transform this simple is handed to the compositor, and a composited
+   *  transform never touches layout: `getBoundingClientRect` answers where
+   *  the element was laid out, which is the same number on every frame. It
+   *  happened to move on the machine this was written on and never moved on
+   *  CI, which is the same class of mistake as reading a measured value the
+   *  moment a goto returns. */
+  const clock = () =>
+    page.locator("[data-slot='logo-cloud-track']").evaluate((node) => {
+      const [animation] = node.getAnimations()
+      return typeof animation?.currentTime === "number"
+        ? animation.currentTime
+        : null
+    })
 
-  const start = await at()
-  await expect.poll(async () => (await at()) !== start).toBe(true)
+  const start = await clock()
+  expect(start, "the track has an animation to read a clock off").not.toBeNull()
+
+  await expect
+    .poll(async () => ((await clock()) ?? 0) > (start ?? 0))
+    .toBe(true)
 
   expect(await state()).toBe("running")
 
@@ -122,6 +137,20 @@ test("the band scrolls, and holds under the cursor", async ({ page }) => {
   )
 
   await expect.poll(state).toBe("paused")
+
+  /** And the clock stops with it, which is what a held marquee is. Two frames
+   *  apart rather than two moments apart: waiting on the next paint is a
+   *  condition, and it is the shortest one that would catch the animation
+   *  still running. */
+  const held = await clock()
+  await page.evaluate(
+    () =>
+      new Promise((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(resolve))
+      }),
+  )
+
+  expect(await clock()).toBe(held)
 
   await page.mouse.move((box?.x ?? 0) + (box?.width ?? 0) / 2, -20)
   await expect.poll(state).toBe("running")
