@@ -670,6 +670,9 @@
      band spans, and the loop stays closed either way — it slides one copy,
      whatever a copy turned out to be. */
   --logo-cloud-copy: 100vw;
+  /* How far the marks take to arrive. The live page fades them in over 48 at
+     each end rather than cutting them at the edge. */
+  --logo-cloud-fade: 3rem;
 
   /* The benefit grid. 389 a card at the desktop, which is the 1200 column less
      two 16 gaps in three; the copy under the panel grows and the panel does
@@ -787,6 +790,22 @@
   to {
     transform: translateX(-50%);
   }
+}
+
+/* The band's ends.
+   The mask hangs on the strip that clips the marks and not on the band
+   itself: alpha applies to everything under it, so a mask on the band would
+   take its olive with the marks and leave the page showing through at both
+   ends. Alpha also means it needs nothing of its own in the dark — it fades
+   whatever the marks have already been filtered into. */
+@utility logo-cloud-fade {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--logo-cloud-fade),
+    black calc(100% - var(--logo-cloud-fade)),
+    transparent
+  );
 }
 
 @utility animate-marquee {
