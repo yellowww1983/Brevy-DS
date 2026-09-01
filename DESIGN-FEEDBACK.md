@@ -1353,3 +1353,87 @@ decoration, but there is no way to derive a fourth.
 The block ships the drawn three as a closed set and rounds the taupe onto its
 ramp. Please confirm the three are meant to be unrelated, and say what a
 fourth rung should be painted.
+
+### 87. The pill's figure is drawn a weight lighter than every other
+
+**website**, `20919:10870`
+
+The big-number-and-unit pair appears 39 times across the file in three
+containers — the testimonial wall's stat card, the tile mosaic's dark tile,
+and the pill on the tile beside it. Thirty-eight of them are 60/60 at weight
+700 with -0.9% tracking. The pill's `2,000+` is the same size, the same
+leading and the same tracking at **weight 600**.
+
+The system now ships that pair as one object, so it has one weight, and the
+one it has is the 700 the other thirty-eight draw. Please confirm the pill is
+a slip rather than a distinction.
+
+### 88. White on the frosted caption does not clear AA over its photograph
+
+**website**, `22618:7252`
+
+The bar across the foot of the photograph tile is black at 22% under a 12
+blur, with the caption set in white on top. Measured on the painted pixels of
+the photograph the file itself places behind it, the caption reads **3.97** at
+the left of the line and **4.29** at the right, against the 4.5 that 20px
+regular text needs.
+
+It is not a wide miss and it is not the block's to fix: the photograph is a
+preset layer, so the number moves with whatever picture is brought. That is
+the problem — at 22% the bar cannot promise a floor for any picture. A darker
+scrim would; so would a fixed tint under the blur rather than a percentage of
+black.
+
+The block ships the drawn 22%. Please say what the floor should be.
+
+### 89. The chart bar's light end disappears into its own card
+
+**website**, `20919:10866`
+
+The bar runs emerald-500 to green-500 across a white card. The dark end reads
+12.75 against the card and the light end **1.90**, where a mark that carries
+meaning needs 3.
+
+The bar is the only thing the tile plots, so its right edge is where the
+number is — and that edge is the end that vanishes. The block ships the drawn
+sweep in the light theme and lifts it a ramp in the dark, where the whole
+gradient fell to 1.41 and no end of it survived. Please say whether the light
+end is meant to fade out.
+
+### 90. The quotation mark hangs at two different heights
+
+**website**, `22618:7253` against `22624:8287` and ten siblings
+
+One drawing, 321 by 265, bled 20 off the left edge of the card that clips it,
+and painted `#f8f5f2` at full strength in every instance. Twelve of them in
+the file, and the only thing that changes is how far down it starts:
+
+| card                    | height    | mark top |
+| ----------------------- | --------- | -------- |
+| testimonial wall, quote | 270 – 320 | 70       |
+| tile mosaic, quotation  | 240       | 40       |
+
+Both happen to show exactly 200 of the mark before the clip, which would be a
+rule if any of the other ten agreed — the wall's mobile cards are 292, 208 and
+320 tall and all three keep 70.
+
+The card takes the offset as a named choice with the two drawn values rather
+than deriving a rule from two coincidences. Please say whether the mark is
+meant to hang from the top of the card or from its floor.
+
+### 91. The quote card's author row is drawn two ways
+
+**website**, `22618:7248` against `22624:8287`
+
+The same card, the same 24 of padding, the same 20/28 quote above it — and
+underneath, two different rows:
+
+| card                    | face | name           |
+| ----------------------- | ---- | -------------- |
+| testimonial wall, quote | 40   | 18/28 Bold     |
+| tile mosaic, quotation  | 32   | 20/28 SemiBold |
+
+The wall draws its row eleven times and the mosaic draws its once, so the
+component ships the wall's and the mosaic now wears it. Please confirm the
+32 and the SemiBold are a slip rather than a distinction — it is the same
+divergence the pill's figure has (87), on the same block.

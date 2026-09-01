@@ -1,8 +1,9 @@
 import type { ReactNode } from "react"
 
-import { Avatar, AvatarFallback, AvatarImage } from "../components/avatar.js"
 import { Container } from "../components/container.js"
+import { QuoteCard } from "../components/quote-card.js"
 import type { SocialProofPerson } from "../components/social-proof.js"
+import { StatFigure } from "../components/stat-figure.js"
 import { cn } from "../lib/utils.js"
 
 /** The ground the section stands on.
@@ -28,12 +29,12 @@ type TestimonialsAuthor = SocialProofPerson
  *  the drawn arrangement is what this order produces and any other order
  *  produces its own.
  *
- *  `stat` is a card of this block for now, and it is on loan. Counted across
- *  the file, its vocabulary — the 60/60 figure, the 24/24 unit, the display
- *  quotation mark behind them — appears 26 times, and half of those are the
- *  stats section that has not been built. When it is, this lifts out into
- *  whatever the two of them share. Building that component today would be
- *  guessing at the half of it nobody has measured. */
+ *  `stat` stays a card of this block, but the figure inside it does not. The
+ *  other half of that vocabulary turned out to be the tile mosaic, which
+ *  paints the same 60/60 number and 24/24 unit twice more and agrees with
+ *  this card on nothing else: one inverts the colours onto a dark ground, the
+ *  other drops the card for a pill. So what lifted out is `StatFigure` — the
+ *  type and nothing else — and the container stayed where it was. */
 type TestimonialsItem =
   | {
       kind: "stat"
@@ -107,10 +108,7 @@ function Stat({
       )}
     >
       <div className="flex flex-col gap-12">
-        <p className="flex items-start text-stat text-emerald-500">
-          {figure}
-          {unit ? <span className="text-stat-unit">{unit}</span> : null}
-        </p>
+        <StatFigure value={figure} unit={unit} className="text-emerald-500" />
 
         <p className="text-body-lg text-emerald-500">{sentence}</p>
       </div>
@@ -145,62 +143,6 @@ function Featured({ quote, portrait }: { quote: string; portrait: ReactNode }) {
       <p className="p-5 text-body-lg text-white tablet:p-0 tablet:pe-5">
         {quote}
       </p>
-    </div>
-  )
-}
-
-/** The white card: a quote, a face, a name, and a quotation mark the size of
- *  the card behind all three.
- *
- *  The mark is bled off the left edge and 70 down from the top, and the card
- *  clips it — so what shows is a corner of a 321 by 265 drawing rather than
- *  the drawing. It is painted rather than typeset: the shape is a vector in
- *  the file, not the typeface's own quote at some size, and no size in the
- *  ramp would reach 265 tall anyway.
- *
- *  The quote and the author are pushed apart rather than gapped, so the name
- *  sits on the floor of the card whatever the quote does above it.
- *
- *  The floor arrives at the tablet and not below it. The file fixes the card
- *  at 270 where the mosaic is a row or a wide column, and lets it hug at
- *  mobile, where it draws 292, 208 and 320 — a short quote is allowed to be a
- *  short card there rather than half a card of white. */
-function Quote({
-  quote,
-  author,
-}: {
-  quote: string
-  author: TestimonialsAuthor
-}) {
-  return (
-    <div
-      data-slot="testimonials-quote"
-      className={cn(
-        CARD,
-        "flex flex-col justify-between gap-6 bg-white p-6 tablet:min-h-(--testimonials-card) dark:bg-card",
-      )}
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-(--testimonials-mark-top) -left-5 -z-10 h-(--testimonials-mark-tall) w-(--testimonials-mark) bg-beige-300 mask-brevy-quote dark:bg-muted"
-      />
-
-      <p className="text-body-lg text-zinc-700 dark:text-card-foreground">
-        {quote}
-      </p>
-
-      <div className="flex items-center gap-3">
-        <Avatar size="md">
-          {author.photo ? (
-            <AvatarImage src={author.photo} alt={author.name} />
-          ) : null}
-          <AvatarFallback>{author.initials}</AvatarFallback>
-        </Avatar>
-
-        <p className="text-lg/7 font-bold text-zinc-800 dark:text-foreground">
-          {author.name}
-        </p>
-      </div>
     </div>
   )
 }
@@ -365,7 +307,18 @@ function Testimonials({
               ) : null}
 
               {item.kind === "quote" ? (
-                <Quote quote={item.quote} author={item.author} />
+                /** The card is the system's, not this block's: the tile
+                 *  mosaic draws the same object. What stays here is the
+                 *  floor, which arrives at the tablet and not below it — the
+                 *  file fixes the card at 270 where the mosaic is a row or a
+                 *  wide column and lets it hug at mobile, where it draws 292,
+                 *  208 and 320. A short quote is allowed to be a short card
+                 *  there rather than half a card of white. */
+                <QuoteCard
+                  quote={item.quote}
+                  author={item.author}
+                  className="grow tablet:min-h-(--testimonials-card)"
+                />
               ) : null}
             </li>
           ))}

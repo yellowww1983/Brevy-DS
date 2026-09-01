@@ -97,9 +97,9 @@ test("the mosaic is three columns with the wide card across two", async ({
   expect(cards.map((card) => card.slot)).toEqual([
     "testimonials-stat",
     "testimonials-featured",
-    "testimonials-quote",
-    "testimonials-quote",
-    "testimonials-quote",
+    "quote-card",
+    "quote-card",
+    "quote-card",
   ])
 
   /** A third of the column, and the wide card two thirds plus the gap between
@@ -276,12 +276,12 @@ test("the white card carries a face at 40 and a mark bled off its edge", async (
 }) => {
   await page.goto(SPECIMEN)
 
-  const card = await box(page, "[data-slot='testimonials-quote']")
+  const card = await box(page, "[data-slot='quote-card']")
   const avatar = await box(
     page,
-    "[data-slot='testimonials-quote'] [data-slot='avatar']",
+    "[data-slot='quote-card'] [data-slot='avatar']",
   )
-  const mark = await box(page, "[data-slot='testimonials-quote'] [aria-hidden]")
+  const mark = await box(page, "[data-slot='quote-card-mark']")
 
   /** The one place in the file that draws a 40 avatar, which is why the
    *  component grew a size rather than a class at this call site. */
@@ -294,7 +294,7 @@ test("the white card carries a face at 40 and a mark bled off its edge", async (
   expect(mark.y - card.y).toBe(DRAWN.mark.top)
 
   const read = await page
-    .locator("[data-slot='testimonials-quote'] [aria-hidden]")
+    .locator("[data-slot='quote-card-mark']")
     .first()
     .evaluate((node) => {
       const style = getComputedStyle(node)
@@ -308,7 +308,7 @@ test("the white card carries a face at 40 and a mark bled off its edge", async (
   expect(read.mask).toContain("svg")
 
   const name = await page
-    .locator("[data-slot='testimonials-quote'] p")
+    .locator("[data-slot='quote-card'] p")
     .nth(1)
     .evaluate((node) => {
       const style = getComputedStyle(node)
@@ -327,7 +327,7 @@ test("the white card carries a face at 40 and a mark bled off its edge", async (
   /** The card clips the mark, which is what makes it a corner of a drawing
    *  rather than a drawing. */
   const clipped = await page
-    .locator("[data-slot='testimonials-quote']")
+    .locator("[data-slot='quote-card']")
     .first()
     .evaluate((node) => getComputedStyle(node).overflow)
 
@@ -459,7 +459,7 @@ test("at mobile the wide card stacks and the floor goes", async ({ page }) => {
   /** The file hugs its white cards here — 292, 208 and 320 — so a short quote
    *  is a short card rather than half a card of white. */
   const heights = await page
-    .locator("[data-slot='testimonials-quote']")
+    .locator("[data-slot='quote-card']")
     .evaluateAll((nodes) =>
       nodes.map((node) => Math.round(node.getBoundingClientRect().height)),
     )
@@ -469,7 +469,7 @@ test("at mobile the wide card stacks and the floor goes", async ({ page }) => {
 
   expect(
     await page
-      .locator("[data-slot='testimonials-quote']")
+      .locator("[data-slot='quote-card']")
       .first()
       .evaluate((node) => getComputedStyle(node).minHeight),
   ).toBe("auto")
@@ -510,11 +510,8 @@ test("on a dark page the two grounds converge and the brand cards stay", async (
           "[data-slot='testimonials-featured']",
           "background-color",
         ),
-        quote: style("[data-slot='testimonials-quote']", "background-color"),
-        mark: style(
-          "[data-slot='testimonials-quote'] [aria-hidden]",
-          "background-color",
-        ),
+        quote: style("[data-slot='quote-card']", "background-color"),
+        mark: style("[data-slot='quote-card-mark']", "background-color"),
       }
     })
 

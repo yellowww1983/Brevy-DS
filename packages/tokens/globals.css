@@ -641,6 +641,29 @@
      width the file draws, and the copy beside it is what grows. */
   --segment-illustration: 23.25rem;
 
+  /* The tile mosaic. A row is 240; a wide tile is 592 and a narrow one 390,
+     which is three and two of the six columns the 1200 column divides into at
+     a 16 gutter. The cut inside the dark tile is 236 beside its words and 362
+     above them, the heading's box 502, and the leaves in the corner 178 by
+     140. The chart's rules run 118 and the frosted caption 96. */
+  --tiles-row: 15rem;
+  --tiles-figure: 14.75rem;
+  --tiles-figure-tall: 22.625rem;
+  --tiles-heading: 31.375rem;
+  --tiles-leaves: 11.125rem;
+  --tiles-leaves-height: 8.75rem;
+  --tiles-chart: 7.375rem;
+  --tiles-caption: 6rem;
+
+  /* The logo band. The file draws 96; the live page runs 122, and 90 where
+     the column narrows to a phone. */
+  --logo-cloud: 7.625rem;
+  --logo-cloud-narrow: 5.625rem;
+  /* Half of what stands between two marks: the row pads its own ends by the
+     same amount, so the seam between the two copies matches every other gap
+     in the band. */
+  --logo-cloud-gap: 2.5rem;
+
   /* The benefit grid. 389 a card at the desktop, which is the 1200 column less
      two 16 gaps in three; the copy under the panel grows and the panel does
      not, which is what puts the drawn cards at 454 and 482 in one row. */
@@ -692,9 +715,12 @@
   --testimonials-photo: 30.375rem;
   --testimonials-portrait: 16.375rem;
   --testimonials-card: 16.875rem;
-  --testimonials-mark: 20.0625rem;
-  --testimonials-mark-tall: 16.5625rem;
-  --testimonials-mark-top: 4.375rem;
+  /* The quotation mark behind a quote card: 321 by 265, hung 70 down. It
+     belongs to the card rather than to the wall the card was written in —
+     the tile mosaic draws the same object. */
+  --quote-mark: 20.0625rem;
+  --quote-mark-tall: 16.5625rem;
+  --quote-mark-top: 4.375rem;
   --testimonials-shade: 31.8125rem;
   --testimonials-header: 16.6875rem;
 
@@ -744,10 +770,48 @@
   );
 }
 
+/* One copy's width, and then start over. The track is two copies of the same
+   row, so sliding exactly half of it lands the second copy where the first
+   began and nobody sees the seam. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@utility animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+/* The dark tile's own thread: its fill one step darker, which is what the
+   file draws on every tile that is not white. */
+@utility hairline-emerald {
+  --hairline-paint: linear-gradient(
+    var(--color-emerald-600),
+    var(--color-emerald-700)
+  );
+}
+
 @utility hairline-taupe {
   --hairline-paint: linear-gradient(
     var(--color-taupe-500),
     var(--color-taupe-600)
+  );
+}
+
+/* The dashed rule the chart tile stands its bar on.
+   The file draws eight 1px columns dashed 2 on 2 in neutral-300
+   (`20919:10856`), which is `--border` to the value. A border cannot be
+   dashed to a pattern, so the dashes are a repeating gradient down the
+   column and the pattern is the drawn one rather than the browser's. */
+@utility dashed-rule {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--border) 0 2px,
+    transparent 2px 4px
   );
 }
 
