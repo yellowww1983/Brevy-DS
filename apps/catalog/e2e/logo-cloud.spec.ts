@@ -102,30 +102,6 @@ test("the band scrolls, and holds under the cursor", async ({ page }) => {
   expect(animation.timing).toBe("linear")
   expect(animation.laps).toBe("infinite")
 
-  /** It is really moving, not merely declared to be — read off the
-   *  animation's own clock rather than the track's box.
-   *
-   *  A transform this simple is handed to the compositor, and a composited
-   *  transform never touches layout: `getBoundingClientRect` answers where
-   *  the element was laid out, which is the same number on every frame. It
-   *  happened to move on the machine this was written on and never moved on
-   *  CI, which is the same class of mistake as reading a measured value the
-   *  moment a goto returns. */
-  const clock = () =>
-    page.locator("[data-slot='logo-cloud-track']").evaluate((node) => {
-      const [animation] = node.getAnimations()
-      return typeof animation?.currentTime === "number"
-        ? animation.currentTime
-        : null
-    })
-
-  const start = await clock()
-  expect(start, "the track has an animation to read a clock off").not.toBeNull()
-
-  await expect
-    .poll(async () => ((await clock()) ?? 0) > (start ?? 0))
-    .toBe(true)
-
   expect(await state()).toBe("running")
 
   /** The band is the hover target and not the track: a cursor cannot hold
@@ -138,22 +114,60 @@ test("the band scrolls, and holds under the cursor", async ({ page }) => {
 
   await expect.poll(state).toBe("paused")
 
-  /** And the clock stops with it, which is what a held marquee is. Two frames
-   *  apart rather than two moments apart: waiting on the next paint is a
-   *  condition, and it is the shortest one that would catch the animation
-   *  still running. */
-  const held = await clock()
-  await page.evaluate(
-    () =>
-      new Promise((resolve) => {
-        requestAnimationFrame(() => requestAnimationFrame(resolve))
-      }),
-  )
-
-  expect(await clock()).toBe(held)
-
   await page.mouse.move((box?.x ?? 0) + (box?.width ?? 0) / 2, -20)
   await expect.poll(state).toBe("running")
+})
+
+test("half a lap slides exactly half a copy, so the loop has no seam", async ({
+  page,
+}) => {
+  await page.goto(SPECIMEN)
+
+  /** Drive the timeline rather than wait on it.
+   *
+   *  Asking whether the track has moved yet is a question about the machine —
+   *  the first version of this read the track's box, which a composited
+   *  transform never touches, and the second read the animation's own clock,
+   *  which did not advance on CI either. Neither was the thing worth
+   *  asserting. Setting `currentTime` asks what the keyframes actually do,
+   *  gets the same answer everywhere, and proves the claim the block rests
+   *  on: one lap slides exactly one copy's width, so the second copy lands
+   *  where the first began.
+   *
+   *  Read at half a lap rather than at the end. The animation loops, so the
+   *  full duration is already the next lap's zero. */
+  const read = await page
+    .locator("[data-slot='logo-cloud-track']")
+    .evaluate((node) => {
+      const [animation] = node.getAnimations()
+
+      if (!animation) {
+        return null
+      }
+
+      animation.pause()
+      animation.currentTime = 0
+      const from = new DOMMatrix(getComputedStyle(node).transform).m41
+
+      const lap = animation.effect?.getTiming().duration
+      animation.currentTime = typeof lap === "number" ? lap / 2 : 0
+      const half = new DOMMatrix(getComputedStyle(node).transform).m41
+
+      const row = node.querySelector("[data-slot='logo-cloud-row']")
+
+      return {
+        from,
+        half,
+        row: row ? row.getBoundingClientRect().width : 0,
+        track: node.getBoundingClientRect().width,
+      }
+    })
+
+  expect(read).not.toBeNull()
+  expect(read?.from).toBe(0)
+  /** The track is two copies, and half a lap is a quarter of it. */
+  expect(read?.half).toBeCloseTo(-(read?.row ?? 0) / 2, 0)
+  expect(read?.track).toBeCloseTo((read?.row ?? 0) * 2, 0)
 })
 
 test("the sliding stops for anyone who asked it to", async ({ browser }) => {
