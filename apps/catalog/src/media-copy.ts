@@ -5,7 +5,7 @@ export const INTRO =
 
 export const USE = [
   "`MediaCopy` takes a `heading`, an optional `marked` phrase for the highlighter to run under, a `description`, the `steps`, and a `picture`.",
-  "Each step is a `title`, a `description` and an `icon` — a node rather than a name, the way every icon in this system arrives, because the file draws three different ones and colours each differently.",
+  "Each step is a `title`, a `description` and an optional `tone` — the colour of the pebble in its disc. The three the file draws come from three unrelated ramps rather than a series, so the set is closed at `green`, `taupe` and `violet`; a step left without one takes the green.",
   "`picture` is a preset layer. The file hand-places the photograph behind the cut, so the crop belongs to whoever brings it — the same arrangement the testimonial photographs have.",
   "The cut itself is `ShapedImage`, which the split hero draws too. It is not a prop and is not meant to become one: a client swaps the photograph inside it, and the silhouette is the identity.",
   "The highlighter is `LineMarker`, which wraps whatever words it marks and takes its width from them.",
@@ -69,7 +69,7 @@ export function mediaCopyDoc() {
     "  heading={heading}",
     "  marked={marked}",
     "  description={description}",
-    "  steps={[{ title, description, icon }]}",
+    '  steps={[{ title, description, tone: "green" }]}',
     "  picture={picture}",
     "/>",
     "```",
