@@ -659,10 +659,17 @@
      the column narrows to a phone. */
   --logo-cloud: 7.625rem;
   --logo-cloud-narrow: 5.625rem;
-  /* Half of what stands between two marks: the row pads its own ends by the
-     same amount, so the seam between the two copies matches every other gap
-     in the band. */
   --logo-cloud-gap: 2.5rem;
+  /* Half of what stands between two marks. Each copy pads its own ends by
+     this, so the seam where one copy meets the next measures a whole gap and
+     matches every other space in the band. */
+  --logo-cloud-edge: 1.25rem;
+  /* The floor on a copy's width. The marks come from outside the block, so
+     four of them are not necessarily a bandful; a copy narrower than the band
+     leaves the far end empty for part of every lap. The viewport is what the
+     band spans, and the loop stays closed either way — it slides one copy,
+     whatever a copy turned out to be. */
+  --logo-cloud-copy: 100vw;
 
   /* The benefit grid. 389 a card at the desktop, which is the 1200 column less
      two 16 gaps in three; the copy under the panel grows and the panel does

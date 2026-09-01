@@ -77,6 +77,41 @@ test("the marks are doubled, and the copy is not announced twice", async ({
   expect(track).toBe((rows[0]?.width ?? 0) * 2)
 })
 
+test("the track is two copies wherever the marks overflow the band", async ({
+  page,
+}) => {
+  /** The marks come from outside the block, so a copy can be wider than the
+   *  band — and a flex item shrinks to its container by default, which left
+   *  the track exactly as wide as the band and turned the 50% it slides into
+   *  something that was not a copy. It held only while the marks were small
+   *  enough to fit, which is why the first four placeholders never caught it. */
+  for (const width of [1440, 900, 390]) {
+    await page.setViewportSize({ width, height: 400 })
+    await page.goto(SPECIMEN)
+
+    const read = await page
+      .locator("[data-slot='logo-cloud-track']")
+      .evaluate((node) => ({
+        shrink: getComputedStyle(node).flexShrink,
+        track: Math.round(node.getBoundingClientRect().width),
+        row: Math.round(
+          node
+            .querySelector("[data-slot='logo-cloud-row']")
+            ?.getBoundingClientRect().width ?? 0,
+        ),
+        band: Math.round(
+          node.parentElement?.getBoundingClientRect().width ?? 0,
+        ),
+      }))
+
+    expect(read.shrink).toBe("0")
+    expect(read.track).toBe(read.row * 2)
+    /** And a copy is never narrower than the band, or the far end of it sits
+     *  empty for part of every lap. */
+    expect(read.row).toBeGreaterThanOrEqual(read.band)
+  }
+})
+
 test("the band scrolls, and holds under the cursor", async ({ page }) => {
   await page.goto(SPECIMEN)
 
@@ -181,6 +216,40 @@ test("half a lap slides exactly half a copy, so the loop has no seam", async ({
   expect(read?.track).toBeCloseTo((read?.row ?? 0) * 2, 0)
 })
 
+test("the seam measures the same as every other space in the band", async ({
+  page,
+}) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 400 })
+    await page.goto(SPECIMEN)
+    await page.waitForFunction(() =>
+      [...document.images].every((image) => image.complete),
+    )
+
+    const gaps = await page
+      .locator("[data-slot='logo-cloud-track']")
+      .evaluate((node) => {
+        const marks = [
+          ...node.querySelectorAll("[data-slot='logo-cloud-logo']"),
+        ]
+
+        return marks
+          .slice(1)
+          .map((mark, index) =>
+            Math.round(
+              mark.getBoundingClientRect().left -
+                (marks[index]?.getBoundingClientRect().right ?? 0),
+            ),
+          )
+      })
+
+    /** The middle one of these is the seam — the space between the last mark
+     *  of the first copy and the first mark of the second. If it measured
+     *  anything else, the loop would stutter once a lap. */
+    expect(new Set(gaps).size, `gaps at ${String(width)}`).toBe(1)
+  }
+})
+
 test("the sliding stops for anyone who asked it to", async ({ browser }) => {
   const context = await browser.newContext({ reducedMotion: "reduce" })
   const page = await context.newPage()
@@ -211,6 +280,130 @@ test("the marks are flattened, and flipped on the dark band", async ({
       .first()
       .evaluate((node) => getComputedStyle(node).filter),
   ).toBe("grayscale(1)")
+
+  await page.addInitScript(() => {
+    localStorage.setItem("theme", "dark")
+  })
+  await page.goto(SPECIMEN)
+
+  await expect
+    .poll(() =>
+      page.evaluate(() => document.documentElement.classList.contains("dark")),
+    )
+    .toBe(true)
+
+  const dark = await page
+    .locator("[data-slot='logo-cloud']")
+    .evaluate((node) => {
+      const mark = node.querySelector("[data-slot='logo-cloud-logo']")
+      return {
+        ground: getComputedStyle(node).backgroundColor,
+        filter: mark ? getComputedStyle(mark).filter : null,
+      }
+    })
+
+  /** The olive band is a tint and darkens with the page — a pale band under a
+   *  dark page is a light plate. */
+  expect(dark.ground).toBe("oklch(0.145 0 none)")
+  /** And the flattened marks invert, because a dark mark on a dark band is a
+   *  hole. */
+  expect(dark.filter).toBe("grayscale(1) invert(1)")
+})
+
+test("the band narrows on a phone", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 700 })
+  await page.goto(SPECIMEN)
+
+  expect(
+    await page
+      .locator("[data-slot='logo-cloud']")
+      .evaluate((node) => Math.round(node.getBoundingClientRect().height)),
+  ).toBe(DRAWN.narrow)
+})
+
+test("no moment in the lap leaves the band empty", async ({ page }) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 400 })
+    await page.goto(SPECIMEN)
+    await page.waitForFunction(() =>
+      [...document.images].every((image) => image.complete),
+    )
+
+    /** Walked rather than watched: forty points around the lap, each one a
+     *  question about geometry rather than about how fast this machine is. */
+    const uncovered = await page
+      .locator("[data-slot='logo-cloud-track']")
+      .evaluate((node) => {
+        const [animation] = node.getAnimations()
+        const band = node.parentElement
+
+        if (!animation || !band) {
+          return null
+        }
+
+        const lap = animation.effect?.getTiming().duration
+        const duration = typeof lap === "number" ? lap : 0
+        animation.pause()
+
+        let worst = Infinity
+
+        for (let step = 0; step <= 40; step++) {
+          animation.currentTime = (duration * step) / 40
+          const track = node.getBoundingClientRect()
+          const box = band.getBoundingClientRect()
+          worst = Math.min(
+            worst,
+            box.left - track.left,
+            track.right - box.right,
+          )
+        }
+
+        return Math.round(worst)
+      })
+
+    expect(uncovered, `uncovered at ${String(width)}`).toBeGreaterThanOrEqual(0)
+  }
+})
+
+test("the sliding stops for anyone who asked it to", async ({ browser }) => {
+  const context = await browser.newContext({ reducedMotion: "reduce" })
+  const page = await context.newPage()
+  await page.goto(SPECIMEN)
+
+  const read = await page
+    .locator("[data-slot='logo-cloud-track']")
+    .evaluate((node) => getComputedStyle(node).animationName)
+
+  expect(read).toBe("none")
+
+  /** The band still reads. Only the sliding goes. */
+  await expect(
+    page.locator("[data-slot='logo-cloud-logo']").first(),
+  ).toBeVisible()
+
+  await context.close()
+})
+
+test("the marks are flattened, and nothing else is done to them", async ({
+  page,
+}) => {
+  await page.goto(SPECIMEN)
+
+  const read = await page
+    .locator("[data-slot='logo-cloud-logo']")
+    .first()
+    .evaluate((node) => {
+      const style = getComputedStyle(node)
+      return { filter: style.filter, opacity: style.opacity }
+    })
+
+  expect(read.filter).toBe("grayscale(1)")
+  /** The live page dims nothing — its filter is `grayscale(1)` and its
+   *  opacity is 1. Its marks read muted because a brand mark flattened is a
+   *  middle grey, which is the artwork's doing and not the band's. A dimming
+   *  here would take a client's own mark lighter than the page it is copied
+   *  from. */
+  expect(read.opacity).toBe("1")
 
   await page.addInitScript(() => {
     localStorage.setItem("theme", "dark")

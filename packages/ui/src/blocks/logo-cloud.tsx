@@ -19,7 +19,10 @@ import { cn } from "../lib/utils.js"
  *
  *  So this doubles what it is given and slides one full copy's width, which is
  *  the seam nobody sees. The marks arrive as children because they are other
- *  organisations' and belong to the page rather than to the system.
+ *  organisations' and belong to the page rather than to the system — and
+ *  because they arrive from outside, the band cannot know how wide they make
+ *  a copy. Both of the things that keep the loop closed follow from that: the
+ *  track refuses to shrink, and a copy is never narrower than the band.
  *
  *  It pads nothing. Every other section in this file breathes 96 above and
  *  below; this is a band rather than a section and the file gives it none,
@@ -53,19 +56,33 @@ function LogoCloud({
       )}
       {...props}
     >
-      {/* Two copies of the same row, each hugging its own width. The track
-          slides exactly one copy and starts over, so the marks come round
-          without a gap and without a jump. */}
+      {/* Two copies of the same row, and the track slides exactly one of
+          them and starts over, so the marks come round without a gap and
+          without a jump.
+
+          It has to refuse to shrink. The track is a flex item, and a flex
+          item shrinks to its container by default — so a row of marks wider
+          than half the band left the track exactly as wide as the band, and
+          the 50% it slides stopped being a copy. It held only while the
+          marks happened to be small. */}
       <div
         data-slot="logo-cloud-track"
-        className="flex w-max animate-marquee items-center group-hover:[animation-play-state:paused] motion-reduce:animate-none"
+        className="flex w-max shrink-0 animate-marquee items-center group-hover:[animation-play-state:paused] motion-reduce:animate-none"
       >
         {[0, 1].map((copy) => (
           <ul
             key={copy}
             data-slot="logo-cloud-row"
             aria-hidden={copy === 1 ? true : undefined}
-            className="flex shrink-0 items-center gap-(--logo-cloud-gap) px-(--logo-cloud-gap)"
+            /** A copy is never narrower than the band. Four marks are not
+             *  necessarily 1440 of marks, and a copy that falls short
+             *  leaves the far end of the band empty for part of every lap —
+             *  the band's own width is the floor, and past it the marks
+             *  take the slack evenly rather than bunching at one end.
+             *
+             *  The ends carry half a gap each, so the seam between two
+             *  copies measures the same as every other space in the band. */
+            className="flex min-w-(--logo-cloud-copy) shrink-0 items-center justify-around gap-(--logo-cloud-gap) px-(--logo-cloud-edge)"
           >
             {logos.map((logo, index) => (
               <li
