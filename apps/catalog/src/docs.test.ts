@@ -4,6 +4,8 @@ import { fileURLToPath, pathToFileURL } from "node:url"
 import ts from "typescript"
 import { describe, expect, test } from "vitest"
 
+import { registry } from "./registry"
+
 /** Everything a doc claims has to be true of the package.
  *
  *  A block's page hands Claude a page of markdown, and the person reading it
@@ -44,11 +46,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 /** Every module beside this one that declares a doc.
  *
- *  Read from the directory rather than from a list, so a block written next
- *  month is covered the day it ships instead of the day someone remembers
- *  this file. The source is grepped first and only the matches are loaded:
- *  the test is about docs, and there is no reason for it to pull in the
- *  component registry and everything the registry draws. */
+ *  Still read from the directory, even though the registry now lists what the
+ *  catalog documents. The two answers have to agree: the registry is what the
+ *  catalog will show and this is what somebody actually wrote, and a doc
+ *  written but never wired into the registry is invisible in exactly the way
+ *  nobody notices. */
 function docModules(): string[] {
   return readdirSync(HERE)
     .filter((name) => /\.tsx?$/.test(name) && !name.endsWith(".test.ts"))
@@ -64,11 +66,9 @@ async function load(file: string): Promise<Record<string, unknown>> {
   return isRecord(loaded) ? loaded : {}
 }
 
-/** The docs are called rather than read: what matters is the markdown a
- *  reader actually copies, and that is the return value. A doc assembled from
- *  a table or a preset comes out different from its own source text. */
-async function collect(): Promise<Doc[]> {
-  const docs: Doc[] = []
+/** What somebody wrote: every `*Doc` export in the directory, called. */
+async function written(): Promise<Map<string, string>> {
+  const found = new Map<string, string>()
 
   for (const path of docModules()) {
     for (const [name, value] of Object.entries(await load(path))) {
@@ -78,17 +78,32 @@ async function collect(): Promise<Doc[]> {
 
       const markdown: unknown = (value as () => unknown)()
 
-      if (typeof markdown !== "string") {
-        continue
+      if (typeof markdown === "string") {
+        found.set(`${path} · ${name}()`, markdown)
       }
-
-      docs.push({
-        source: `${path} · ${name}()`,
-        subject: headingOf(markdown),
-        markdown,
-      })
     }
   }
+
+  return found
+}
+
+/** What the catalog shows: every entry in the registry, asked for its doc.
+ *
+ *  This is the list under test, because it is the list a reader can reach.
+ *  The docs are called rather than read: what matters is the markdown someone
+ *  actually copies, and that is the return value. */
+async function collect(): Promise<Doc[]> {
+  const docs = await Promise.all(
+    registry.map(async (entry) => {
+      const markdown = await entry.doc()
+
+      return {
+        source: `${entry.kind} · ${entry.slug}`,
+        subject: headingOf(markdown),
+        markdown,
+      }
+    }),
+  )
 
   return docs.sort((a, b) => a.source.localeCompare(b.source))
 }
@@ -531,27 +546,40 @@ function report(diagnostics: readonly ts.Diagnostic[]) {
     .join("\n")
 }
 
-test("every doc that makes a checkable claim hands it over", () => {
+test("everything written is in the registry, and everything in it is checked", async () => {
   /** The suite discovers its own subjects, so the way it fails quietly is by
-   *  discovering nothing — a fence written differently, a heading reworded,
-   *  and thirty checks become zero without one of them going red. Whichever
-   *  modules say `\`\`\`tsx` or write a props table in their source have to
-   *  turn up here, and the count is taken from the source rather than written
-   *  down. */
-  const claims = (marker: string, found: readonly { source: string }[]) => {
-    const writing = docModules().filter((file) =>
-      readFileSync(join(HERE, file), "utf8").includes(marker),
-    )
+   *  discovering fewer of them. Two counts have to agree and neither is
+   *  written down here: what the registry lists, and what somebody wrote.
+   *
+   *  A doc written and never wired in is the failure this merge introduced —
+   *  before it, a doc was found by being in the directory, and now it is
+   *  found by being in the registry. */
+  const authored = await written()
+  const shown = new Set(docs.map((doc) => doc.markdown))
 
-    expect(writing.length, marker).toBeGreaterThan(0)
+  expect(docs.length).toBe(authored.size)
 
-    const checked = new Set(found.map(({ source }) => source.split(" · ")[0]))
+  const orphans = [...authored]
+    .filter(([, markdown]) => !shown.has(markdown))
+    .map(([source]) => source)
 
-    return writing.filter((file) => !checked.has(file))
-  }
+  expect(orphans, "written but not in the registry").toEqual([])
+})
 
-  expect(claims("```tsx", snippets)).toEqual([])
-  expect(claims('"Prop', tables)).toEqual([])
+test("every doc that makes a checkable claim hands it over", () => {
+  /** And the claims inside them are found too: a fence written differently,
+   *  a heading reworded, and thirty checks become zero without one of them
+   *  going red. Whichever docs say `\`\`\`tsx` or write a props table have to
+   *  turn up, and the count comes from the docs rather than from a number. */
+  expect(docs.filter((doc) => doc.markdown.includes("```tsx")).length).toBe(
+    new Set(snippets.map(({ source }) => source)).size,
+  )
+
+  expect(docs.filter((doc) => /^\|\s*Prop/im.test(doc.markdown)).length).toBe(
+    new Set(
+      tables.map(({ source }) => source.split(" · ").slice(0, 2).join(" · ")),
+    ).size,
+  )
 })
 
 describe.each(snippets)("$source", ({ code }) => {
