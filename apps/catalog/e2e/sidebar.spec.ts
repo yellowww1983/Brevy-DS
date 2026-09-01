@@ -13,6 +13,106 @@ test("the way in is the introduction, not the component list", async ({
   )
 })
 
+test("the logo goes where the root goes", async ({ page }) => {
+  await page.goto("/components/button")
+
+  /** They used to disagree, so the way in depended on whether you typed the
+   *  address or pressed the logo. */
+  await expect(page.locator("aside a").first()).toHaveAttribute(
+    "href",
+    "/getting-started/introduction",
+  )
+})
+
+test("the toggle stands before the search rather than in its place", async ({
+  page,
+}) => {
+  const toggle = page.getByRole("button", { name: /the navigation/ })
+  const search = page.getByRole("searchbox", { name: "Search components" })
+
+  await page.goto("/components")
+
+  /** Both, in that order. The toggle arrived beside the field rather than
+   *  instead of it, and the two are easy to confuse because the field is
+   *  absent everywhere else by design. */
+  await expect(toggle).toBeVisible()
+  await expect(search).toBeVisible()
+
+  const left = await toggle.boundingBox()
+  const right = await search.boundingBox()
+
+  expect(left?.x ?? 0).toBeLessThan(right?.x ?? 0)
+
+  /** And it still narrows the list, which is the only reason it is there. */
+  await search.fill("but")
+  await expect(page.locator("aside nav ul li a")).toHaveCount(3)
+
+  /** Off the component pages the field is absent and the toggle is not. */
+  await page.goto("/blocks/tiles")
+
+  await expect(toggle).toBeVisible()
+  await expect(search).toHaveCount(0)
+})
+
+test("the bar is indented to the page's column, not to itself", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto("/components/button")
+
+  /** The bar carried 24 where the page carries 48, which nobody could see
+   *  until something stood at the left end of it. */
+  const left = async (locator: ReturnType<typeof page.locator>) =>
+    Math.round((await locator.boundingBox())?.x ?? -1)
+
+  const toggle = await left(
+    page.getByRole("button", { name: /the navigation/ }),
+  )
+
+  expect(toggle).toBe(await left(page.locator("nav[aria-label='Breadcrumb']")))
+  expect(toggle).toBe(await left(page.locator("main h1")))
+  expect(toggle).toBe(await left(page.locator("main [data-preview]").first()))
+
+  /** And it holds when the navigation is put away and the column moves. */
+  await page.getByRole("button", { name: /the navigation/ }).click()
+
+  const moved = await left(page.getByRole("button", { name: /the navigation/ }))
+
+  expect(moved).toBeLessThan(toggle)
+  expect(moved).toBe(await left(page.locator("main h1")))
+})
+
+test("the navigation can be put away, and the page takes the room", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto("/blocks/tiles")
+
+  const nav = page.locator("#catalog-nav")
+  const toggle = page.getByRole("button", { name: /the navigation/ })
+  const room = () =>
+    page
+      .locator("main")
+      .evaluate((node) => Math.round(node.getBoundingClientRect().width))
+
+  await expect(nav).toBeVisible()
+  await expect(toggle).toHaveAttribute("aria-expanded", "true")
+
+  const narrow = await room()
+
+  await toggle.click()
+
+  await expect(nav).toBeHidden()
+  await expect(toggle).toHaveAttribute("aria-expanded", "false")
+  /** The point of it: a preview drawn at 1440 gets the window. */
+  expect(await room()).toBeGreaterThan(narrow)
+
+  await toggle.click()
+
+  await expect(nav).toBeVisible()
+  expect(await room()).toBe(narrow)
+})
+
 test("every sidebar entry is either a working link or plainly inert", async ({
   page,
 }) => {

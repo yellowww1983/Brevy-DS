@@ -87,28 +87,28 @@ export default function IntroductionPage() {
       <p className="mt-6 leading-relaxed">
         <strong className="font-semibold">1. Browse.</strong> Look through the
         Components and Blocks in this catalog. Components are the small pieces:
-        buttons, inputs, badges. Blocks are whole sections: a hero, a pricing
-        table, a FAQ. Both exist for the same reason: consistency across the
-        whole journey. Someone who lands on a campaign page, clicks through to
-        pricing and ends up on a FAQ should feel one brand the entire way, and
-        they do, because every page is built from the same pieces, even when the
-        person putting them together isn&rsquo;t a designer.
+        buttons, inputs, badges. Blocks are whole sections: a hero, a wall of
+        testimonials, a FAQ. Both exist for the same reason: consistency across
+        the whole journey. Someone who lands on a campaign page, clicks through
+        to how it works and ends up on a FAQ should feel one brand the whole
+        way, and they do, because every page is built from the same pieces, even
+        when the person putting them together isn&rsquo;t a designer.
       </p>
 
       <ImageSlot>Browsing the blocks gallery</ImageSlot>
 
       <p className="mt-6 leading-relaxed">
         <strong className="font-semibold">2. Pick.</strong> Decide which blocks
-        your page needs and in what order: hero at the top, then features, then
-        pricing, then a call to action.
+        your page needs and in what order: hero at the top, then benefits, then
+        testimonials, then a call to action.
       </p>
 
       <p className="mt-6 leading-relaxed">
         <strong className="font-semibold">3. Assemble.</strong> Tell Claude what
         you picked, in plain language: &ldquo;New page for the spring campaign:
-        hero, three features, pricing, FAQ, call to action.&rdquo; Claude puts
-        the page together using only these blocks, fills in your content, and
-        shows you the result.
+        hero, three benefits, testimonials, FAQ, call to action.&rdquo; Claude
+        puts the page together using only these blocks, fills in your content,
+        and shows you the result.
       </p>
 
       <ImageSlot>Claude Code composing a page from a prompt</ImageSlot>

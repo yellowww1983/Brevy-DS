@@ -21,6 +21,33 @@ const inTheDark = async (page: Page) => {
 const isDark = async (page: Page) =>
   page.evaluate(() => document.documentElement.classList.contains("dark"))
 
+test("the catalog opens light on a machine that prefers dark", async ({
+  browser,
+}) => {
+  /** What is on screen here is the system's own light drawing. Someone
+   *  arriving on a dark machine used to meet a dark page and have to work out
+   *  that the design was not what they were looking at. Dark is a mode this
+   *  catalog can show, reached by asking. */
+  const context = await browser.newContext({ colorScheme: "dark" })
+  const page = await context.newPage()
+
+  await page.goto("/components/button")
+  expect(
+    await isDark(page),
+    "the machine's preference is not the catalog's",
+  ).toBe(false)
+
+  await page.getByRole("button", { name: "Toggle color theme" }).click()
+  expect(await isDark(page)).toBe(true)
+
+  /** And the asking is remembered, which is the half that would make a
+   *  default of light unbearable if it were missing. */
+  await page.reload()
+  await expect.poll(() => isDark(page)).toBe(true)
+
+  await context.close()
+})
+
 /** What the app file draws, and what the token file binds for it. */
 const NEUTRAL_950 = "oklch(0.145 0 none)"
 const NEUTRAL_900 = "oklch(0.205 0 none)"

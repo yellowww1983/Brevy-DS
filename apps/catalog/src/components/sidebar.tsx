@@ -33,6 +33,7 @@ import type { ComponentType, ReactNode } from "react"
 import { components, entriesOf, filterComponents } from "@/registry"
 import { BrevyLogo } from "./brevy-logo"
 import { useSearch, useSearchable } from "./search-provider"
+import { useSidebar } from "./sidebar-provider"
 
 type Entry = {
   label: string
@@ -256,6 +257,7 @@ export function Sidebar() {
   const pathname = usePathname()
   const { query } = useSearch()
   const searchable = useSearchable()
+  const { collapsed } = useSidebar()
 
   const activeSlug = pathname.split("/")[2]
   const matched = new Set(
@@ -266,10 +268,19 @@ export function Sidebar() {
   )
 
   return (
-    <aside className="flex w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
+    <aside
+      id="catalog-nav"
+      hidden={collapsed}
+      /** Out of the way entirely rather than narrowed to a rail. What the
+       *  room is wanted for is a preview drawn at 1440, and a rail of icons
+       *  standing beside it is 72px of nothing anybody asked to see. */
+      className="flex w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar"
+    >
       <div className="flex h-14 shrink-0 items-center border-b border-sidebar-border px-6">
         <Link
-          href="/components"
+          /** Where the root goes. The two used to disagree, so the way in
+           *  depended on whether you typed the address or pressed the logo. */
+          href="/getting-started/introduction"
           className="block rounded-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         >
           <BrevyLogo />

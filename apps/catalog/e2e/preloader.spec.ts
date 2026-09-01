@@ -48,17 +48,27 @@ async function cleared(page: import("@playwright/test").Page) {
 }
 
 /** This build of Playwright does not type reducedMotion/colorScheme as test
- *  options, so the emulated contexts are built by hand. */
+ *  options, so the contexts are built by hand. */
 async function visit(
   browser: Browser,
-  options: { reducedMotion?: "reduce"; colorScheme?: "dark" },
+  options: { reducedMotion?: "reduce"; dark?: true },
 ) {
-  const context = await browser.newContext(options)
-  const page = await context.newPage()
+  const { dark, ...context } = options
+  const opened = await browser.newContext(context)
+  const page = await opened.newPage()
+
+  /** Asked for rather than emulated. The catalog opens light whatever the
+   *  machine prefers, so a dark page here is a stored choice. */
+  if (dark) {
+    await page.addInitScript(() => {
+      localStorage.setItem("theme", "dark")
+    })
+  }
+
   await frozen(page)
   await page.goto("/components")
 
-  return { page, context }
+  return { page, context: opened }
 }
 
 test("the first visit plays the animation and clears itself", async ({
@@ -142,7 +152,7 @@ test("reduced motion gets the static logo and never fetches the player", async (
 test("dark mode repaints the animation to the dark logo colour", async ({
   browser,
 }) => {
-  const { page, context } = await visit(browser, { colorScheme: "dark" })
+  const { page, context } = await visit(browser, { dark: true })
 
   await expect(page.locator(`${STAGE} svg`)).toBeVisible()
   await hydrated(page)
