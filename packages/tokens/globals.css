@@ -655,6 +655,15 @@
   --tiles-chart: 7.375rem;
   --tiles-caption: 6rem;
 
+  /* The logo band. The file draws 96; the live page runs 122, and 90 where
+     the column narrows to a phone. */
+  --logo-cloud: 7.625rem;
+  --logo-cloud-narrow: 5.625rem;
+  /* Half of what stands between two marks: the row pads its own ends by the
+     same amount, so the seam between the two copies matches every other gap
+     in the band. */
+  --logo-cloud-gap: 2.5rem;
+
   /* The benefit grid. 389 a card at the desktop, which is the 1200 column less
      two 16 gaps in three; the copy under the panel grows and the panel does
      not, which is what puts the drawn cards at 454 and 482 in one row. */
@@ -759,6 +768,22 @@
     var(--color-olive-600),
     var(--color-olive-600)
   );
+}
+
+/* One copy's width, and then start over. The track is two copies of the same
+   row, so sliding exactly half of it lands the second copy where the first
+   began and nobody sees the seam. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@utility animate-marquee {
+  animation: marquee 40s linear infinite;
 }
 
 /* The dark tile's own thread: its fill one step darker, which is what the
