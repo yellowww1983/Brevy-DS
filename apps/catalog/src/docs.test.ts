@@ -4,6 +4,7 @@ import { fileURLToPath, pathToFileURL } from "node:url"
 import ts from "typescript"
 import { describe, expect, test } from "vitest"
 
+import { llmsFull, llmsMap } from "./llms"
 import { registry } from "./registry"
 
 /** Everything a doc claims has to be true of the package.
@@ -564,6 +565,69 @@ test("everything written is in the registry, and everything in it is checked", a
     .map(([source]) => source)
 
   expect(orphans, "written but not in the registry").toEqual([])
+})
+
+test("the map lists everything, and loads none of it", () => {
+  const map = llmsMap()
+
+  /** The convention's own shape: one heading, a summary quoted under it, and
+   *  the links in sections below. */
+  expect(map.startsWith("# Brevy Design System\n\n> ")).toBe(true)
+  expect(map.match(/^# .+$/gm)).toHaveLength(1)
+  expect(map.match(/^## .+$/gm)).toEqual([
+    "## Foundations",
+    "## Components",
+    "## Blocks",
+    "## Optional",
+  ])
+
+  /** Every entry, once, as a link with its own summary beside it. */
+  for (const entry of registry) {
+    expect(map, entry.slug).toContain(
+      `- [${entry.name}](${entry.href}): ${entry.summary}`,
+    )
+  }
+
+  expect(map.match(/^- \[/gm)).toHaveLength(registry.length)
+
+  /** And no documentation in it. The map is what an agent reads to decide
+   *  what to fetch, so a doc's worth of prose in here defeats the point. */
+  for (const doc of docs) {
+    expect(map.includes(doc.markdown), doc.source).toBe(false)
+  }
+})
+
+test("the whole system is the sum of its pages, unedited", async () => {
+  const full = await llmsFull()
+
+  /** Every page, exactly as that page hands it over. A doc rewritten on the
+   *  way through would make this a third version of the same text, and the
+   *  only way to know it had drifted would be to read all thirty-three. */
+  for (const doc of docs) {
+    expect(full.includes(doc.markdown), doc.source).toBe(true)
+  }
+
+  /** In the registry's order, which reads as a document: the tokens, then the
+   *  parts, then the sections built out of them. */
+  const positions = docs
+    .map((doc) => full.indexOf(doc.markdown))
+    .filter((at) => at >= 0)
+
+  expect(positions).toHaveLength(registry.length)
+
+  const inOrder = registry.map((entry) => entry.slug)
+  const met = registry
+    .map((entry) => ({
+      slug: entry.slug,
+      at: full.indexOf(
+        docs.find((doc) => doc.source.endsWith(` · ${entry.slug}`))?.markdown ??
+          "\u0000",
+      ),
+    }))
+    .sort((a, b) => a.at - b.at)
+    .map((entry) => entry.slug)
+
+  expect(met).toEqual(inOrder)
 })
 
 test("every doc that makes a checkable claim hands it over", () => {
