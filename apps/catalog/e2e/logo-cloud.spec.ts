@@ -12,8 +12,13 @@ const DRAWN = {
   olive500: "rgb(215, 228, 201)",
   gap: "40px",
   marks: 4,
+  mark: 36,
   lap: "40s",
+  fade: 48,
 }
+
+/** Where the ramp is read. Four points inside the fade and two past it. */
+const COLUMNS = [6, 18, 30, 42, 96, 400]
 
 test("the band is a band and not a section", async ({ page }) => {
   await page.goto(SPECIMEN)
@@ -28,6 +33,7 @@ test("the band is a band and not a section", async ({ page }) => {
         padding: style.padding,
         clipped: style.overflow,
         label: node.getAttribute("aria-label"),
+        masked: style.maskImage,
       }
     })
 
@@ -36,10 +42,96 @@ test("the band is a band and not a section", async ({ page }) => {
   /** Every other section in the file breathes 96 above and below. This one is
    *  given none, which is what makes it a band. */
   expect(read.padding).toBe("0px")
-  expect(read.clipped).toBe("hidden")
+  /** The band clips nothing itself and wears no mask. Both belong to the
+   *  strip inside it, because a mask is alpha over everything beneath it and
+   *  would take the olive along with the marks. */
+  expect(read.clipped).toBe("visible")
+  expect(read.masked).toBe("none")
   /** Without it the band announces a list of pictures with no reason for
    *  being there. */
   expect(read.label).toBeTruthy()
+})
+
+test("the ends fade rather than cut, and the ground does not fade with them", async ({
+  page,
+}) => {
+  await page.goto(SPECIMEN)
+
+  const mask = await page
+    .locator("[data-slot='logo-cloud-clip']")
+    .evaluate((node) => ({
+      image: getComputedStyle(node).maskImage,
+      clipped: getComputedStyle(node).overflow,
+    }))
+
+  /** The live page's own declaration, to the pixel. */
+  expect(mask.image).toBe(
+    "linear-gradient(to right, rgba(0, 0, 0, 0), rgb(0, 0, 0) 48px, rgb(0, 0, 0) calc(100% - 48px), rgba(0, 0, 0, 0))",
+  )
+  expect(mask.clipped).toBe("hidden")
+
+  for (const scheme of ["light", "dark"] as const) {
+    await page.emulateMedia({ colorScheme: scheme })
+
+    /** The band keeps its own colour out to both edges. Read off the pixels,
+     *  because hit testing ignores a mask entirely — the row is still under
+     *  the cursor at the very edge, it is just no longer painted there. A
+     *  mask one level up would have taken the ground with it and left the
+     *  page showing through the ends. */
+    const shot = (
+      await page.locator("[data-slot='logo-cloud']").screenshot()
+    ).toString("base64")
+
+    const ends = await page
+      .locator("[data-slot='logo-cloud']")
+      .evaluate(async (node, shot) => {
+        const bitmap = await createImageBitmap(
+          await (await fetch(`data:image/png;base64,${shot}`)).blob(),
+        )
+        const canvas = new OffscreenCanvas(bitmap.width, bitmap.height)
+        const context = canvas.getContext("2d")
+
+        if (!context) {
+          return null
+        }
+
+        context.drawImage(bitmap, 0, 0)
+
+        const box = node.getBoundingClientRect()
+        const ratio = bitmap.width / box.width
+        const at = (x: number) => {
+          const pixel = context.getImageData(
+            Math.round(x * ratio),
+            Math.round((box.height / 2) * ratio),
+            1,
+            1,
+          ).data
+
+          return [pixel[0] ?? 0, pixel[1] ?? 0, pixel[2] ?? 0]
+        }
+
+        const swatch = document.createElement("canvas").getContext("2d")
+
+        if (!swatch) {
+          return null
+        }
+
+        swatch.fillStyle = getComputedStyle(node).backgroundColor
+        swatch.fillRect(0, 0, 1, 1)
+        const ground = swatch.getImageData(0, 0, 1, 1).data
+
+        return {
+          left: at(1),
+          right: at(box.width - 2),
+          ground: [ground[0] ?? 0, ground[1] ?? 0, ground[2] ?? 0],
+        }
+      }, shot)
+
+    expect(ends?.left, `left edge in ${scheme}`).toEqual(ends?.ground)
+    expect(ends?.right, `right edge in ${scheme}`).toEqual(ends?.ground)
+  }
+
+  await page.emulateMedia({ colorScheme: null })
 })
 
 test("the marks are doubled, and the copy is not announced twice", async ({
@@ -75,6 +167,75 @@ test("the marks are doubled, and the copy is not announced twice", async ({
   /** The slide is exactly one copy's width, so it can only be seamless if the
    *  track is exactly two of them. */
   expect(track).toBe((rows[0]?.width ?? 0) * 2)
+})
+
+test("the track is two copies wherever the marks overflow the band", async ({
+  page,
+}) => {
+  /** The marks come from outside the block, so a copy can be wider than the
+   *  band — and a flex item shrinks to its container by default, which left
+   *  the track exactly as wide as the band and turned the 50% it slides into
+   *  something that was not a copy. It held only while the marks were small
+   *  enough to fit, which is why the first four placeholders never caught it. */
+  for (const width of [1440, 900, 390]) {
+    await page.setViewportSize({ width, height: 400 })
+    await page.goto(SPECIMEN)
+
+    const read = await page
+      .locator("[data-slot='logo-cloud-track']")
+      .evaluate((node) => ({
+        shrink: getComputedStyle(node).flexShrink,
+        track: Math.round(node.getBoundingClientRect().width),
+        row: Math.round(
+          node
+            .querySelector("[data-slot='logo-cloud-row']")
+            ?.getBoundingClientRect().width ?? 0,
+        ),
+        band: Math.round(
+          node.parentElement?.getBoundingClientRect().width ?? 0,
+        ),
+      }))
+
+    expect(read.shrink).toBe("0")
+    expect(read.track).toBe(read.row * 2)
+    /** And a copy is never narrower than the band, or the far end of it sits
+     *  empty for part of every lap. */
+    expect(read.row).toBeGreaterThanOrEqual(read.band)
+  }
+})
+
+test("the marks fit the band and stand at one height", async ({ page }) => {
+  for (const [width, band] of [
+    [1440, DRAWN.band],
+    [390, DRAWN.narrow],
+  ] as const) {
+    await page.setViewportSize({ width, height: 400 })
+    await page.goto(SPECIMEN)
+    await page.waitForFunction(() =>
+      [...document.images].every((image) => image.complete),
+    )
+
+    const marks = await page
+      .locator("[data-slot='logo-cloud-logo']")
+      .evaluateAll((nodes) =>
+        nodes.map((node) => {
+          const box = node.getBoundingClientRect()
+          return {
+            width: Math.round(box.width),
+            height: Math.round(box.height),
+          }
+        }),
+      )
+
+    expect(marks).toHaveLength(DRAWN.marks * 2)
+
+    for (const mark of marks) {
+      expect(mark.height).toBe(DRAWN.mark)
+      expect(mark.height).toBeLessThan(band)
+      /** A real mark is a wordmark, not a box: none of the four is square. */
+      expect(mark.width).toBeGreaterThan(mark.height)
+    }
+  }
 })
 
 test("the band scrolls, and holds under the cursor", async ({ page }) => {
@@ -181,6 +342,200 @@ test("half a lap slides exactly half a copy, so the loop has no seam", async ({
   expect(read?.track).toBeCloseTo((read?.row ?? 0) * 2, 0)
 })
 
+test("the seam measures the same as every other space in the band", async ({
+  page,
+}) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 400 })
+    await page.goto(SPECIMEN)
+    await page.waitForFunction(() =>
+      [...document.images].every((image) => image.complete),
+    )
+
+    const gaps = await page
+      .locator("[data-slot='logo-cloud-track']")
+      .evaluate((node) => {
+        const marks = [
+          ...node.querySelectorAll("[data-slot='logo-cloud-logo']"),
+        ]
+
+        return marks
+          .slice(1)
+          .map((mark, index) =>
+            Math.round(
+              mark.getBoundingClientRect().left -
+                (marks[index]?.getBoundingClientRect().right ?? 0),
+            ),
+          )
+      })
+
+    /** The middle one of these is the seam — the space between the last mark
+     *  of the first copy and the first mark of the second. If it measured
+     *  anything else, the loop would stutter once a lap. */
+    expect(new Set(gaps).size, `gaps at ${String(width)}`).toBe(1)
+  }
+})
+
+test("a mark arrives over 48 rather than at an edge", async ({ page }) => {
+  await page.goto(SPECIMEN)
+  await page.waitForFunction(() =>
+    [...document.images].every((image) => image.complete),
+  )
+
+  /** Park a frame with a mark's own strokes lying right across the ramp, so
+   *  there is something there to be faded. */
+  await page.locator("[data-slot='logo-cloud-track']").evaluate((node) => {
+    const [animation] = node.getAnimations()
+
+    if (!animation) {
+      return
+    }
+
+    animation.pause()
+
+    const lap = animation.effect?.getTiming().duration
+    const duration = typeof lap === "number" ? lap : 0
+    let best = 0
+    let reach = -Infinity
+
+    for (let step = 0; step < 400; step++) {
+      animation.currentTime = (duration * step) / 400
+
+      for (const mark of node.querySelectorAll(
+        "[data-slot='logo-cloud-logo']",
+      )) {
+        const box = mark.getBoundingClientRect()
+
+        if (box.left < -20 && box.right > 30 && box.right > reach) {
+          reach = box.right
+          best = (duration * step) / 400
+        }
+      }
+    }
+
+    animation.currentTime = best
+  })
+
+  /** Read the fade off what it does rather than off what it says: the same
+   *  frame twice, once masked and once not. The ratio between them is the
+   *  mask's own alpha at that column. */
+  const ink = async () => {
+    const shot = (
+      await page.locator("[data-slot='logo-cloud']").screenshot()
+    ).toString("base64")
+
+    return page.locator("[data-slot='logo-cloud']").evaluate(
+      async (node, { shot, columns }) => {
+        const bitmap = await createImageBitmap(
+          await (await fetch(`data:image/png;base64,${shot}`)).blob(),
+        )
+        const canvas = new OffscreenCanvas(bitmap.width, bitmap.height)
+        const context = canvas.getContext("2d")
+
+        if (!context) {
+          return []
+        }
+
+        context.drawImage(bitmap, 0, 0)
+
+        const box = node.getBoundingClientRect()
+        const ratio = bitmap.width / box.width
+        const level = (x: number, y: number) => {
+          const pixel = context.getImageData(
+            Math.round(x * ratio),
+            Math.round(y * ratio),
+            1,
+            1,
+          ).data
+
+          return ((pixel[0] ?? 0) + (pixel[1] ?? 0) + (pixel[2] ?? 0)) / 3
+        }
+
+        const ground = level(2, 2)
+
+        return columns.map((x) => {
+          let most = 0
+
+          for (let y = 10; y < box.height - 10; y++) {
+            most = Math.max(most, Math.abs(level(x, y) - ground))
+          }
+
+          return most
+        })
+      },
+      { shot, columns: COLUMNS },
+    )
+  }
+
+  const masked = await ink()
+
+  await page.locator("[data-slot='logo-cloud-clip']").evaluate((node) => {
+    node.style.setProperty("mask-image", "none")
+  })
+
+  const plain = await ink()
+
+  expect(
+    plain.some((value) => value > 20),
+    "the frame has ink to fade",
+  ).toBe(true)
+
+  COLUMNS.forEach((x, index) => {
+    const raw = plain[index] ?? 0
+
+    if (raw < 20) {
+      return
+    }
+
+    const alpha = (masked[index] ?? 0) / raw
+    expect(alpha, `alpha at ${String(x)}px`).toBeCloseTo(Math.min(1, x / 48), 1)
+  })
+})
+
+test("no moment in the lap leaves the band empty", async ({ page }) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 400 })
+    await page.goto(SPECIMEN)
+    await page.waitForFunction(() =>
+      [...document.images].every((image) => image.complete),
+    )
+
+    /** Walked rather than watched: forty points around the lap, each one a
+     *  question about geometry rather than about how fast this machine is. */
+    const uncovered = await page
+      .locator("[data-slot='logo-cloud-track']")
+      .evaluate((node) => {
+        const [animation] = node.getAnimations()
+        const band = node.parentElement
+
+        if (!animation || !band) {
+          return null
+        }
+
+        const lap = animation.effect?.getTiming().duration
+        const duration = typeof lap === "number" ? lap : 0
+        animation.pause()
+
+        let worst = Infinity
+
+        for (let step = 0; step <= 40; step++) {
+          animation.currentTime = (duration * step) / 40
+          const track = node.getBoundingClientRect()
+          const box = band.getBoundingClientRect()
+          worst = Math.min(
+            worst,
+            box.left - track.left,
+            track.right - box.right,
+          )
+        }
+
+        return Math.round(worst)
+      })
+
+    expect(uncovered, `uncovered at ${String(width)}`).toBeGreaterThanOrEqual(0)
+  }
+})
+
 test("the sliding stops for anyone who asked it to", async ({ browser }) => {
   const context = await browser.newContext({ reducedMotion: "reduce" })
   const page = await context.newPage()
@@ -200,17 +555,26 @@ test("the sliding stops for anyone who asked it to", async ({ browser }) => {
   await context.close()
 })
 
-test("the marks are flattened, and flipped on the dark band", async ({
+test("the marks are flattened, and nothing else is done to them", async ({
   page,
 }) => {
   await page.goto(SPECIMEN)
 
-  expect(
-    await page
-      .locator("[data-slot='logo-cloud-logo']")
-      .first()
-      .evaluate((node) => getComputedStyle(node).filter),
-  ).toBe("grayscale(1)")
+  const read = await page
+    .locator("[data-slot='logo-cloud-logo']")
+    .first()
+    .evaluate((node) => {
+      const style = getComputedStyle(node)
+      return { filter: style.filter, opacity: style.opacity }
+    })
+
+  expect(read.filter).toBe("grayscale(1)")
+  /** The live page dims nothing — its filter is `grayscale(1)` and its
+   *  opacity is 1. Its marks read muted because a brand mark flattened is a
+   *  middle grey, which is the artwork's doing and not the band's. A dimming
+   *  here would take a client's own mark lighter than the page it is copied
+   *  from. */
+  expect(read.opacity).toBe("1")
 
   await page.addInitScript(() => {
     localStorage.setItem("theme", "dark")

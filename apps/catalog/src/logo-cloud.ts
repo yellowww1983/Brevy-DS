@@ -5,16 +5,17 @@ export const INTRO =
 
 export const USE = [
   "`LogoCloud` takes the marks as `logos` and a `label` saying what the band is. The marks are other organisations' and belong to the page rather than to the system, so they arrive as nodes and the block never ships one.",
-  "It doubles whatever it is given and slides exactly one copy's width, so the marks come round without a seam. Two of anything is enough; more is fine.",
+  "It doubles whatever it is given and slides exactly one copy's width, so the marks come round without a seam. Two of anything is enough; more is fine. Because the marks arrive from outside, the band cannot know how wide they make a copy: the track refuses to shrink, and a copy is never narrower than the band — past that width the marks take the slack evenly rather than leaving the far end empty for part of every lap.",
   "`label` is not decoration. The file writes nothing above the marks, so without it the band announces a list of pictures with no reason for being there.",
   "Motion stops for anyone who asked it to. The band still reads — it is a row of marks either way — and only the sliding goes.",
 ]
 
 export const LAYOUT = [
   "The band is 122px tall, 90px where the column narrows to a phone, and it pads nothing. Every other section in this file breathes 96px above and below; this is a band rather than a section, and the file gives it none.",
-  "The ground is flat olive-500, and the marks are laid over in `grayscale(1)` — the file has them in full colour, the live page flattens them.",
+  "The ground is flat olive-500, and the marks are laid over in `grayscale(1)` — the file has them in full colour, the live page flattens them. Nothing dims them beyond that, and the live page does not either: its filter is `grayscale(1)` and its opacity is 1. Its marks read muted because a brand mark flattened is a middle grey rather than black — measured off the live band, its four are painted 113, 80, 126 and 114 out of 255, and no two agree. That is the artwork's doing, and a dimming here would take a client's own mark lighter than the page it is copied from.",
+  "The ends fade rather than cut: a gradient mask 48 wide at each end, so a mark arrives and leaves instead of appearing at an edge. It hangs on the strip that clips the marks and not on the band — a mask is alpha over everything beneath it, and one level up it would fade the olive too and leave the page showing through the ends. Alpha is also why it needs nothing of its own in the dark: it fades whatever the marks have already been filtered into.",
   "In the dark the band darkens with the page and the same filter flips, because a grey mark on a dark band is a hole.",
-  "The animation runs 40 seconds a lap and pauses under the cursor.",
+  "The animation runs 40 seconds a lap and pauses under the cursor. The ends of each copy carry half a gap, so the seam where one copy meets the next measures the same as every other space in the band.",
 ]
 
 export function logoCloudDoc() {
