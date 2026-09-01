@@ -1,5 +1,18 @@
 import { expect, test } from "./catalog-test"
 
+test("the way in is the introduction, not the component list", async ({
+  page,
+}) => {
+  /** Nothing covered this, which is how it came to point at `/components` —
+   *  a list of twelve cards answering a question nobody has asked yet. */
+  await page.goto("/")
+
+  await expect(page).toHaveURL(/\/getting-started\/introduction$/)
+  await expect(page.getByRole("heading", { level: 1 })).not.toHaveText(
+    "Components",
+  )
+})
+
 test("every sidebar entry is either a working link or plainly inert", async ({
   page,
 }) => {
