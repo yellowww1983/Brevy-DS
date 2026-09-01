@@ -1368,6 +1368,38 @@ The system now ships that pair as one object, so it has one weight, and the
 one it has is the 700 the other thirty-eight draw. Please confirm the pill is
 a slip rather than a distinction.
 
+### 88. White on the frosted caption does not clear AA over its photograph
+
+**website**, `22618:7252`
+
+The bar across the foot of the photograph tile is black at 22% under a 12
+blur, with the caption set in white on top. Measured on the painted pixels of
+the photograph the file itself places behind it, the caption reads **3.97** at
+the left of the line and **4.29** at the right, against the 4.5 that 20px
+regular text needs.
+
+It is not a wide miss and it is not the block's to fix: the photograph is a
+preset layer, so the number moves with whatever picture is brought. That is
+the problem — at 22% the bar cannot promise a floor for any picture. A darker
+scrim would; so would a fixed tint under the blur rather than a percentage of
+black.
+
+The block ships the drawn 22%. Please say what the floor should be.
+
+### 89. The chart bar's light end disappears into its own card
+
+**website**, `20919:10866`
+
+The bar runs emerald-500 to green-500 across a white card. The dark end reads
+12.75 against the card and the light end **1.90**, where a mark that carries
+meaning needs 3.
+
+The bar is the only thing the tile plots, so its right edge is where the
+number is — and that edge is the end that vanishes. The block ships the drawn
+sweep in the light theme and lifts it a ramp in the dark, where the whole
+gradient fell to 1.41 and no end of it survived. Please say whether the light
+end is meant to fade out.
+
 ### 90. The quotation mark hangs at two different heights
 
 **website**, `22618:7253` against `22624:8287` and ten siblings

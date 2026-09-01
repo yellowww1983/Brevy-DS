@@ -61,6 +61,8 @@ export { Faq } from "./blocks/faq.js"
 export { MediaCopy } from "./blocks/media-copy.js"
 export type { MediaCopyStep, MediaCopyTone } from "./blocks/media-copy.js"
 export { SegmentRows } from "./blocks/segment-rows.js"
+export { Tiles } from "./blocks/tiles.js"
+export type { TilePerson, TilesItem } from "./blocks/tiles.js"
 export type { SegmentRowsItem, SegmentTone } from "./blocks/segment-rows.js"
 export { Steps } from "./blocks/steps.js"
 export type {

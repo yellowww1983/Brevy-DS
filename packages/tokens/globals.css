@@ -641,6 +641,20 @@
      width the file draws, and the copy beside it is what grows. */
   --segment-illustration: 23.25rem;
 
+  /* The tile mosaic. A row is 240; a wide tile is 592 and a narrow one 390,
+     which is three and two of the six columns the 1200 column divides into at
+     a 16 gutter. The cut inside the dark tile is 236 beside its words and 362
+     above them, the heading's box 502, and the leaves in the corner 178 by
+     140. The chart's rules run 118 and the frosted caption 96. */
+  --tiles-row: 15rem;
+  --tiles-figure: 14.75rem;
+  --tiles-figure-tall: 22.625rem;
+  --tiles-heading: 31.375rem;
+  --tiles-leaves: 11.125rem;
+  --tiles-leaves-height: 8.75rem;
+  --tiles-chart: 7.375rem;
+  --tiles-caption: 6rem;
+
   /* The benefit grid. 389 a card at the desktop, which is the 1200 column less
      two 16 gaps in three; the copy under the panel grows and the panel does
      not, which is what puts the drawn cards at 454 and 482 in one row. */
@@ -747,10 +761,32 @@
   );
 }
 
+/* The dark tile's own thread: its fill one step darker, which is what the
+   file draws on every tile that is not white. */
+@utility hairline-emerald {
+  --hairline-paint: linear-gradient(
+    var(--color-emerald-600),
+    var(--color-emerald-700)
+  );
+}
+
 @utility hairline-taupe {
   --hairline-paint: linear-gradient(
     var(--color-taupe-500),
     var(--color-taupe-600)
+  );
+}
+
+/* The dashed rule the chart tile stands its bar on.
+   The file draws eight 1px columns dashed 2 on 2 in neutral-300
+   (`20919:10856`), which is `--border` to the value. A border cannot be
+   dashed to a pattern, so the dashes are a repeating gradient down the
+   column and the pattern is the drawn one rather than the browser's. */
+@utility dashed-rule {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--border) 0 2px,
+    transparent 2px 4px
   );
 }
 
