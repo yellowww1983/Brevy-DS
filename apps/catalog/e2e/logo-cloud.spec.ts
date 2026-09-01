@@ -71,7 +71,18 @@ test("the ends fade rather than cut, and the ground does not fade with them", as
   expect(mask.clipped).toBe("hidden")
 
   for (const scheme of ["light", "dark"] as const) {
-    await page.emulateMedia({ colorScheme: scheme })
+    /** Asked for rather than emulated: the catalog opens light whatever the
+     *  machine prefers, so dark is a stored choice and a reload applies it. */
+    await page.evaluate((theme) => {
+      localStorage.setItem("theme", theme)
+    }, scheme)
+    await page.reload()
+    await page.waitForFunction(
+      (theme) =>
+        document.documentElement.classList.contains("dark") ===
+        (theme === "dark"),
+      scheme,
+    )
 
     /** The band keeps its own colour out to both edges. Read off the pixels,
      *  because hit testing ignores a mask entirely — the row is still under
@@ -131,7 +142,9 @@ test("the ends fade rather than cut, and the ground does not fade with them", as
     expect(ends?.right, `right edge in ${scheme}`).toEqual(ends?.ground)
   }
 
-  await page.emulateMedia({ colorScheme: null })
+  await page.evaluate(() => {
+    localStorage.removeItem("theme")
+  })
 })
 
 test("the marks are doubled, and the copy is not announced twice", async ({
