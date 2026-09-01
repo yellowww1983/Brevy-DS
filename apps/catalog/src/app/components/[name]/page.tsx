@@ -4,6 +4,9 @@ import { buttonDoc } from "@/button"
 import { Breadcrumbs } from "@/components/breadcrumbs"
 import { ComponentView } from "@/components/component-view"
 import { ContentPage } from "@/components/content-page"
+import { formDoc } from "@/form"
+import { inputDoc } from "@/input"
+import { labelDoc } from "@/label"
 import { components, getComponent } from "@/registry"
 
 /** Which components can hand themselves to Claude.
@@ -15,6 +18,9 @@ import { components, getComponent } from "@/registry"
  *  without one keep the page they already had. */
 const DOCS: Readonly<Record<string, () => string>> = {
   button: buttonDoc,
+  form: formDoc,
+  input: inputDoc,
+  label: labelDoc,
 }
 
 export function generateStaticParams() {

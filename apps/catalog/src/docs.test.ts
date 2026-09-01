@@ -120,37 +120,64 @@ function snippetsOf(markdown: string): string[] {
   return found
 }
 
-/** The names in the first column of the props table, if the doc writes one.
+/** Every props table a doc writes, and what each one is about.
  *
- *  Found by its heading rather than by position, so a doc can put the table
- *  wherever it reads best, and by the start of that heading rather than the
- *  whole of it: a doc that says Property or Props is still writing a props
- *  table, and the alternative is a rename quietly taking a table out of the
- *  suite. The names come back stripped of the backticks the table sets them
- *  in. */
-function propsOf(markdown: string): string[] | undefined {
+ *  A table is found by its first column's heading rather than by position, so
+ *  a doc can put one wherever it reads best, and by the start of that heading
+ *  rather than the whole of it: a doc that says Property or Props is still
+ *  writing a props table, and the alternative is a rename quietly taking a
+ *  table out of the suite.
+ *
+ *  A doc can write more than one, because a family is documented together —
+ *  the form's label takes different props from its field. Each table belongs
+ *  to the nearest heading above it that names something the package exports,
+ *  and to the doc's own subject when no heading does. So `## Props` under
+ *  `# Button` is Button's, and a `### FormLabel` under it is FormLabel's,
+ *  without either doc saying so twice.
+ *
+ *  The names come back stripped of the backticks the table sets them in. */
+function tablesOf(
+  markdown: string,
+  subject: string,
+  exports: ReadonlySet<string>,
+): { subject: string; props: string[] }[] {
   const lines = markdown.split("\n")
-  const start = lines.findIndex((line) => /^\|\s*Prop/i.test(line))
+  const found: { subject: string; props: string[] }[] = []
+  const headings: string[] = []
 
-  if (start === -1) {
-    return undefined
-  }
+  for (const [index, line] of lines.entries()) {
+    const heading = /^#+ (.+)$/.exec(line)?.[1]?.trim()
 
-  const props: string[] = []
-
-  for (const line of lines.slice(start + 2)) {
-    if (!line.startsWith("|")) {
-      break
+    if (heading) {
+      headings.unshift(heading)
+      continue
     }
 
-    const first = line.split("|")[1]?.trim().replaceAll("`", "")
-
-    if (first) {
-      props.push(first)
+    if (!/^\|\s*Prop/i.test(line)) {
+      continue
     }
+
+    const props: string[] = []
+
+    for (const row of lines.slice(index + 2)) {
+      if (!row.startsWith("|")) {
+        break
+      }
+
+      const first = row.split("|")[1]?.trim().replaceAll("`", "")
+
+      if (first) {
+        props.push(first)
+      }
+    }
+
+    found.push({
+      subject: headings.find((name) => exports.has(name)) ?? subject,
+      props,
+    })
   }
 
-  return props
+  return found
 }
 
 const docs = await collect()
@@ -159,11 +186,15 @@ const snippets: Snippet[] = docs.flatMap((doc) =>
   snippetsOf(doc.markdown).map((code) => ({ source: doc.source, code })),
 )
 
-const tables: Table[] = docs.flatMap((doc) => {
-  const props = propsOf(doc.markdown)
+const exported = packageExports()
 
-  return props ? [{ source: doc.source, subject: doc.subject, props }] : []
-})
+const tables: Table[] = docs.flatMap((doc) =>
+  tablesOf(doc.markdown, doc.subject, exported).map((table) => ({
+    source: `${doc.source} · ${table.subject}`,
+    subject: table.subject,
+    props: table.props,
+  })),
+)
 
 /** Components a snippet uses without importing, on purpose.
  *
@@ -302,24 +333,58 @@ function diagnosticsOf(program: ts.Program, source: ts.SourceFile | undefined) {
     : []
 }
 
+/** The snippet's imports, and everything under them.
+ *
+ *  An import runs to wherever its `from` is rather than to the end of its
+ *  first line: a form pulling nine names in reads as nine lines and would
+ *  otherwise have eight of them land in the body, where they parse as
+ *  something else entirely. The guard is not allowed to decide how a doc
+ *  formats itself. */
+function split(code: string): { imports: string; body: string } {
+  const imports: string[] = []
+  const body: string[] = []
+  let running = false
+
+  for (const line of code.split("\n")) {
+    if (running) {
+      imports.push(line)
+      running = !line.includes(" from ")
+      continue
+    }
+
+    if (line.startsWith("import ")) {
+      imports.push(line)
+      running = !line.includes(" from ") && !/^import ["']/.test(line)
+      continue
+    }
+
+    body.push(line)
+  }
+
+  return { imports: imports.join("\n"), body: body.join("\n").trim() }
+}
+
 /** Compiles one snippet where it lives. Returns whatever the compiler still
  *  objects to once the reader's placeholders are declared. */
 function check(code: string): readonly ts.Diagnostic[] {
   const run = compiler(join(HERE, "__snippet__.tsx"))
 
-  const imports = code
-    .split("\n")
-    .filter((line) => line.startsWith("import "))
-    .join("\n")
+  const { imports, body } = split(code)
 
-  const body = code
-    .split("\n")
-    .filter((line) => !line.startsWith("import "))
-    .join("\n")
-    .trim()
+  /** A snippet is either an expression or a module.
+   *
+   *  Most are an expression: one element with the reader's values in it,
+   *  which has to be wrapped in something before a compiler will look at it.
+   *  A component that needs a hook cannot be written that way — the form's
+   *  does, because where `useForm` goes is half of what there is to say — so
+   *  a snippet that opens with anything other than an element is compiled as
+   *  it stands. */
+  const expression = body.startsWith("<")
 
   const wrap = (declarations: string) =>
-    `${imports}\n${declarations}\nexport function Snippet() {\n  return (\n    <>\n${body}\n    </>\n  )\n}\n`
+    expression
+      ? `${imports}\n${declarations}\nexport function Snippet() {\n  return (\n    <>\n${body}\n    </>\n  )\n}\n`
+      : `${imports}\n${declarations}\n${body}\n`
 
   const first = run(wrap(""))
 
@@ -340,6 +405,47 @@ function check(code: string): readonly ts.Diagnostic[] {
   const second = run(wrap(declarations))
 
   return diagnosticsOf(second.program, second.source)
+}
+
+/** Every name `@brevy/ui` exports, so a heading can be recognised as naming
+ *  one. Asked of the compiler for the same reason everything else here is:
+ *  the alternative is a second list of the package's contents, kept by
+ *  hand. */
+function packageExports(): ReadonlySet<string> {
+  const run = compiler(join(HERE, "__exports__.tsx"))
+  const { program, source } = run(
+    [
+      `import * as ui from "@brevy/ui"`,
+      `export declare const probe: typeof ui`,
+      "",
+    ].join("\n"),
+  )
+
+  const names = new Set<string>()
+
+  if (source) {
+    const checker = program.getTypeChecker()
+
+    ts.forEachChild(source, (node) => {
+      if (!ts.isVariableStatement(node)) {
+        return
+      }
+
+      const [declaration] = node.declarationList.declarations
+
+      if (!declaration) {
+        return
+      }
+
+      for (const property of checker.getPropertiesOfType(
+        checker.getTypeAtLocation(declaration),
+      )) {
+        names.add(property.getName())
+      }
+    })
+  }
+
+  return names
 }
 
 /** Every prop the component really takes, asked of the compiler rather than
