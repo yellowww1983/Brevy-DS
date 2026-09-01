@@ -1353,3 +1353,17 @@ decoration, but there is no way to derive a fourth.
 The block ships the drawn three as a closed set and rounds the taupe onto its
 ramp. Please confirm the three are meant to be unrelated, and say what a
 fourth rung should be painted.
+
+### 87. The pill's figure is drawn a weight lighter than every other
+
+**website**, `20919:10870`
+
+The big-number-and-unit pair appears 39 times across the file in three
+containers — the testimonial wall's stat card, the tile mosaic's dark tile,
+and the pill on the tile beside it. Thirty-eight of them are 60/60 at weight
+700 with -0.9% tracking. The pill's `2,000+` is the same size, the same
+leading and the same tracking at **weight 600**.
+
+The system now ships that pair as one object, so it has one weight, and the
+one it has is the 700 the other thirty-eight draw. Please confirm the pill is
+a slip rather than a distinction.

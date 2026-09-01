@@ -3,6 +3,7 @@ import type { ReactNode } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "../components/avatar.js"
 import { Container } from "../components/container.js"
 import type { SocialProofPerson } from "../components/social-proof.js"
+import { StatFigure } from "../components/stat-figure.js"
 import { cn } from "../lib/utils.js"
 
 /** The ground the section stands on.
@@ -28,12 +29,12 @@ type TestimonialsAuthor = SocialProofPerson
  *  the drawn arrangement is what this order produces and any other order
  *  produces its own.
  *
- *  `stat` is a card of this block for now, and it is on loan. Counted across
- *  the file, its vocabulary — the 60/60 figure, the 24/24 unit, the display
- *  quotation mark behind them — appears 26 times, and half of those are the
- *  stats section that has not been built. When it is, this lifts out into
- *  whatever the two of them share. Building that component today would be
- *  guessing at the half of it nobody has measured. */
+ *  `stat` stays a card of this block, but the figure inside it does not. The
+ *  other half of that vocabulary turned out to be the tile mosaic, which
+ *  paints the same 60/60 number and 24/24 unit twice more and agrees with
+ *  this card on nothing else: one inverts the colours onto a dark ground, the
+ *  other drops the card for a pill. So what lifted out is `StatFigure` — the
+ *  type and nothing else — and the container stayed where it was. */
 type TestimonialsItem =
   | {
       kind: "stat"
@@ -107,10 +108,7 @@ function Stat({
       )}
     >
       <div className="flex flex-col gap-12">
-        <p className="flex items-start text-stat text-emerald-500">
-          {figure}
-          {unit ? <span className="text-stat-unit">{unit}</span> : null}
-        </p>
+        <StatFigure value={figure} unit={unit} className="text-emerald-500" />
 
         <p className="text-body-lg text-emerald-500">{sentence}</p>
       </div>
