@@ -102,11 +102,22 @@ test("the band scrolls, and holds under the cursor", async ({ page }) => {
   expect(animation.timing).toBe("linear")
   expect(animation.laps).toBe("infinite")
 
-  expect(await state()).toBe("running")
+  const box = await page.locator("[data-slot='logo-cloud']").boundingBox()
+  const clear = { x: (box?.width ?? 0) / 2, y: (box?.height ?? 0) + 200 }
+
+  /** Put the pointer somewhere before asking whether the band is hovered.
+   *
+   *  The pointer starts at 0,0, and on a specimen page that is the band —
+   *  it runs edge to edge from the top of the document. So the band opens
+   *  already held, and a spec that reads the play state without moving
+   *  first is reading a hover nobody performed. It is only visible on a
+   *  machine that leaves the pointer there, which is why this passed here
+   *  and failed on CI three times running. */
+  await page.mouse.move(clear.x, clear.y)
+  await expect.poll(state).toBe("running")
 
   /** The band is the hover target and not the track: a cursor cannot hold
    *  still on a strip that is sliding out from under it. */
-  const box = await page.locator("[data-slot='logo-cloud']").boundingBox()
   await page.mouse.move(
     (box?.x ?? 0) + (box?.width ?? 0) / 2,
     (box?.y ?? 0) + (box?.height ?? 0) / 2,
@@ -114,7 +125,7 @@ test("the band scrolls, and holds under the cursor", async ({ page }) => {
 
   await expect.poll(state).toBe("paused")
 
-  await page.mouse.move((box?.x ?? 0) + (box?.width ?? 0) / 2, -20)
+  await page.mouse.move(clear.x, clear.y)
   await expect.poll(state).toBe("running")
 })
 
