@@ -1,12 +1,16 @@
 import { notFound } from "next/navigation"
 
+import { avatarDoc } from "@/avatar"
+import { badgeDoc } from "@/badge"
 import { buttonDoc } from "@/button"
+import { chipDoc } from "@/chip"
 import { Breadcrumbs } from "@/components/breadcrumbs"
 import { ComponentView } from "@/components/component-view"
 import { ContentPage } from "@/components/content-page"
 import { formDoc } from "@/form"
 import { inputDoc } from "@/input"
 import { labelDoc } from "@/label"
+import { lineMarkerDoc } from "@/line-marker"
 import { components, getComponent } from "@/registry"
 
 /** Which components can hand themselves to Claude.
@@ -17,10 +21,14 @@ import { components, getComponent } from "@/registry"
  *  then a component appears here the day its doc is written, and the ones
  *  without one keep the page they already had. */
 const DOCS: Readonly<Record<string, () => string>> = {
+  avatar: avatarDoc,
+  badge: badgeDoc,
   button: buttonDoc,
+  chip: chipDoc,
   form: formDoc,
   input: inputDoc,
   label: labelDoc,
+  "line-marker": lineMarkerDoc,
 }
 
 export function generateStaticParams() {

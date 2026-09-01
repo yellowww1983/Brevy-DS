@@ -282,22 +282,31 @@ function compilerOptions(): ts.CompilerOptions {
     path,
   )
 
-  return {
-    ...parsed.options,
-    noEmit: true,
-    /** A snippet is a fragment. It is wrapped in a component to be compiled
-     *  at all, and the wrapper is not what is under test. */
-    noUnusedLocals: false,
-    noUnusedParameters: false,
-    types: [],
-  }
+  return { ...parsed.options, noEmit: true, types: [] }
+}
+
+/** What a snippet is not held to.
+ *
+ *  All three are consequences of standing in for the reader rather than
+ *  claims a doc makes. A snippet is a fragment, wrapped in a component to be
+ *  compiled at all, and the wrapper is not under test. And the names the
+ *  reader supplies are stubbed as `any`, so anything downstream of one has no
+ *  type to inherit: `people.map((person) => ...)` reads as an implicit any
+ *  here and as nothing at all on a page where `people` is a real array.
+ *
+ *  None of it touches what is being checked, which is what the snippet names:
+ *  its imports, its props, and the shape it gives an object. */
+const STANDING_IN: ts.CompilerOptions = {
+  noUnusedLocals: false,
+  noUnusedParameters: false,
+  noImplicitAny: false,
 }
 
 /** A compiler that reads one file out of memory and everything else off disk,
  *  so a made-up module sitting where the catalog's own pages sit resolves
  *  `@brevy/ui` and `react` the way they do. */
-function compiler(file: string) {
-  const options = compilerOptions()
+function compiler(file: string, overrides: ts.CompilerOptions = {}) {
+  const options = { ...compilerOptions(), ...overrides }
   let contents = ""
 
   const host = ts.createCompilerHost(options, true)
@@ -367,7 +376,7 @@ function split(code: string): { imports: string; body: string } {
 /** Compiles one snippet where it lives. Returns whatever the compiler still
  *  objects to once the reader's placeholders are declared. */
 function check(code: string): readonly ts.Diagnostic[] {
-  const run = compiler(join(HERE, "__snippet__.tsx"))
+  const run = compiler(join(HERE, "__snippet__.tsx"), STANDING_IN)
 
   const { imports, body } = split(code)
 
