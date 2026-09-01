@@ -57,13 +57,22 @@ export default function HowToUsePage() {
 
       <p className="mt-4 leading-relaxed">
         Browse Components and Blocks here. When you find something that fits,
-        use the Copy button. It gives you the exact phrase to paste to Claude,
-        so you name the real piece instead of describing it and hoping Claude
-        guesses right.
+        use Copy for Claude. It hands over that page&rsquo;s whole
+        documentation: what the piece is for, which variant to reach for, every
+        prop it takes and an example you can paste. Claude then builds with the
+        real thing instead of guessing from a name.
+      </p>
+
+      <p className="mt-6 leading-relaxed">
+        That is one page at a time. When the page you are building needs several
+        blocks at once, use Copy entire system in the top bar instead: it hands
+        over every component, block and foundation in one paste, so Claude has
+        the whole catalog in front of it rather than the one piece you happened
+        to be looking at.
       </p>
 
       <ImageSlot>
-        The Copy button on a component, and the phrase pasted into Claude
+        Copy for Claude on a component, and its documentation pasted into Claude
       </ImageSlot>
 
       <h2 id="describe-the-content" className={HEADING}>
