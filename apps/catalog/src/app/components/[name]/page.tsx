@@ -1,16 +1,20 @@
 import { notFound } from "next/navigation"
 
+import { accordionDoc } from "@/accordion"
 import { avatarDoc } from "@/avatar"
 import { badgeDoc } from "@/badge"
 import { buttonDoc } from "@/button"
+import { chatDoc } from "@/chat"
 import { chipDoc } from "@/chip"
 import { Breadcrumbs } from "@/components/breadcrumbs"
 import { ComponentView } from "@/components/component-view"
 import { ContentPage } from "@/components/content-page"
 import { formDoc } from "@/form"
+import { iconListDoc } from "@/icon-list"
 import { inputDoc } from "@/input"
 import { labelDoc } from "@/label"
 import { lineMarkerDoc } from "@/line-marker"
+import { socialProofDoc } from "@/social-proof"
 import { components, getComponent } from "@/registry"
 
 /** Which components can hand themselves to Claude.
@@ -21,14 +25,18 @@ import { components, getComponent } from "@/registry"
  *  then a component appears here the day its doc is written, and the ones
  *  without one keep the page they already had. */
 const DOCS: Readonly<Record<string, () => string>> = {
+  accordion: accordionDoc,
   avatar: avatarDoc,
   badge: badgeDoc,
   button: buttonDoc,
+  chat: chatDoc,
   chip: chipDoc,
   form: formDoc,
+  "icon-list": iconListDoc,
   input: inputDoc,
   label: labelDoc,
   "line-marker": lineMarkerDoc,
+  "social-proof": socialProofDoc,
 }
 
 export function generateStaticParams() {
