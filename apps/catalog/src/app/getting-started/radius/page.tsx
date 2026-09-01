@@ -1,17 +1,18 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { RadiusSwatch } from "@/components/radius-swatch"
 import type { Section } from "@/components/table-of-contents"
 import { MarkdownText } from "@/components/markdown-text"
-import { INTRO, LEAF, radiusDoc, RADIUS, SCALE_NOTE } from "@/radius"
+import { INTRO, LEAF, RADIUS, SCALE_NOTE } from "@/radius"
 
 const SECTIONS: readonly Section[] = [
   { id: "the-scale", title: "The scale" },
   { id: "the-leaf", title: "The leaf" },
 ]
 
-export default function RadiusPage() {
+export default async function RadiusPage() {
   return (
-    <ContentPage sections={SECTIONS} markdown={radiusDoc()}>
+    <ContentPage sections={SECTIONS} markdown={await docFor("radius")}>
       <h1 className="text-4xl font-bold tracking-tight">Radius</h1>
 
       <p className="mt-6 text-lg leading-relaxed text-muted-foreground">

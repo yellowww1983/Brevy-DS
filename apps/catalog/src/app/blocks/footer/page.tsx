@@ -1,12 +1,13 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { FooterFrame } from "@/components/footer-frame"
 import { MarkdownText } from "@/components/markdown-text"
 import { ViewportProvider } from "@/components/viewport-frame"
-import { footerDoc, INTRO, LAYOUT, USE } from "@/footer"
+import { INTRO, LAYOUT, USE } from "@/footer"
 
-export default function FooterPage() {
+export default async function FooterPage() {
   return (
-    <ContentPage markdown={footerDoc()}>
+    <ContentPage markdown={await docFor("footer")}>
       <h1 className="text-4xl font-bold tracking-tight">Footer</h1>
 
       <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">

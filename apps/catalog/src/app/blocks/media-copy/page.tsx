@@ -1,12 +1,13 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { MarkdownText } from "@/components/markdown-text"
 import { MediaCopyFrame } from "@/components/media-copy-frame"
 import { ViewportProvider } from "@/components/viewport-frame"
-import { INTRO, LAYOUT, mediaCopyDoc, USE } from "@/media-copy"
+import { INTRO, LAYOUT, USE } from "@/media-copy"
 
-export default function MediaCopyPage() {
+export default async function MediaCopyPage() {
   return (
-    <ContentPage markdown={mediaCopyDoc()}>
+    <ContentPage markdown={await docFor("media-copy")}>
       <h1 className="text-4xl font-bold tracking-tight">Media and copy</h1>
 
       <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">

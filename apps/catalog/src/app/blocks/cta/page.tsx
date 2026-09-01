@@ -1,15 +1,16 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { CtaBandFrame } from "@/components/cta-band-frame"
 import { MarkdownText } from "@/components/markdown-text"
 import { ViewportProvider } from "@/components/viewport-frame"
-import { ctaBandDoc, INTRO, LAYOUT, USE } from "@/cta-band"
+import { INTRO, LAYOUT, USE } from "@/cta-band"
 
 const LONG =
   "Get paid for the care you already give, and let somebody else handle the paperwork it comes with"
 
-export default function CtaBandPage() {
+export default async function CtaBandPage() {
   return (
-    <ContentPage markdown={ctaBandDoc()}>
+    <ContentPage markdown={await docFor("cta")}>
       <h1 className="text-4xl font-bold tracking-tight">CtaBand</h1>
 
       <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">

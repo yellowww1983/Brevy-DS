@@ -1,12 +1,13 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { LogoCloudFrame } from "@/components/logo-cloud-frame"
 import { MarkdownText } from "@/components/markdown-text"
 import { ViewportProvider } from "@/components/viewport-frame"
-import { INTRO, LAYOUT, logoCloudDoc, USE } from "@/logo-cloud"
+import { INTRO, LAYOUT, USE } from "@/logo-cloud"
 
-export default function LogoCloudPage() {
+export default async function LogoCloudPage() {
   return (
-    <ContentPage markdown={logoCloudDoc()}>
+    <ContentPage markdown={await docFor("logo-cloud")}>
       <h1 className="text-4xl font-bold tracking-tight">Logo cloud</h1>
 
       <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">

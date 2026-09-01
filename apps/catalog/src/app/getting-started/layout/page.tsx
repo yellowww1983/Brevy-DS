@@ -1,8 +1,9 @@
+import { docFor } from "@/registry"
 import { ContainerFrame } from "@/components/container-frame"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { MarkdownText } from "@/components/markdown-text"
 import type { Section } from "@/components/table-of-contents"
-import { CONTAINER, GRID, GUTTER, INTRO, layoutDoc, WIDTHS } from "@/layout"
+import { CONTAINER, GRID, GUTTER, INTRO, WIDTHS } from "@/layout"
 
 const SECTIONS: readonly Section[] = [
   { id: "the-container", title: "The container" },
@@ -10,9 +11,9 @@ const SECTIONS: readonly Section[] = [
   { id: "the-grid", title: "The grid" },
 ]
 
-export default function LayoutPage() {
+export default async function LayoutPage() {
   return (
-    <ContentPage sections={SECTIONS} markdown={layoutDoc()}>
+    <ContentPage sections={SECTIONS} markdown={await docFor("layout")}>
       <h1 className="text-4xl font-bold tracking-tight">Layout</h1>
 
       <p className="mt-6 text-lg leading-relaxed text-muted-foreground">

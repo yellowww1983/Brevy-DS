@@ -1,12 +1,13 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { MarkdownText } from "@/components/markdown-text"
 import { StepsFrame } from "@/components/steps-frame"
 import { ViewportProvider } from "@/components/viewport-frame"
-import { INTRO, LAYOUT, stepsDoc, USE } from "@/steps"
+import { INTRO, LAYOUT, USE } from "@/steps"
 
-export default function StepsPage() {
+export default async function StepsPage() {
   return (
-    <ContentPage markdown={stepsDoc()}>
+    <ContentPage markdown={await docFor("steps")}>
       <h1 className="text-4xl font-bold tracking-tight">Steps</h1>
 
       <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">

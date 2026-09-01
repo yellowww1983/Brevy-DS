@@ -1,3 +1,4 @@
+import { docFor } from "@/registry"
 import { Button } from "@brevy/ui"
 import { ArrowUp, Bell, Check, ChevronDown, Download, Play } from "lucide-react"
 
@@ -5,7 +6,7 @@ import { ContentPage, HEADING } from "@/components/content-page"
 import { IconSample, IconSize } from "@/components/icon-specimen"
 import { MarkdownText } from "@/components/markdown-text"
 import type { Section } from "@/components/table-of-contents"
-import { iconsDoc, IN_A_COMPONENT, INTRO, SET, SIZE, STROKE } from "@/icons"
+import { IN_A_COMPONENT, INTRO, SET, SIZE, STROKE } from "@/icons"
 
 const SECTIONS: readonly Section[] = [
   { id: "the-set", title: "The set" },
@@ -14,9 +15,9 @@ const SECTIONS: readonly Section[] = [
   { id: "in-a-component", title: "In a component" },
 ]
 
-export default function IconsPage() {
+export default async function IconsPage() {
   return (
-    <ContentPage sections={SECTIONS} markdown={iconsDoc()}>
+    <ContentPage sections={SECTIONS} markdown={await docFor("icons")}>
       <h1 className="text-4xl font-bold tracking-tight">Icons</h1>
 
       <p className="mt-6 text-lg leading-relaxed text-muted-foreground">

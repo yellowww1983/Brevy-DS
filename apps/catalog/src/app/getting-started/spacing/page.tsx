@@ -1,17 +1,18 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { SpacingStep } from "@/components/spacing-step"
 import type { Section } from "@/components/table-of-contents"
 import { MarkdownText } from "@/components/markdown-text"
-import { INTRO, NAMING, SCALE_NOTE, spacingDoc, STEPS } from "@/spacing"
+import { INTRO, NAMING, SCALE_NOTE, STEPS } from "@/spacing"
 
 const SECTIONS: readonly Section[] = [
   { id: "the-scale", title: "The scale" },
   { id: "naming", title: "Naming" },
 ]
 
-export default function SpacingPage() {
+export default async function SpacingPage() {
   return (
-    <ContentPage sections={SECTIONS} markdown={spacingDoc()}>
+    <ContentPage sections={SECTIONS} markdown={await docFor("spacing")}>
       <h1 className="text-4xl font-bold tracking-tight">Spacing</h1>
 
       <p className="mt-6 text-lg leading-relaxed text-muted-foreground">

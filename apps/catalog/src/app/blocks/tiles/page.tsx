@@ -1,12 +1,13 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { MarkdownText } from "@/components/markdown-text"
 import { TilesFrame } from "@/components/tiles-frame"
 import { ViewportProvider } from "@/components/viewport-frame"
-import { INTRO, LAYOUT, tilesDoc, USE } from "@/tiles"
+import { INTRO, LAYOUT, USE } from "@/tiles"
 
-export default function TilesPage() {
+export default async function TilesPage() {
   return (
-    <ContentPage markdown={tilesDoc()}>
+    <ContentPage markdown={await docFor("tiles")}>
       <h1 className="text-4xl font-bold tracking-tight">Tiles</h1>
 
       <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">

@@ -1,16 +1,17 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import type { Section } from "@/components/table-of-contents"
 import { ViewportFrame, ViewportProvider } from "@/components/viewport-frame"
-import { INTRO, typographyDoc, TYPE_GROUPS } from "@/typography"
+import { INTRO, TYPE_GROUPS } from "@/typography"
 
 const SECTIONS: readonly Section[] = TYPE_GROUPS.map((group) => ({
   id: group.id,
   title: group.title,
 }))
 
-export default function TypographyPage() {
+export default async function TypographyPage() {
   return (
-    <ContentPage sections={SECTIONS} markdown={typographyDoc()}>
+    <ContentPage sections={SECTIONS} markdown={await docFor("typography")}>
       <h1 className="text-4xl font-bold tracking-tight">Typography</h1>
 
       <p className="mt-6 text-lg leading-relaxed text-muted-foreground">

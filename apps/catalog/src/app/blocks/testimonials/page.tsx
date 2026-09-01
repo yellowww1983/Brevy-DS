@@ -1,12 +1,13 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { MarkdownText } from "@/components/markdown-text"
 import { TestimonialsFrame } from "@/components/testimonials-frame"
 import { ViewportProvider } from "@/components/viewport-frame"
-import { INTRO, LAYOUT, testimonialsDoc, USE } from "@/testimonials"
+import { INTRO, LAYOUT, USE } from "@/testimonials"
 
-export default function TestimonialsPage() {
+export default async function TestimonialsPage() {
   return (
-    <ContentPage markdown={testimonialsDoc()}>
+    <ContentPage markdown={await docFor("testimonials")}>
       <h1 className="text-4xl font-bold tracking-tight">Testimonials</h1>
 
       <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">

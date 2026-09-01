@@ -59,9 +59,54 @@ export type Omission = {
   note: "missing in Figma" | "identical to Default" | "not drawn"
 }
 
-export type ComponentEntry = {
+/** What kind of thing an entry is. It decides which page shows it and what
+ *  extra an entry carries: a component brings its previews, a block brings a
+ *  specimen to frame, a foundation and a screen bring neither. */
+export type Kind = "component" | "block" | "foundation" | "screen"
+
+/** One documented thing.
+ *
+ *  Everything the catalog explains is in one list: twelve components, thirteen
+ *  blocks, seven foundations and a screen. They used to be three inventories —
+ *  the components here, the blocks in a hand-written array inside the sidebar,
+ *  and the docs in a third map beside the component page — which is three
+ *  places to forget when something new lands.
+ *
+ *  Every entry has a doc. That is the rule that decides what belongs here: the
+ *  registry is what the system can say about itself, so the two written pages
+ *  that document nothing but the catalog itself stay in the sidebar's own
+ *  navigation rather than joining this.
+ *
+ *  The doc is fetched rather than held. A doc is markdown and the pages that
+ *  read it are server components, but the sidebar and the preview grid are not
+ *  — and anything a client component imports is sent to the browser. Written
+ *  as an import the bundler splits them out, so the 79KB of documentation this
+ *  list points at stays where it is read.
+ *
+ *  The icon is a name rather than a component for the same reason in reverse:
+ *  lucide is the sidebar's business, and the sidebar is the one place that
+ *  turns a name into a drawing. */
+export type Entry = {
   slug: string
   name: string
+  kind: Kind
+  href: string
+  /** A lucide export name. The sidebar owns the map from here to the icon,
+   *  and asks for one only where it draws a nav row: components are listed by
+   *  name under a heading of their own and wear none. */
+  icon?: string
+  /** One line, for a list of entries rather than for the page itself. The
+   *  doc's own opening paragraph introduces the thing at length; this says
+   *  which one it is among thirty-three. */
+  summary: string
+  doc: () => Promise<string>
+  /** The family a block belongs to, where the design draws one skeleton in
+   *  several arrangements. The sidebar puts them under one heading. */
+  family?: string
+}
+
+export type ComponentEntry = Entry & {
+  kind: "component"
   axes: readonly Axis[]
   omitted: readonly Omission[]
   /** One preview per row instead of the grid, for a component whose drawn
@@ -162,10 +207,14 @@ const badgeVariants: Record<string, NonNullable<BadgeProps["variant"]>> = {
   Beige: "beige",
 }
 
-export const components: readonly ComponentEntry[] = [
+const COMPONENTS: readonly ComponentEntry[] = [
   {
     slug: "button",
     name: "Button",
+    kind: "component",
+    href: "/components/button",
+    summary: "The action a section is asking for, in six weights.",
+    doc: () => import("./button").then((module) => module.buttonDoc()),
     // Drawn from Brevy Website · frame 22912:1932
     axes: [
       {
@@ -250,6 +299,11 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "input",
     name: "Input",
+    kind: "component",
+    href: "/components/input",
+    summary:
+      "The text field, at two heights, with room for an icon at either end.",
+    doc: () => import("./input").then((module) => module.inputDoc()),
     // Drawn from Brevy app · component set 65:533; the tall size from the
     // website file, where every form field is 48. The file type exists on the
     // component natively but is shown nowhere: the website never draws one.
@@ -297,6 +351,10 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "badge",
     name: "Badge",
+    kind: "component",
+    href: "/components/badge",
+    summary: "A small label for a fact: a status, a category, a settled state.",
+    doc: () => import("./badge").then((module) => module.badgeDoc()),
     // Drawn from Brevy Website · the Mobile App section's status badges
     axes: [
       {
@@ -335,6 +393,10 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "chip",
     name: "Chip",
+    kind: "component",
+    href: "/components/chip",
+    summary: "The round pill: an eyebrow, a suggestion, a filter.",
+    doc: () => import("./chip").then((module) => module.chipDoc()),
     // Drawn from Brevy Website · the pill family every page decorates with
     axes: [
       {
@@ -381,6 +443,10 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "line-marker",
     name: "Line marker",
+    kind: "component",
+    href: "/components/line-marker",
+    summary: "The yellow highlighter under a phrase of a heading.",
+    doc: () => import("./line-marker").then((module) => module.lineMarkerDoc()),
     wide: true,
     align: "start",
     // Drawn from Brevy Website · 24 strokes across five pages, every one the
@@ -428,6 +494,10 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "icon-list",
     name: "Icon list",
+    kind: "component",
+    href: "/components/icon-list",
+    summary: "Short lines, each with a mark beside it.",
+    doc: () => import("./icon-list").then((module) => module.iconListDoc()),
     wide: true,
     // Every list here is a different width — 288 for the bare markers, 472
     // for the discs — so centred they each begin somewhere else and the page
@@ -527,6 +597,10 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "accordion",
     name: "Accordion",
+    kind: "component",
+    href: "/components/accordion",
+    summary: "Questions that open one at a time, each on its own card.",
+    doc: () => import("./accordion").then((module) => module.accordionDoc()),
     wide: true,
     // Drawn from Brevy Website · the FAQ list on the home pages, one card per
     // question, the first drawn open. The copy is the shipped site's own.
@@ -594,6 +668,10 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "avatar",
     name: "Avatar",
+    kind: "component",
+    href: "/components/avatar",
+    summary: "A person, round, alone or in a stack.",
+    doc: () => import("./avatar").then((module) => module.avatarDoc()),
     // Drawn from Brevy Website · the avatar group at `22680:1103`, with the
     // fallback's colours taken from the app file, which localised them where
     // the website file left shadcn's own Geist and neutral-100 in place.
@@ -660,6 +738,11 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "social-proof",
     name: "Social proof",
+    kind: "component",
+    href: "/components/social-proof",
+    summary: "Faces, five stars and a line of reassurance.",
+    doc: () =>
+      import("./social-proof").then((module) => module.socialProofDoc()),
     // The row is 555 wide where it is drawn and its sentence is one line; a
     // grid cell folds it into a column, which is a different object.
     wide: true,
@@ -715,6 +798,10 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "chat",
     name: "Chat",
+    kind: "component",
+    href: "/components/chat",
+    summary: "The hero's chat card: a box to ask in and a round send.",
+    doc: () => import("./chat").then((module) => module.chatDoc()),
     wide: true,
     viewport: true,
     // Drawn from Brevy Website · frame 22912:2612, the hero's chat card. The
@@ -740,6 +827,10 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "form",
     name: "Form",
+    kind: "component",
+    href: "/components/form",
+    summary: "The wiring that holds a label, a field and its error together.",
+    doc: () => import("./form").then((module) => module.formDoc()),
     // Drawn from Brevy App · the auth screens at `20786:176842`: fields 16
     // apart, an 8-gap column of label, control and helper inside each. The
     // invalid state is react-hook-form actually failing, so the ring the
@@ -774,6 +865,10 @@ export const components: readonly ComponentEntry[] = [
   {
     slug: "label",
     name: "Label",
+    kind: "component",
+    href: "/components/label",
+    summary: "The word over a field, tied to it.",
+    doc: () => import("./label").then((module) => module.labelDoc()),
     // Drawn from Brevy App · `Password` over the auth field (`20786:176978`):
     // Medium 14 set solid in the page's text colour — the one corner of
     // shadcn the file localised by agreeing with it.
@@ -811,6 +906,240 @@ const axisValues = (entry: ComponentEntry) =>
 
 /** A term satisfied by the component name selects the component whole; the rest
  *  narrow its grid. Axis labels are deliberately not searchable. */
+/** The blocks: whole sections a page is assembled from. Their routes are
+ *  written by hand, one folder each, and stay that way — this list is where
+ *  the catalog looks them up, not where it learns to serve them. */
+const BLOCKS: readonly Entry[] = [
+  {
+    slug: "navbar",
+    name: "Navbar",
+    kind: "block",
+    href: "/blocks/navbar",
+    icon: "PanelTop",
+    summary:
+      "The bar at the top: a pill of links that shrinks as the page scrolls.",
+    doc: () => import("./navbar").then((module) => module.navbarDoc()),
+  },
+  {
+    slug: "hero-centered",
+    name: "Centered",
+    kind: "block",
+    href: "/blocks/hero/centered",
+    icon: "Megaphone",
+    family: "Hero",
+    summary: "The home page's opening: a heading over a chat box, on a wash.",
+    doc: () =>
+      import("./hero-centered").then((module) => module.heroCenteredDoc()),
+  },
+  {
+    slug: "hero-split",
+    name: "Split",
+    kind: "block",
+    href: "/blocks/hero/split",
+    icon: "Megaphone",
+    family: "Hero",
+    summary: "A heading and a button beside a shaped photograph.",
+    doc: () => import("./hero-split").then((module) => module.heroSplitDoc()),
+  },
+  {
+    slug: "card-grid",
+    name: "Card grid",
+    kind: "block",
+    href: "/blocks/card-grid",
+    icon: "Grid2x2",
+    summary: "Three cards across, each an illustration over a line of copy.",
+    doc: () => import("./card-grid").then((module) => module.cardGridDoc()),
+  },
+  {
+    slug: "logo-cloud",
+    name: "Logo cloud",
+    kind: "block",
+    href: "/blocks/logo-cloud",
+    icon: "Loader",
+    summary: "A band of partner marks, moving, fading out at both ends.",
+    doc: () => import("./logo-cloud").then((module) => module.logoCloudDoc()),
+  },
+  {
+    slug: "media-copy",
+    name: "Media and copy",
+    kind: "block",
+    href: "/blocks/media-copy",
+    icon: "Images",
+    summary: "A shaped picture beside a ladder of steps.",
+    doc: () => import("./media-copy").then((module) => module.mediaCopyDoc()),
+  },
+  {
+    slug: "segment-rows",
+    name: "Segment rows",
+    kind: "block",
+    href: "/blocks/segment-rows",
+    icon: "Rows3",
+    summary: "Full-width cards, one per segment, each in its own colour.",
+    doc: () =>
+      import("./segment-rows").then((module) => module.segmentRowsDoc()),
+  },
+  {
+    slug: "faq",
+    name: "FAQ",
+    kind: "block",
+    href: "/blocks/faq",
+    icon: "CircleHelp",
+    summary: "Questions on the right, a green contact card on the left.",
+    doc: () => import("./faq").then((module) => module.faqDoc()),
+  },
+  {
+    slug: "steps",
+    name: "Steps",
+    kind: "block",
+    href: "/blocks/steps",
+    icon: "ListOrdered",
+    summary: "A numbered path through what happens, in cards or in a row.",
+    doc: () => import("./steps").then((module) => module.stepsDoc()),
+  },
+  {
+    slug: "tiles",
+    name: "Tiles",
+    kind: "block",
+    href: "/blocks/tiles",
+    icon: "LayoutGrid",
+    summary: "A wall of five tiles that are five different things.",
+    doc: () => import("./tiles").then((module) => module.tilesDoc()),
+  },
+  {
+    slug: "testimonials",
+    name: "Testimonials",
+    kind: "block",
+    href: "/blocks/testimonials",
+    icon: "Quote",
+    summary: "A mosaic of quotes, figures and faces over a photograph.",
+    doc: () =>
+      import("./testimonials").then((module) => module.testimonialsDoc()),
+  },
+  {
+    slug: "cta",
+    name: "CTA Band",
+    kind: "block",
+    href: "/blocks/cta",
+    icon: "Signpost",
+    summary: "The last ask before the footer, on a deep green band.",
+    doc: () => import("./cta-band").then((module) => module.ctaBandDoc()),
+  },
+  {
+    slug: "footer",
+    name: "Footer",
+    kind: "block",
+    href: "/blocks/footer",
+    icon: "PanelBottom",
+    summary: "The foot of every page: links, a newsletter and the brand marks.",
+    doc: () => import("./footer").then((module) => module.footerDoc()),
+  },
+]
+
+/** The foundations: the tokens everything else is built out of. */
+const FOUNDATIONS: readonly Entry[] = [
+  {
+    slug: "colors",
+    name: "Colors",
+    kind: "foundation",
+    href: "/getting-started/colors",
+    icon: "Palette",
+    summary: "The brand ramps, the semantic tokens, and what is borrowed.",
+    doc: () => import("./colors").then((module) => module.colorsDoc()),
+  },
+  {
+    slug: "typography",
+    name: "Typography",
+    kind: "foundation",
+    href: "/getting-started/typography",
+    icon: "Type",
+    summary: "The type scale, which roles are fluid and which hold.",
+    doc: () => import("./typography").then((module) => module.typographyDoc()),
+  },
+  {
+    slug: "spacing",
+    name: "Spacing",
+    kind: "foundation",
+    href: "/getting-started/spacing",
+    icon: "Move",
+    summary: "The spacing steps and what each one is named for.",
+    doc: () => import("./spacing").then((module) => module.spacingDoc()),
+  },
+  {
+    slug: "radius",
+    name: "Radius",
+    kind: "foundation",
+    href: "/getting-started/radius",
+    icon: "Squircle",
+    summary: "The corner scale, and the leaf the brand cuts.",
+    doc: () => import("./radius").then((module) => module.radiusDoc()),
+  },
+  {
+    slug: "shadows",
+    name: "Shadows",
+    kind: "foundation",
+    href: "/getting-started/shadows",
+    icon: "Layers",
+    summary: "The shadow scale, from a hairline lift to a floating card.",
+    doc: () => import("./shadows").then((module) => module.shadowsDoc()),
+  },
+  {
+    slug: "icons",
+    name: "Icons",
+    kind: "foundation",
+    href: "/getting-started/icons",
+    icon: "Shapes",
+    summary: "Where icons come from, what size they take, how they are drawn.",
+    doc: () => import("./icons").then((module) => module.iconsDoc()),
+  },
+  {
+    slug: "layout",
+    name: "Layout",
+    kind: "foundation",
+    href: "/getting-started/layout",
+    icon: "Columns3",
+    summary: "The container, the gutter and the grid at three widths.",
+    doc: () => import("./layout").then((module) => module.layoutDoc()),
+  },
+]
+
+/** The screens: what a signed-in product shows, built from these parts.
+ *  Their own kind so that someone assembling a landing page does not reach
+ *  for one by mistake. */
+const SCREENS: readonly Entry[] = [
+  {
+    slug: "login",
+    name: "Login",
+    kind: "screen",
+    href: "/screens/login",
+    icon: "LogIn",
+    summary: "The signed-in product's way in: a form beside a photograph.",
+    doc: () => import("./auth").then((module) => module.authDoc()),
+  },
+]
+
+/** Everything the system can say about itself, in the order the catalog
+ *  reads it. */
+export const registry: readonly Entry[] = [
+  ...FOUNDATIONS,
+  ...COMPONENTS,
+  ...BLOCKS,
+  ...SCREENS,
+]
+
+export const components = COMPONENTS
+
+export function entriesOf(kind: Kind) {
+  return registry.filter((entry) => entry.kind === kind)
+}
+
+/** The doc for whatever lives at a slug, for a page that wants to hand
+ *  itself over. */
+export async function docFor(slug: string) {
+  const entry = registry.find((item) => item.slug === slug)
+
+  return entry ? await entry.doc() : undefined
+}
+
 export function componentMatches(entry: ComponentEntry, query: string) {
   return termsOf(query).every(
     (term) =>
