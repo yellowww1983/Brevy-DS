@@ -4,15 +4,13 @@
 
 export function preamble(
   name: string,
-  kind: "foundation" | "block" | "screen" = "foundation",
+  kind: "foundation" | "block" | "component" | "screen" = "foundation",
 ) {
-  if (kind === "screen") {
-    return `This is documentation for the ${name} screen from the Brevy design system. Use it to help me use the screen correctly.`
+  if (kind === "foundation") {
+    return `This is documentation for the ${name} foundation from the Brevy design system. Use it to help me apply these tokens correctly.`
   }
 
-  return kind === "block"
-    ? `This is documentation for the ${name} block from the Brevy design system. Use it to help me use the block correctly.`
-    : `This is documentation for the ${name} foundation from the Brevy design system. Use it to help me apply these tokens correctly.`
+  return `This is documentation for the ${name} ${kind} from the Brevy design system. Use it to help me use the ${kind} correctly.`
 }
 
 export function table(
