@@ -18,7 +18,7 @@ export default function LogoCloudPage() {
         <p className="mt-4 max-w-3xl leading-relaxed text-muted-foreground">
           <MarkdownText>
             {
-              "Four marks doubled, sliding one copy's width and starting over — hover it and the animation holds. The marks here stand in for the four the file names: those are other organisations' trademarks, and the block takes its marks as nodes precisely so it never ships one."
+              "Four marks doubled, sliding one copy's width and starting over — hover it and the animation holds. The marks here are logoipsum's: real-looking wordmarks that belong to nobody. The four the file names are other organisations' trademarks, and the block takes its marks as nodes precisely so it never ships one."
             }
           </MarkdownText>
         </p>

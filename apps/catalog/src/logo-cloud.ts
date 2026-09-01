@@ -12,7 +12,7 @@ export const USE = [
 
 export const LAYOUT = [
   "The band is 122px tall, 90px where the column narrows to a phone, and it pads nothing. Every other section in this file breathes 96px above and below; this is a band rather than a section, and the file gives it none.",
-  "The ground is flat olive-500, and the marks are laid over in `grayscale(1)` — the file has them in full colour, the live page flattens them.",
+  "The ground is flat olive-500, and the marks are laid over in `grayscale(1)` — the file has them in full colour, the live page flattens them. Nothing dims them beyond that, and the live page does not either: its filter is `grayscale(1)` and its opacity is 1. Its marks read muted because a brand mark flattened is a middle grey rather than black — measured off the live band, its four are painted 113, 80, 126 and 114 out of 255, and no two agree. That is the artwork's doing, and a dimming here would take a client's own mark lighter than the page it is copied from.",
   "In the dark the band darkens with the page and the same filter flips, because a grey mark on a dark band is a hole.",
   "The animation runs 40 seconds a lap and pauses under the cursor. The ends of each copy carry half a gap, so the seam where one copy meets the next measures the same as every other space in the band.",
 ]

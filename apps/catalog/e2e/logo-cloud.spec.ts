@@ -12,6 +12,7 @@ const DRAWN = {
   olive500: "rgb(215, 228, 201)",
   gap: "40px",
   marks: 4,
+  mark: 36,
   lap: "40s",
 }
 
@@ -109,6 +110,40 @@ test("the track is two copies wherever the marks overflow the band", async ({
     /** And a copy is never narrower than the band, or the far end of it sits
      *  empty for part of every lap. */
     expect(read.row).toBeGreaterThanOrEqual(read.band)
+  }
+})
+
+test("the marks fit the band and stand at one height", async ({ page }) => {
+  for (const [width, band] of [
+    [1440, DRAWN.band],
+    [390, DRAWN.narrow],
+  ] as const) {
+    await page.setViewportSize({ width, height: 400 })
+    await page.goto(SPECIMEN)
+    await page.waitForFunction(() =>
+      [...document.images].every((image) => image.complete),
+    )
+
+    const marks = await page
+      .locator("[data-slot='logo-cloud-logo']")
+      .evaluateAll((nodes) =>
+        nodes.map((node) => {
+          const box = node.getBoundingClientRect()
+          return {
+            width: Math.round(box.width),
+            height: Math.round(box.height),
+          }
+        }),
+      )
+
+    expect(marks).toHaveLength(DRAWN.marks * 2)
+
+    for (const mark of marks) {
+      expect(mark.height).toBe(DRAWN.mark)
+      expect(mark.height).toBeLessThan(band)
+      /** A real mark is a wordmark, not a box: none of the four is square. */
+      expect(mark.width).toBeGreaterThan(mark.height)
+    }
   }
 })
 
@@ -269,17 +304,26 @@ test("the sliding stops for anyone who asked it to", async ({ browser }) => {
   await context.close()
 })
 
-test("the marks are flattened, and flipped on the dark band", async ({
+test("the marks are flattened, and nothing else is done to them", async ({
   page,
 }) => {
   await page.goto(SPECIMEN)
 
-  expect(
-    await page
-      .locator("[data-slot='logo-cloud-logo']")
-      .first()
-      .evaluate((node) => getComputedStyle(node).filter),
-  ).toBe("grayscale(1)")
+  const read = await page
+    .locator("[data-slot='logo-cloud-logo']")
+    .first()
+    .evaluate((node) => {
+      const style = getComputedStyle(node)
+      return { filter: style.filter, opacity: style.opacity }
+    })
+
+  expect(read.filter).toBe("grayscale(1)")
+  /** The live page dims nothing — its filter is `grayscale(1)` and its
+   *  opacity is 1. Its marks read muted because a brand mark flattened is a
+   *  middle grey, which is the artwork's doing and not the band's. A dimming
+   *  here would take a client's own mark lighter than the page it is copied
+   *  from. */
+  expect(read.opacity).toBe("1")
 
   await page.addInitScript(() => {
     localStorage.setItem("theme", "dark")
