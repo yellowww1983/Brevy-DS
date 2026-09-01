@@ -457,6 +457,21 @@ function packageExports(): ReadonlySet<string> {
   return names
 }
 
+/** Every property of a type, and of each branch where the type is a union.
+ *
+ *  A component can take one shape or another: the accordion holds one panel
+ *  open or several, and `collapsible` means something only in the first. TS
+ *  answers a union with the properties its branches share, which leaves
+ *  every prop that tells the branches apart looking like a prop that does not
+ *  exist. Asking each branch and taking them together is what a doc is
+ *  actually claiming — that a reader can pass this — and which branch it
+ *  belongs to is prose. */
+function propertiesIn(checker: ts.TypeChecker, type: ts.Type): ts.Symbol[] {
+  return type.isUnion()
+    ? type.types.flatMap((branch) => propertiesIn(checker, branch))
+    : checker.getPropertiesOfType(type)
+}
+
 /** Every prop the component really takes, asked of the compiler rather than
  *  read off its source.
  *
@@ -495,7 +510,8 @@ function propertiesOf(component: string): {
         return
       }
 
-      for (const property of checker.getPropertiesOfType(
+      for (const property of propertiesIn(
+        checker,
         checker.getTypeAtLocation(declaration),
       )) {
         names.add(property.getName())
