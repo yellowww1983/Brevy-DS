@@ -692,9 +692,12 @@
   --testimonials-photo: 30.375rem;
   --testimonials-portrait: 16.375rem;
   --testimonials-card: 16.875rem;
-  --testimonials-mark: 20.0625rem;
-  --testimonials-mark-tall: 16.5625rem;
-  --testimonials-mark-top: 4.375rem;
+  /* The quotation mark behind a quote card: 321 by 265, hung 70 down. It
+     belongs to the card rather than to the wall the card was written in —
+     the tile mosaic draws the same object. */
+  --quote-mark: 20.0625rem;
+  --quote-mark-tall: 16.5625rem;
+  --quote-mark-top: 4.375rem;
   --testimonials-shade: 31.8125rem;
   --testimonials-header: 16.6875rem;
 

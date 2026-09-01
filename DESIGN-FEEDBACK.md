@@ -1367,3 +1367,41 @@ leading and the same tracking at **weight 600**.
 The system now ships that pair as one object, so it has one weight, and the
 one it has is the 700 the other thirty-eight draw. Please confirm the pill is
 a slip rather than a distinction.
+
+### 90. The quotation mark hangs at two different heights
+
+**website**, `22618:7253` against `22624:8287` and ten siblings
+
+One drawing, 321 by 265, bled 20 off the left edge of the card that clips it,
+and painted `#f8f5f2` at full strength in every instance. Twelve of them in
+the file, and the only thing that changes is how far down it starts:
+
+| card                    | height    | mark top |
+| ----------------------- | --------- | -------- |
+| testimonial wall, quote | 270 – 320 | 70       |
+| tile mosaic, quotation  | 240       | 40       |
+
+Both happen to show exactly 200 of the mark before the clip, which would be a
+rule if any of the other ten agreed — the wall's mobile cards are 292, 208 and
+320 tall and all three keep 70.
+
+The card takes the offset as a named choice with the two drawn values rather
+than deriving a rule from two coincidences. Please say whether the mark is
+meant to hang from the top of the card or from its floor.
+
+### 91. The quote card's author row is drawn two ways
+
+**website**, `22618:7248` against `22624:8287`
+
+The same card, the same 24 of padding, the same 20/28 quote above it — and
+underneath, two different rows:
+
+| card                    | face | name           |
+| ----------------------- | ---- | -------------- |
+| testimonial wall, quote | 40   | 18/28 Bold     |
+| tile mosaic, quotation  | 32   | 20/28 SemiBold |
+
+The wall draws its row eleven times and the mosaic draws its once, so the
+component ships the wall's and the mosaic now wears it. Please confirm the
+32 and the SemiBold are a slip rather than a distinction — it is the same
+divergence the pill's figure has (87), on the same block.
