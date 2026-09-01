@@ -1,3 +1,4 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { CopyToken, PaletteSwatch, TokenSwatch } from "@/components/swatch"
 import type { Section } from "@/components/table-of-contents"
@@ -6,7 +7,6 @@ import {
   BORROWED_NOTE,
   BRAND_GROUPS,
   BRAND_NOTE,
-  colorsDoc,
   INTRO,
   SEMANTIC_GROUPS,
   SEMANTIC_NOTE,
@@ -40,9 +40,9 @@ function Ramp({
   )
 }
 
-export default function ColorsPage() {
+export default async function ColorsPage() {
   return (
-    <ContentPage sections={SECTIONS} markdown={colorsDoc()}>
+    <ContentPage sections={SECTIONS} markdown={await docFor("colors")}>
       <h1 className="text-4xl font-bold tracking-tight">Colors</h1>
 
       <p className="mt-6 text-lg leading-relaxed text-muted-foreground">

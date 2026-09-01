@@ -1,12 +1,13 @@
+import { docFor } from "@/registry"
 import { CardGridFrame } from "@/components/card-grid-frame"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { MarkdownText } from "@/components/markdown-text"
 import { ViewportProvider } from "@/components/viewport-frame"
-import { cardGridDoc, INTRO, LAYOUT, USE } from "@/card-grid"
+import { INTRO, LAYOUT, USE } from "@/card-grid"
 
-export default function CardGridPage() {
+export default async function CardGridPage() {
   return (
-    <ContentPage markdown={cardGridDoc()}>
+    <ContentPage markdown={await docFor("card-grid")}>
       <h1 className="text-4xl font-bold tracking-tight">Card grid</h1>
 
       <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">

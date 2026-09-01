@@ -1,12 +1,13 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING as H } from "@/components/content-page"
 import { MarkdownText } from "@/components/markdown-text"
 import { SegmentRowsFrame } from "@/components/segment-rows-frame"
 import { ViewportProvider } from "@/components/viewport-frame"
-import { INTRO, LAYOUT, segmentRowsDoc, TONES, USE } from "@/segment-rows"
+import { INTRO, LAYOUT, TONES, USE } from "@/segment-rows"
 
-export default function SegmentRowsPage() {
+export default async function SegmentRowsPage() {
   return (
-    <ContentPage markdown={segmentRowsDoc()}>
+    <ContentPage markdown={await docFor("segment-rows")}>
       <h1 className="text-4xl font-bold tracking-tight">Segment rows</h1>
 
       <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">

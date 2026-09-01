@@ -1,12 +1,13 @@
+import { docFor } from "@/registry"
 import { AuthFrame } from "@/components/auth-frame"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { MarkdownText } from "@/components/markdown-text"
 import { ViewportProvider } from "@/components/viewport-frame"
-import { authDoc, INTRO, LAYOUT, USE } from "@/auth"
+import { INTRO, LAYOUT, USE } from "@/auth"
 
-export default function LoginPage() {
+export default async function LoginPage() {
   return (
-    <ContentPage markdown={authDoc()}>
+    <ContentPage markdown={await docFor("login")}>
       <h1 className="text-4xl font-bold tracking-tight">Login</h1>
 
       <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">

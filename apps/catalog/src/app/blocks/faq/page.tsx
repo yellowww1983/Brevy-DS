@@ -1,12 +1,13 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { FaqFrame } from "@/components/faq-frame"
 import { MarkdownText } from "@/components/markdown-text"
 import { ViewportProvider } from "@/components/viewport-frame"
-import { faqDoc, INTRO, LAYOUT, USE } from "@/faq"
+import { INTRO, LAYOUT, USE } from "@/faq"
 
-export default function FaqPage() {
+export default async function FaqPage() {
   return (
-    <ContentPage markdown={faqDoc()}>
+    <ContentPage markdown={await docFor("faq")}>
       <h1 className="text-4xl font-bold tracking-tight">FAQ</h1>
 
       <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">

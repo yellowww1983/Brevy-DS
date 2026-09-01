@@ -1,12 +1,13 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { HeroCenteredFrame } from "@/components/hero-centered-frame"
 import { MarkdownText } from "@/components/markdown-text"
 import { ViewportProvider } from "@/components/viewport-frame"
-import { heroCenteredDoc, INTRO, LAYOUT, USE } from "@/hero-centered"
+import { INTRO, LAYOUT, USE } from "@/hero-centered"
 
-export default function HeroCenteredPage() {
+export default async function HeroCenteredPage() {
   return (
-    <ContentPage markdown={heroCenteredDoc()}>
+    <ContentPage markdown={await docFor("hero-centered")}>
       <h1 className="text-4xl font-bold tracking-tight">HeroCentered</h1>
 
       <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">

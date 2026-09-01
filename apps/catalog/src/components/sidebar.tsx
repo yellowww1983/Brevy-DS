@@ -30,7 +30,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import type { ComponentType, ReactNode } from "react"
 
-import { components, filterComponents } from "@/registry"
+import { components, entriesOf, filterComponents } from "@/registry"
 import { BrevyLogo } from "./brevy-logo"
 import { useSearch, useSearchable } from "./search-provider"
 
@@ -50,6 +50,32 @@ type Family = {
   variants: readonly { label: string; href: string }[]
 }
 
+/** A registry entry names its icon; this is where the name becomes one. It
+ *  lives in the sidebar because lucide is the sidebar's business, and keeping
+ *  it out of the registry is what lets the registry stay a list of data. */
+const ICONS: Readonly<Record<string, ComponentType<{ className?: string }>>> = {
+  CircleHelp,
+  Columns3,
+  Grid2x2,
+  Images,
+  Layers,
+  LayoutGrid,
+  ListOrdered,
+  Loader,
+  LogIn,
+  Megaphone,
+  Move,
+  Palette,
+  PanelBottom,
+  PanelTop,
+  Quote,
+  Rows3,
+  Shapes,
+  Signpost,
+  Squircle,
+  Type,
+}
+
 const GETTING_STARTED: readonly Entry[] = [
   {
     label: "Introduction",
@@ -63,41 +89,59 @@ const GETTING_STARTED: readonly Entry[] = [
  *  shows, drawn in the app file but built from this system's parts. Their own
  *  group so a reader assembling a landing page does not reach for one by
  *  mistake. */
-const SCREENS: readonly Entry[] = [
-  { label: "Login", icon: LogIn, href: "/screens/login" },
-]
+const SCREENS: readonly Entry[] = entriesOf("screen").map((entry) => ({
+  label: entry.name,
+  icon: ICONS[entry.icon ?? ""] ?? Shapes,
+  href: entry.href,
+}))
 
-const FOUNDATIONS: readonly Entry[] = [
-  { label: "Colors", icon: Palette, href: "/getting-started/colors" },
-  { label: "Typography", icon: Type, href: "/getting-started/typography" },
-  { label: "Spacing", icon: Move, href: "/getting-started/spacing" },
-  { label: "Radius", icon: Squircle, href: "/getting-started/radius" },
-  { label: "Shadows", icon: Layers, href: "/getting-started/shadows" },
-  { label: "Icons", icon: Shapes, href: "/getting-started/icons" },
-  { label: "Layout", icon: Columns3, href: "/getting-started/layout" },
-]
+const FOUNDATIONS: readonly Entry[] = entriesOf("foundation").map((entry) => ({
+  label: entry.name,
+  icon: ICONS[entry.icon ?? ""] ?? Shapes,
+  href: entry.href,
+}))
 
-const BLOCKS: readonly (Entry | Family)[] = [
-  { label: "Navbar", icon: PanelTop, href: "/blocks/navbar" },
-  {
-    label: "Hero",
-    icon: Megaphone,
-    variants: [
-      { label: "Centered", href: "/blocks/hero/centered" },
-      { label: "Split", href: "/blocks/hero/split" },
-    ],
-  },
-  { label: "Card grid", icon: Grid2x2, href: "/blocks/card-grid" },
-  { label: "Logo cloud", icon: Loader, href: "/blocks/logo-cloud" },
-  { label: "Media and copy", icon: Images, href: "/blocks/media-copy" },
-  { label: "Segment rows", icon: Rows3, href: "/blocks/segment-rows" },
-  { label: "FAQ", icon: CircleHelp, href: "/blocks/faq" },
-  { label: "Steps", icon: ListOrdered, href: "/blocks/steps" },
-  { label: "Tiles", icon: LayoutGrid, href: "/blocks/tiles" },
-  { label: "Testimonials", icon: Quote, href: "/blocks/testimonials" },
-  { label: "CTA Band", icon: Signpost, href: "/blocks/cta" },
-  { label: "Footer", icon: PanelBottom, href: "/blocks/footer" },
-]
+/** The blocks, read from the registry rather than listed again here. A block
+ *  arriving used to mean two edits, and the second one was easy to skip.
+ *
+ *  A family is a heading with shapes under it, which is how the file thinks
+ *  about heroes: one skeleton, several arrangements. The registry says which
+ *  family an entry belongs to and the grouping happens here, because it is a
+ *  way of drawing a list rather than a fact about a block. */
+const BLOCKS: readonly (Entry | Family)[] = entriesOf("block").reduce<
+  (Entry | Family)[]
+>((rows, entry) => {
+  const item = {
+    label: entry.name,
+    icon: ICONS[entry.icon ?? ""] ?? Shapes,
+    href: entry.href,
+  }
+
+  if (!entry.family) {
+    return [...rows, item]
+  }
+
+  const open = rows.at(-1)
+
+  if (open && "variants" in open && open.label === entry.family) {
+    return [
+      ...rows.slice(0, -1),
+      {
+        ...open,
+        variants: [...open.variants, { label: entry.name, href: entry.href }],
+      },
+    ]
+  }
+
+  return [
+    ...rows,
+    {
+      label: entry.family,
+      icon: item.icon,
+      variants: [{ label: entry.name, href: entry.href }],
+    },
+  ]
+}, [])
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (

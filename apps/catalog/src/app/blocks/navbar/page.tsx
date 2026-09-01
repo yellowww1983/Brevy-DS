@@ -1,12 +1,13 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { MarkdownText } from "@/components/markdown-text"
 import { NavbarFrame } from "@/components/navbar-frame"
 import { ViewportProvider } from "@/components/viewport-frame"
-import { INTRO, MENU, navbarDoc, SCROLL, USE, WIDTH } from "@/navbar"
+import { INTRO, MENU, SCROLL, USE, WIDTH } from "@/navbar"
 
-export default function NavbarPage() {
+export default async function NavbarPage() {
   return (
-    <ContentPage markdown={navbarDoc()}>
+    <ContentPage markdown={await docFor("navbar")}>
       <h1 className="text-4xl font-bold tracking-tight">Navbar</h1>
 
       <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">

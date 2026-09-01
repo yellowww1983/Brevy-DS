@@ -1,12 +1,13 @@
+import { docFor } from "@/registry"
 import { ContentPage, HEADING } from "@/components/content-page"
 import { HeroSplitFrame } from "@/components/hero-split-frame"
 import { MarkdownText } from "@/components/markdown-text"
 import { ViewportProvider } from "@/components/viewport-frame"
-import { heroSplitDoc, INTRO, LAYOUT, USE } from "@/hero-split"
+import { INTRO, LAYOUT, USE } from "@/hero-split"
 
-export default function HeroSplitPage() {
+export default async function HeroSplitPage() {
   return (
-    <ContentPage markdown={heroSplitDoc()}>
+    <ContentPage markdown={await docFor("hero-split")}>
       <h1 className="text-4xl font-bold tracking-tight">HeroSplit</h1>
 
       <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
