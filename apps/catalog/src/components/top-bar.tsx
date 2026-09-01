@@ -2,6 +2,7 @@
 
 import { Search } from "lucide-react"
 
+import { CopySystem } from "./copy-system"
 import { useSearch, useSearchable } from "./search-provider"
 import { ThemeToggle } from "./theme-toggle"
 
@@ -35,6 +36,7 @@ export function TopBar() {
         </div>
       )}
 
+      <CopySystem />
       <ThemeToggle />
     </header>
   )
