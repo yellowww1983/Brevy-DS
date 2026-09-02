@@ -3,7 +3,7 @@ import { BrevyLockup } from "@brevy/ui"
 export function BrevyLogo() {
   return (
     <svg
-      className="h-6 w-auto text-brand-500 dark:text-olive-500"
+      className="h-6 w-auto text-brand-500 dark:text-primary"
       aria-hidden
       viewBox="0 0 304 82"
       fill="none"
@@ -43,6 +43,6 @@ export function BrevyLogo() {
  *  drawn in, with the olive the catalog's own dark mode wants. */
 export function BrevyWordmark() {
   return (
-    <BrevyLockup className="h-10 w-auto text-brand-500 dark:text-olive-500" />
+    <BrevyLockup className="h-10 w-auto text-brand-500 dark:text-primary" />
   )
 }

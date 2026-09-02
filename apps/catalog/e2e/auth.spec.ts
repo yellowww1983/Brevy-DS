@@ -108,7 +108,7 @@ test("the column carries the drawn rhythm", async ({ page }) => {
       const heading = one("[data-slot='auth-split-heading']")
       const description = one("[data-slot='auth-split-description']")
       const labelRow = one("[data-slot='form-label-row']")
-      const label = one("[data-slot='form-label']")
+      const label = one("[data-slot='label']")
       const input = one("input")
 
       if (
@@ -189,7 +189,7 @@ test("the field is the system's tall input with the eye in its slot", async ({
   ).toBe(DRAWN.eye.inset)
 
   const label = await page
-    .locator("[data-slot='form-label']")
+    .locator("[data-slot='label']")
     .first()
     .evaluate((node) => {
       const style = getComputedStyle(node)

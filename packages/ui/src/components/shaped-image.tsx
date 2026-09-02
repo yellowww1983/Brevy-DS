@@ -27,12 +27,12 @@ import { cn } from "../lib/utils.js"
 function ShapedImage({ className, children, ...props }: ComponentProps<"div">) {
   return (
     <div
-      data-slot="shaped-image"
       className={cn(
         "aspect-(--aspect-brevy-mark) overflow-hidden mask-brevy-mark",
         className,
       )}
       {...props}
+      data-slot="shaped-image"
     >
       {children}
     </div>

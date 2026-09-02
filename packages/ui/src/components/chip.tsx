@@ -53,9 +53,9 @@ type ChipProps = ComponentProps<"span"> &
 function Chip({ className, variant, count, children, ...props }: ChipProps) {
   return (
     <span
-      data-slot="chip"
       className={cn(chipVariants({ variant }), className)}
       {...props}
+      data-slot="chip"
     >
       {count !== undefined && (
         <span

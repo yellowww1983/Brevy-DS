@@ -77,7 +77,7 @@ export function navbarDoc() {
     'import { BrevyLockup, Navbar } from "@brevy/ui"',
     "",
     "<Navbar",
-    '  logo={<BrevyLockup className="h-10 w-auto text-brand-500" />}',
+    '  logo={<BrevyLockup className="h-10 w-auto text-brand-500 dark:text-primary" />}',
     "  links={[",
     '    { label: "Get paid for caregiving", href: "/caregiving" },',
     '    { label: "Eldercare Guide", href: "/guide" },',

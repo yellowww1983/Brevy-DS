@@ -37,7 +37,7 @@ export default function FooterSpecimenPage() {
 
       <Footer
         logo={
-          <BrevyLockup className="h-10 w-auto text-brand-500 dark:text-olive-500" />
+          <BrevyLockup className="h-10 w-auto text-brand-500 dark:text-primary" />
         }
         tagline={TAGLINE}
         socials={socials}

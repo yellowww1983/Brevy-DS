@@ -33,9 +33,9 @@ function StatFigure({
 }) {
   return (
     <p
-      data-slot="stat-figure"
       className={cn("flex items-start text-stat", className)}
       {...props}
+      data-slot="stat-figure"
     >
       {value}
       {unit ? (

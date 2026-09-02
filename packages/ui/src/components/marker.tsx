@@ -61,9 +61,9 @@ type MarkerProps = ComponentProps<"span"> & VariantProps<typeof markerVariants>
 function Marker({ className, tone, size, children, ...props }: MarkerProps) {
   return (
     <span
-      data-slot="marker"
       className={cn(markerVariants({ tone, size }), className)}
       {...props}
+      data-slot="marker"
     >
       <span data-slot="marker-face" className={faceVariants({ tone, size })}>
         {children}

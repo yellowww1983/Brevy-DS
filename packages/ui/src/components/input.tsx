@@ -62,7 +62,6 @@ function Input({
   const field = (
     <input
       type={type}
-      data-slot="input"
       className={cn(
         inputVariants({ size }),
         leading && LEADING_PAD,
@@ -70,6 +69,7 @@ function Input({
         className,
       )}
       {...props}
+      data-slot="input"
     />
   )
 

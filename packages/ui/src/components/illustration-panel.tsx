@@ -36,12 +36,12 @@ function IllustrationPanel({
 }) {
   return (
     <div
-      data-slot="illustration-panel"
       className={cn(
         "h-(--illustration-panel) rounded-2xl bg-linear-to-b from-olive-200 to-neutral-100 p-px",
         className,
       )}
       {...props}
+      data-slot="illustration-panel"
     >
       {/* Centred both ways. Artwork drawn to the panel's own size fills it
           and centring changes nothing; artwork that is a composition rather

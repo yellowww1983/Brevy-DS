@@ -24,9 +24,9 @@ import { cn } from "../lib/utils.js"
 function LineMarker({ className, children, ...props }: ComponentProps<"span">) {
   return (
     <span
-      data-slot="line-marker"
       className={cn("relative isolate inline-block", className)}
       {...props}
+      data-slot="line-marker"
     >
       <span
         data-slot="line-marker-stroke"

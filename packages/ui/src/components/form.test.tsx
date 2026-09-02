@@ -51,7 +51,12 @@ describe("Form", () => {
 
     const input = screen.getByLabelText("Email")
     expect(input.tagName).toBe("INPUT")
-    expect(input).toHaveAttribute("data-slot", "form-control")
+
+    /** And it is still an input while it is one. `FormControl` renders no
+     *  element of its own, so what it carries lands on the control inside it
+     *  — including, until it was taken out, a slot that renamed every field
+     *  in the system to `form-control`. */
+    expect(input).toHaveAttribute("data-slot", "input")
   })
 
   it("points aria-describedby at the description while valid", () => {

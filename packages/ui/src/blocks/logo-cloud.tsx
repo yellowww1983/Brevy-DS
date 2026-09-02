@@ -62,13 +62,13 @@ function LogoCloud({
 }) {
   return (
     <section
-      data-slot="logo-cloud"
       aria-label={label}
       className={cn(
         "group flex h-(--logo-cloud-narrow) items-center bg-olive-500 tablet:h-(--logo-cloud) dark:bg-background",
         className,
       )}
       {...props}
+      data-slot="logo-cloud"
     >
       {/* What clips the marks, and what fades them out at both ends.
 

@@ -11,9 +11,9 @@ import { cn } from "../lib/utils.js"
 function Container({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
-      data-slot="container"
       className={cn("container-content", className)}
       {...props}
+      data-slot="container"
     />
   )
 }

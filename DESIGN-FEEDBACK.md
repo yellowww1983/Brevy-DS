@@ -1437,3 +1437,33 @@ The wall draws its row eleven times and the mosaic draws its once, so the
 component ships the wall's and the mosaic now wears it. Please confirm the
 32 and the SemiBold are a slip rather than a distinction — it is the same
 divergence the pill's figure has (87), on the same block.
+
+### 92. The brand green in the dark is one shade here, and two in the file
+
+**app**, Dark Mode page
+
+The file paints the brand three ways on a dark page. The wordmark is
+olive-500, measured across fifteen vectors with no green among them. The
+serif heading is green, and is drawn in two of them — `#066e3d` seven times
+and `#0e8a4d` seven times, same face, same 30, same page. The button is the
+vivid.
+
+This system ships one. Everything that reads as the brand on a dark page is
+`--primary`, which is `#0e8a4d`: the button, the logo in all four places it
+appears, and the catalog's own active navigation. That is a decision about
+the brand rather than a reading of the file, and it is Brevy's to make, so
+it is written here rather than treated as a defect either way.
+
+Two things follow from it that are worth saying out loud.
+
+The logo diverges from the file on purpose. The file's dark wordmark is
+olive and ours is green, because a mark that does not match the button
+beside it reads as two brands rather than one.
+
+And the light theme still has two greens, because the file does: the logo is
+brand-500 and the button is emerald-500. Nothing here changed that. If one
+shade is the rule, it is a rule the light theme does not yet follow, and the
+answer is a decision rather than a measurement.
+
+Please confirm the single green is intended, and say whether the serif
+heading's two values in the file are a split worth resolving.

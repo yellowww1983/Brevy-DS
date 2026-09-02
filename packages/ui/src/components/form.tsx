@@ -86,9 +86,9 @@ function FormItem({ className, ...props }: ComponentProps<"div">) {
   return (
     <FormItemContext.Provider value={{ id }}>
       <div
-        data-slot="form-item"
         className={cn("grid gap-2", className)}
         {...props}
+        data-slot="form-item"
       />
     </FormItemContext.Provider>
   )
@@ -109,9 +109,17 @@ function FormLabel({
 }: ComponentProps<typeof LabelPrimitive.Root> & { action?: ReactNode }) {
   const { error, formItemId } = useFormField()
 
+  /** It stays a `Label`, and says so. This is the only place in the system
+   *  that wanted to rename another component's element, and renaming is the
+   *  mechanism that lost three components their own names — the difference
+   *  between a wrapper doing it on purpose and a call site doing it by
+   *  accident is not visible in the markup, so neither is allowed. `data-error`
+   *  stays, because that is a state rather than a name.
+   *
+   *  Where the row exists it has a name of its own, because it is an element
+   *  of its own. */
   const label = (
     <Label
-      data-slot="form-label"
       data-error={Boolean(error)}
       className={cn("data-[error=true]:text-destructive", className)}
       htmlFor={formItemId}
@@ -136,12 +144,20 @@ function FormLabel({
   )
 }
 
+/** Hands the control its id, what describes it, and whether it is invalid.
+ *
+ *  It names no slot of its own, and cannot: it is a `Slot`, so it renders no
+ *  element — everything it carries lands on the control inside it. A slot
+ *  written here would land there too, over whatever that control calls
+ *  itself, and for a while it did: a field inside a form stopped being an
+ *  `input` and became a `form-control`, which is the same overwrite this
+ *  component was accidentally performing on every field in the system. What
+ *  it is for is the wiring, and the wiring is what it passes down. */
 function FormControl(props: ComponentProps<typeof Slot.Root>) {
   const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
 
   return (
     <Slot.Root
-      data-slot="form-control"
       id={formItemId}
       aria-describedby={
         error ? `${formDescriptionId} ${formMessageId}` : formDescriptionId
@@ -162,13 +178,13 @@ function FormDescription({ className, ...props }: ComponentProps<"p">) {
 
   return (
     <p
-      data-slot="form-description"
       id={formDescriptionId}
       className={cn(
         "text-sm text-zinc-700 dark:text-muted-foreground",
         className,
       )}
       {...props}
+      data-slot="form-description"
     />
   )
 }
@@ -183,10 +199,10 @@ function FormMessage({ className, children, ...props }: ComponentProps<"p">) {
 
   return (
     <p
-      data-slot="form-message"
       id={formMessageId}
       className={cn("text-sm text-destructive", className)}
       {...props}
+      data-slot="form-message"
     >
       {body}
     </p>
