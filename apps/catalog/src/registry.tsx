@@ -100,8 +100,10 @@ export type Entry = {
    *  which one it is among thirty-three. */
   summary: string
   doc: () => Promise<string>
-  /** The family a block belongs to, where the design draws one skeleton in
-   *  several arrangements. The sidebar puts them under one heading. */
+  /** The family an entry belongs to, where one subject is drawn in more than
+   *  one shape: the hero's two arrangements, the two libraries of motion. The
+   *  sidebar puts them under one heading and each keeps its own page and its
+   *  own doc. */
   family?: string
 }
 
@@ -1099,6 +1101,32 @@ const FOUNDATIONS: readonly Entry[] = [
     icon: "Columns3",
     summary: "The container, the gutter and the grid at three widths.",
     doc: () => import("./layout").then((module) => module.layoutDoc()),
+  },
+  {
+    slug: "animations-lottie",
+    name: "Lottie",
+    kind: "foundation",
+    href: "/getting-started/animations/lottie",
+    icon: "Clapperboard",
+    family: "Animations",
+    summary: "Sixteen animated mockups of the product, and how to write more.",
+    doc: () =>
+      import("./animations-lottie").then((module) =>
+        module.animationsLottieDoc(),
+      ),
+  },
+  {
+    slug: "animations-video",
+    name: "Video",
+    kind: "foundation",
+    href: "/getting-started/animations/video",
+    icon: "Clapperboard",
+    family: "Animations",
+    summary: "Four watercolour scenes that stand behind a page.",
+    doc: () =>
+      import("./animations-video").then((module) =>
+        module.animationsVideoDoc(),
+      ),
   },
 ]
 
