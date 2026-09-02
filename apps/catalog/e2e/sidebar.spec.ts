@@ -43,9 +43,14 @@ test("the toggle stands before the search rather than in its place", async ({
 
   expect(left?.x ?? 0).toBeLessThan(right?.x ?? 0)
 
-  /** And it still narrows the list, which is the only reason it is there. */
+  /** And it still narrows the list, which is the only reason it is there.
+   *  The component list rather than every nested row in the sidebar: a block
+   *  family and a foundation split into parts both nest rows of their own,
+   *  and neither has anything to do with the field. */
   await search.fill("but")
-  await expect(page.locator("aside nav ul li a")).toHaveCount(3)
+  await expect(page.locator("aside [data-nav='components'] li a")).toHaveCount(
+    1,
+  )
 
   /** Off the component pages the field is absent and the toggle is not. */
   await page.goto("/blocks/tiles")
