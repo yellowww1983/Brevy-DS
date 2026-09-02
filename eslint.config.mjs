@@ -92,6 +92,13 @@ export default defineConfig(
     languageOptions: { globals: globals.node },
   },
   {
+    /** Build scripts that drive a browser. Half of one of these runs in node
+     *  and half inside `page.evaluate`, where `document` is the point, so the
+     *  file needs both sets of globals to read as written. */
+    files: ["apps/catalog/scripts/**/*.mjs"],
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
+  },
+  {
     files: ["packages/ui/src/**/*.{ts,tsx}", "apps/catalog/src/**/*.{ts,tsx}"],
     extends: [reactHooks.configs.flat.recommended],
     languageOptions: { globals: globals.browser },

@@ -9,7 +9,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
-    "test": "vitest run"
+    "test": "vitest run",
+    "posters": "node scripts/lottie-posters.mjs && node scripts/video-posters.mjs"
   },
   "dependencies": {
     "@brevy/tokens": "workspace:*",
