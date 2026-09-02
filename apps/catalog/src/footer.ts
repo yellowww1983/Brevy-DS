@@ -60,7 +60,7 @@ export function footerDoc() {
     'import { BrevyLockup, Facebook, Footer } from "@brevy/ui"',
     "",
     "<Footer",
-    '  logo={<BrevyLockup className="h-10 w-auto text-brand-500" />}',
+    '  logo={<BrevyLockup className="h-10 w-auto text-brand-500 dark:text-primary" />}',
     "  tagline={tagline}",
     '  socials={[{ label: "Facebook", href, mark: <Facebook /> }]}',
     "  newsletter={{ heading, description, placeholder, action }}",

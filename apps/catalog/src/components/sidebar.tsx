@@ -166,7 +166,7 @@ const ITEM = "flex items-center gap-2 px-3 py-2 text-sm"
  *  same one rather than a second that could drift from it. */
 const NESTED = "block py-2 pr-3 pl-5 text-sm"
 const NESTED_ACTIVE =
-  "font-medium text-sidebar-primary before:absolute before:inset-y-0 before:-left-px before:w-0.5 before:bg-primary"
+  "font-medium text-primary before:absolute before:inset-y-0 before:-left-px before:w-0.5 before:bg-primary"
 const NESTED_REST = "text-muted-foreground hover:text-foreground"
 
 /** Keyboard focus has to stay visible, so the ring stays, tinted to the active
@@ -243,7 +243,7 @@ function NavEntry({
         ITEM,
         FOCUS,
         active
-          ? "font-medium text-sidebar-primary"
+          ? "font-medium text-primary"
           : "text-muted-foreground hover:text-foreground",
       )}
     >
