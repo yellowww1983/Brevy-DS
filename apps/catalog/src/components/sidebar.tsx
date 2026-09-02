@@ -4,6 +4,7 @@ import { cn } from "@brevy/ui"
 import {
   ChevronDown,
   CircleHelp,
+  Clapperboard,
   Columns3,
   Layers,
   Images,
@@ -30,7 +31,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import type { ComponentType, ReactNode } from "react"
 
-import { components, entriesOf, filterComponents } from "@/registry"
+import { components, entriesOf, filterComponents, type Kind } from "@/registry"
 import { BrevyLogo } from "./brevy-logo"
 import { useSearch, useSearchable } from "./search-provider"
 import { useSidebar } from "./sidebar-provider"
@@ -55,6 +56,7 @@ type Family = {
  *  lives in the sidebar because lucide is the sidebar's business, and keeping
  *  it out of the registry is what lets the registry stay a list of data. */
 const ICONS: Readonly<Record<string, ComponentType<{ className?: string }>>> = {
+  Clapperboard,
   CircleHelp,
   Columns3,
   Grid2x2,
@@ -96,53 +98,52 @@ const SCREENS: readonly Entry[] = entriesOf("screen").map((entry) => ({
   href: entry.href,
 }))
 
-const FOUNDATIONS: readonly Entry[] = entriesOf("foundation").map((entry) => ({
-  label: entry.name,
-  icon: ICONS[entry.icon ?? ""] ?? Shapes,
-  href: entry.href,
-}))
+const FOUNDATIONS: readonly (Entry | Family)[] = grouped("foundation")
 
-/** The blocks, read from the registry rather than listed again here. A block
+/** A list read from the registry rather than written again here. An entry
  *  arriving used to mean two edits, and the second one was easy to skip.
  *
  *  A family is a heading with shapes under it, which is how the file thinks
- *  about heroes: one skeleton, several arrangements. The registry says which
- *  family an entry belongs to and the grouping happens here, because it is a
- *  way of drawing a list rather than a fact about a block. */
-const BLOCKS: readonly (Entry | Family)[] = entriesOf("block").reduce<
-  (Entry | Family)[]
->((rows, entry) => {
-  const item = {
-    label: entry.name,
-    icon: ICONS[entry.icon ?? ""] ?? Shapes,
-    href: entry.href,
-  }
+ *  about heroes: one skeleton, several arrangements. The two libraries of
+ *  motion read the same way. The registry says which family an entry belongs
+ *  to and the grouping happens here, because it is a way of drawing a list
+ *  rather than a fact about the thing. */
+function grouped(kind: Kind): readonly (Entry | Family)[] {
+  return entriesOf(kind).reduce<(Entry | Family)[]>((rows, entry) => {
+    const item = {
+      label: entry.name,
+      icon: ICONS[entry.icon ?? ""] ?? Shapes,
+      href: entry.href,
+    }
 
-  if (!entry.family) {
-    return [...rows, item]
-  }
+    if (!entry.family) {
+      return [...rows, item]
+    }
 
-  const open = rows.at(-1)
+    const open = rows.at(-1)
 
-  if (open && "variants" in open && open.label === entry.family) {
+    if (open && "variants" in open && open.label === entry.family) {
+      return [
+        ...rows.slice(0, -1),
+        {
+          ...open,
+          variants: [...open.variants, { label: entry.name, href: entry.href }],
+        },
+      ]
+    }
+
     return [
-      ...rows.slice(0, -1),
+      ...rows,
       {
-        ...open,
-        variants: [...open.variants, { label: entry.name, href: entry.href }],
+        label: entry.family,
+        icon: item.icon,
+        variants: [{ label: entry.name, href: entry.href }],
       },
     ]
-  }
+  }, [])
+}
 
-  return [
-    ...rows,
-    {
-      label: entry.family,
-      icon: item.icon,
-      variants: [{ label: entry.name, href: entry.href }],
-    },
-  ]
-}, [])
+const BLOCKS: readonly (Entry | Family)[] = grouped("block")
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -174,9 +175,9 @@ const NESTED_REST = "text-muted-foreground hover:text-foreground"
 const FOCUS =
   "rounded-md focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
 
-/** A family of blocks: a heading that goes nowhere and the shapes under it.
- *  The heading is a label rather than a disabled link — there is no page it is
- *  waiting for, it is the name of the group. */
+/** A family: a heading that goes nowhere and the pages under it. The heading
+ *  is a label rather than a disabled link, because there is no page it is
+ *  waiting for. It is the name of the group. */
 function NavFamily({
   label,
   icon: Icon,
@@ -302,7 +303,7 @@ export function Sidebar() {
         </Section>
 
         <Section title="Components">
-          <ul className="border-l border-sidebar-border">
+          <ul data-nav="components" className="border-l border-sidebar-border">
             {matches.map((entry) => {
               const href = `/components/${entry.slug}`
               const active = pathname === href
@@ -351,13 +352,17 @@ export function Sidebar() {
         </Section>
 
         <Section title="Foundations">
-          {FOUNDATIONS.map((entry) => (
-            <NavEntry
-              key={entry.label}
-              {...entry}
-              active={pathname === entry.href}
-            />
-          ))}
+          {FOUNDATIONS.map((entry) =>
+            "variants" in entry ? (
+              <NavFamily key={entry.label} {...entry} pathname={pathname} />
+            ) : (
+              <NavEntry
+                key={entry.label}
+                {...entry}
+                active={pathname === entry.href}
+              />
+            ),
+          )}
         </Section>
       </nav>
     </aside>
