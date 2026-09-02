@@ -169,13 +169,13 @@ function IconList({
 }: IconListProps) {
   const list = (
     <ul
-      data-slot="icon-list"
       data-marker={marker ?? "check"}
       className={cn(
         iconListVariants({ marker, tone, size, divided }),
         className,
       )}
       {...props}
+      data-slot="icon-list"
     >
       {children}
     </ul>
@@ -226,9 +226,9 @@ function IconListItem({
 }: ComponentProps<"li"> & { icon: ReactNode }) {
   return (
     <li
-      data-slot="icon-list-row"
       className={cn("flex items-start", className)}
       {...props}
+      data-slot="icon-list-row"
     >
       <span
         data-slot="icon-list-marker"

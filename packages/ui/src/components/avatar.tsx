@@ -44,9 +44,9 @@ function Avatar({
   VariantProps<typeof avatarVariants>) {
   return (
     <AvatarPrimitive.Root
-      data-slot="avatar"
       className={cn(avatarVariants({ size }), className)}
       {...props}
+      data-slot="avatar"
     />
   )
 }
@@ -57,9 +57,9 @@ function AvatarImage({
 }: ComponentProps<typeof AvatarPrimitive.Image>) {
   return (
     <AvatarPrimitive.Image
-      data-slot="avatar-image"
       className={cn("aspect-square size-full object-cover", className)}
       {...props}
+      data-slot="avatar-image"
     />
   )
 }
@@ -78,12 +78,12 @@ function AvatarFallback({
 }: ComponentProps<typeof AvatarPrimitive.Fallback>) {
   return (
     <AvatarPrimitive.Fallback
-      data-slot="avatar-fallback"
       className={cn(
         "flex size-full items-center justify-center rounded-full bg-muted text-sm text-foreground",
         className,
       )}
       {...props}
+      data-slot="avatar-fallback"
     />
   )
 }
@@ -102,12 +102,12 @@ function AvatarFallback({
 function AvatarGroup({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
-      data-slot="avatar-group"
       className={cn(
         "flex items-center -space-x-2 [&_[data-slot=avatar]]:ring-2 [&_[data-slot=avatar]]:ring-background",
         className,
       )}
       {...props}
+      data-slot="avatar-group"
     />
   )
 }

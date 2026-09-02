@@ -25,9 +25,9 @@ function Accordion({ className, ...props }: AccordionProps) {
 
   return (
     <AccordionPrimitive.Root
-      data-slot="accordion"
       className={cn("flex w-full flex-col gap-2", className)}
       {...resolved}
+      data-slot="accordion"
     />
   )
 }
@@ -49,12 +49,12 @@ function AccordionItem({
 }: ComponentProps<typeof AccordionPrimitive.Item>) {
   return (
     <AccordionPrimitive.Item
-      data-slot="accordion-item"
       className={cn(
         "hairline rounded-2xl bg-card px-6 shadow-xs outline-ring/50 has-focus-visible:outline-2 has-focus-visible:outline-offset-2",
         className,
       )}
       {...props}
+      data-slot="accordion-item"
     />
   )
 }
@@ -97,9 +97,9 @@ function AccordionContent({
 }: ComponentProps<typeof AccordionPrimitive.Content>) {
   return (
     <AccordionPrimitive.Content
-      data-slot="accordion-content"
       className="overflow-hidden"
       {...props}
+      data-slot="accordion-content"
     >
       <div
         className={cn(
