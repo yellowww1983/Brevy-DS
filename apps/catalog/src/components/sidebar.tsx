@@ -166,8 +166,20 @@ const ITEM = "flex items-center gap-2 px-3 py-2 text-sm"
 /** The indent the Components list wears, lifted out so a block family uses the
  *  same one rather than a second that could drift from it. */
 const NESTED = "block py-2 pr-3 pl-5 text-sm"
-const NESTED_ACTIVE =
-  "font-medium text-primary before:absolute before:inset-y-0 before:-left-px before:w-0.5 before:bg-primary"
+/** The catalog's own accent in the light and the brand's one green in the
+ *  dark, which are two tokens because they are two different jobs.
+ *
+ *  `--sidebar-primary` is the chrome's, brand-500, and it is what this row
+ *  wore until the dark palette was pulled onto one green: `--primary` was the
+ *  only token that reads `#0e8a4d` there, and taking it for the dark took it
+ *  for the light too, where it is emerald-500. So the theme picks. Dark is
+ *  untouched by this and stays on the one green the logos and the button
+ *  share. */
+const NESTED_ACTIVE = cn(
+  "font-medium text-sidebar-primary dark:text-primary",
+  "before:absolute before:inset-y-0 before:-left-px before:w-0.5",
+  "before:bg-sidebar-primary dark:before:bg-primary",
+)
 const NESTED_REST = "text-muted-foreground hover:text-foreground"
 
 /** Keyboard focus has to stay visible, so the ring stays, tinted to the active
@@ -244,7 +256,7 @@ function NavEntry({
         ITEM,
         FOCUS,
         active
-          ? "font-medium text-primary"
+          ? "font-medium text-sidebar-primary dark:text-primary"
           : "text-muted-foreground hover:text-foreground",
       )}
     >
