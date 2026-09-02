@@ -123,7 +123,7 @@ function CardGrid({
             {description ? (
               <p
                 data-slot="card-grid-description"
-                className="max-w-(--steps-lede) text-center text-body-lg text-balance text-zinc-700 dark:text-muted-foreground"
+                className="max-w-(--section-lede) text-center text-body-lg text-balance text-zinc-700 dark:text-muted-foreground"
               >
                 {description}
               </p>
