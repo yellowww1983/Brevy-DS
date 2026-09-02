@@ -177,11 +177,21 @@ function StepBody({
  *  no way to see the other three states at all.
  *
  *  The width is read off `--breakpoint-content` rather than written again here,
- *  so the query and the layout that depends on it cannot drift apart. */
-function useSlider() {
+ *  so the query and the layout that depends on it cannot drift apart.
+ *
+ *  Only one of the two arrangements has a slider. The row of cards reads
+ *  neither answer — nothing in it depends on which step the list has reached —
+ *  so asking costs it two media-query listeners and, through `advancing`, a
+ *  timer that fires every 3.5 seconds to move a number nothing renders. It
+ *  does not ask. */
+function useSlider(enabled: boolean) {
   const [state, setState] = useState({ interactive: false, advancing: false })
 
   useEffect(() => {
+    if (!enabled) {
+      return
+    }
+
     const wide = getComputedStyle(document.documentElement)
       .getPropertyValue("--breakpoint-content")
       .trim()
@@ -208,7 +218,7 @@ function useSlider() {
       columns.removeEventListener("change", read)
       still.removeEventListener("change", read)
     }
-  }, [])
+  }, [enabled])
 
   return state
 }
@@ -271,7 +281,7 @@ function Steps({
   tail?: StepsTail
   className?: string
 }) {
-  const { interactive, advancing } = useSlider()
+  const { interactive, advancing } = useSlider(layout === "panel")
   const [active, setActive] = useState(0)
   const [held, setHeld] = useState(false)
 
@@ -313,7 +323,7 @@ function Steps({
           >
             <Chip count={steps.length}>{eyebrow}</Chip>
 
-            <div className="flex max-w-(--steps-lede) flex-col gap-2">
+            <div className="flex max-w-(--section-lede) flex-col gap-2">
               <h2
                 data-slot="steps-heading"
                 className="font-serif text-h2 text-balance text-zinc-800 dark:text-foreground"
@@ -357,7 +367,7 @@ function Steps({
                   <div className="flex flex-col gap-2">
                     <h3
                       data-slot="steps-step-title"
-                      className="text-body-lg font-semibold text-zinc-800 dark:text-foreground"
+                      className="text-h3 text-zinc-800 dark:text-foreground"
                     >
                       {step.title}
                     </h3>

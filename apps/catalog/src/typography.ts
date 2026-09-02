@@ -45,7 +45,7 @@ export const TYPE_GROUPS: readonly TypeGroup[] = [
   {
     id: "body",
     title: "Body",
-    note: "Set in Rethink Sans at fixed sizes. h3 and body-lg share a size and differ only in weight: use h3 to title a card, body-lg to open a paragraph.",
+    note: "Set in Rethink Sans at fixed sizes. h3 and body-lg share a size and part on weight and tracking: h3 is 600 and untracked, body-lg 400 and tracked with the rest of the body copy. Use h3 to title a card, body-lg to open a paragraph.",
     roles: [
       {
         name: "h3",

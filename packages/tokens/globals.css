@@ -592,12 +592,14 @@
      on the Home pages draw the same object, 44 nodes across the two blocks. */
   --illustration-panel: 18.125rem;
 
-  /* The steps section. 468 is the box the file gives the heading and the line
-     under it on three of the four pages that draw one; the panel beside a step
-     list is 680 wide and narrow, and 492 where the column narrows to a
-     phone. */
-  --steps-lede: 29.25rem;
+  /* The box a section's heading and the line under it are given: 468, which
+     the file draws on three of the four pages that carry a step list and on
+     the benefit grid beside them. Not the steps section's own any more, the
+     way the illustration panel above stopped being it. */
+  --section-lede: 29.25rem;
 
+  /* The steps section. The panel beside a step list is 680 wide and narrow,
+     and 492 where the column narrows to a phone. */
   --steps-panel: 42.5rem;
   --steps-panel-narrow: 30.75rem;
   /* The plate inside the panel does not stretch with it. The file keeps it at
