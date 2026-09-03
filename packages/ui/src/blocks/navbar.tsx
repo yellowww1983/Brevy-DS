@@ -5,6 +5,7 @@ import { useEffect, useState, type ReactNode } from "react"
 
 import { Button } from "../components/button.js"
 import { Container } from "../components/container.js"
+import { cn } from "../lib/utils.js"
 
 type NavbarLink = {
   label: string
@@ -46,12 +47,20 @@ function Navbar({
   logo,
   links,
   cta,
+  banner = false,
 }: {
   logo: ReactNode
   links: readonly NavbarLink[]
   /** Sits in the pill beside the links, and at the foot of the open menu.
    *  Optional, because the design draws only the menu's. */
   cta?: NavbarCta
+  /** Set when a `Banner` stands above this on the page.
+   *
+   *  The bar is fixed, so it is out of the document and cannot see what is
+   *  in front of it. Told there is a banner, it starts below one; left alone
+   *  it sits where it always has, which is what every page without a banner
+   *  needs to keep getting. */
+  banner?: boolean
 }) {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -87,7 +96,11 @@ function Navbar({
     <>
       <header
         data-slot="navbar"
-        className="fixed top-0 right-0 left-0 z-50 py-6"
+        data-banner={banner ? "" : undefined}
+        className={cn(
+          "fixed right-0 left-0 z-50 py-6",
+          banner ? "top-12" : "top-0",
+        )}
       >
         <Container>
           <div

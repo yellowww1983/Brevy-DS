@@ -649,6 +649,18 @@
      above them, the heading's box 502, and the leaves in the corner 178 by
      140. The chart's rules run 118 and the frosted caption 96. */
   --tiles-row: 15rem;
+
+  /* Where the banner hangs its two marks. Both are 96 square and mostly
+     outside the 48 the strip is tall, so what is drawn is a corner of each:
+     the left one starts 59 before the strip does, the right one 38 in from
+     its end and 56 above it. Read off the drawing and confirmed against the
+     shipped page, which puts them at the same numbers at every width.
+
+     Both are written as the distance the mark hangs past the edge, because
+     that is what CSS can hold on to. The drawn right one begins 38 in from
+     the end and runs 96, so it finishes 58 past it. */
+  --banner-mark-left: 3.6875rem;
+  --banner-mark-right: 3.625rem;
   --tiles-figure: 14.75rem;
   --tiles-figure-tall: 22.625rem;
   --tiles-heading: 31.375rem;
