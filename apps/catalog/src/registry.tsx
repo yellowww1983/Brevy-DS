@@ -944,6 +944,16 @@ const BLOCKS: readonly Entry[] = [
     doc: () => import("./hero-split").then((module) => module.heroSplitDoc()),
   },
   {
+    slug: "banner",
+    name: "Banner",
+    kind: "block",
+    href: "/blocks/banner",
+    icon: "Megaphone",
+    summary:
+      "A strip a page opens with, that pushes the page down by its height.",
+    doc: () => import("./banner").then((module) => module.bannerDoc()),
+  },
+  {
     slug: "card-grid",
     name: "Card grid",
     kind: "block",
