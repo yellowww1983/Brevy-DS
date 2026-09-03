@@ -4,6 +4,8 @@ import { BrevyLockup } from "@brevy/ui"
 import { LoaderCircle, Play, RotateCcw } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 
+import { colourOf, repaint } from "./lottie"
+
 /** The logo's one animation, on a press.
  *
  *  On a press rather than on arrival: the catalog already opens with this once
@@ -16,48 +18,6 @@ import { useCallback, useEffect, useRef, useState } from "react"
  *  the player starts, the way the preloader does it. Without that the one
  *  animation of the identity would be the one place on a dark page still
  *  painting the light theme's green. */
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null
-}
-
-function repaint(node: unknown, colour: readonly number[]): void {
-  if (!isRecord(node)) {
-    return
-  }
-
-  if ((node.ty === "fl" || node.ty === "st") && isRecord(node.c)) {
-    node.c.k = [...colour, 1]
-  }
-
-  for (const value of Object.values(node)) {
-    repaint(value, colour)
-  }
-}
-
-/** Through a canvas rather than a regular expression. A colour reaches
- *  `getComputedStyle` in whatever form it was authored, and the tokens here
- *  arrive as `oklch(...)`; reading them as `rgb(...)` returns nothing, and a
- *  fill of nothing paints the logo black. Painting one pixel and reading it
- *  back answers in the only form the player understands, whatever it was
- *  written in. */
-function channels(element: HTMLElement): readonly number[] {
-  const canvas = document.createElement("canvas")
-  canvas.width = canvas.height = 1
-
-  const context = canvas.getContext("2d")
-
-  if (!context) {
-    return [0, 0, 0]
-  }
-
-  context.fillStyle = getComputedStyle(element).color
-  context.fillRect(0, 0, 1, 1)
-
-  const pixel = context.getImageData(0, 0, 1, 1).data
-
-  return [pixel[0], pixel[1], pixel[2]].map((channel) => (channel ?? 0) / 255)
-}
-
 type Phase = "still" | "loading" | "playing" | "ended"
 
 export function LogoMotion() {
@@ -114,7 +74,7 @@ export function LogoMotion() {
           return
         }
 
-        repaint(data, channels(container))
+        repaint(data, colourOf(container))
 
         const animation = lottie.loadAnimation({
           container,
