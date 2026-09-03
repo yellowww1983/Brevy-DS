@@ -1508,3 +1508,39 @@ than handed down.
 Please confirm them or replace them. An official set is better than a
 reasonable reading, and the reading is only here because there was nothing else
 to put on the page.
+
+### 94. The banner's hairlines are in the file and not on the page
+
+**website** `24930:614`, and brevy-mobile-lp.vercel.app
+
+The drawing puts a 1px `rgba(0,0,0,0.1)` border down the left and right of the
+banner's inner wrapper, which is inset 16 from each end. The shipped page has
+the 16 as padding and no border at all: measured on the strip and on its
+paragraph at 1440, 810, 640 and 390, nothing carries one.
+
+On a full width strip in the brand's deepest green, a black hairline at 10%
+sits 16px in from each end and is invisible against the ground either way. It
+reads as a leftover from a wrapper that once had a card in it rather than
+something drawn on purpose, so the block follows the shipped page and omits it.
+
+Worth a word either way, because it is the only thing in this block the two
+sources disagree about.
+
+### 95. The banner's mark is a third drawing of the mark
+
+**website** `24930:614`
+
+The two shapes at the ends of the banner are the Brevy mark, and the file
+exports them as their own asset rather than reusing the lockup's. Measured
+against the mark this system ships, they part their quadrants by 11.11% of
+their width where ours parts at 11.06%, and the exported one carries two small
+notches ours does not.
+
+That is the same family as the 304×82 lockup the catalog carried for months
+before DESIGN-FEEDBACK 12 and shipped one drawing instead. Rather than add a
+third, the block paints the mark this system already has, through the mask that
+already exists, filled with a gradient the way the closing band fills it.
+
+At the size it is drawn the difference is a fraction of a pixel and most of the
+shape is clipped away. Confirm the shipped mark is the intended one, or say
+which of the three is.
