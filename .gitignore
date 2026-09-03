@@ -10,3 +10,9 @@ dist
 test-results
 playwright-report
 .playwright
+
+# iCloud makes a numbered copy of a file it thinks two machines touched at
+# once. A duplicated module is a duplicated export, so these turn the docs
+# guard red by making it count more docs than the registry has entries. They
+# are never wanted and never ours.
+* [0-9].*

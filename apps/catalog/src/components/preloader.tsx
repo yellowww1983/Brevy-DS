@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 
 import { BrevyLogo } from "./brevy-logo"
+import { colourOf, repaint } from "./lottie"
 
 /** Frame 143 is where the wordmark finishes settling; 143–180 is a hold that
  *  nobody should wait through. Doubling the speed puts the whole thing at
@@ -14,40 +15,6 @@ const REDUCED_MS = 300
 const FADE_MS = 300
 
 type Phase = "static" | "animating" | "leaving" | "gone"
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null
-}
-
-/** The colour is baked into the export, so it has to be rewritten to whatever
- *  the static logo resolves to in the current theme before the player starts. */
-function repaint(node: unknown, color: readonly number[]): void {
-  if (!isRecord(node)) {
-    return
-  }
-
-  if ((node.ty === "fl" || node.ty === "st") && isRecord(node.c)) {
-    node.c.k = [...color, 1]
-  }
-
-  for (const value of Object.values(node)) {
-    repaint(value, color)
-  }
-}
-
-function colorOf(element: HTMLElement): readonly number[] {
-  const parsed = /rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(
-    getComputedStyle(element).color,
-  )
-
-  if (!parsed) {
-    return [0, 0, 0]
-  }
-
-  return [parsed[1], parsed[2], parsed[3]].map(
-    (channel) => Number(channel) / 255,
-  )
-}
 
 export function Preloader() {
   const [phase, setPhase] = useState<Phase>("static")
@@ -99,7 +66,7 @@ export function Preloader() {
             return
           }
 
-          repaint(data, colorOf(container))
+          repaint(data, colourOf(container))
 
           const animation = lottie.loadAnimation({
             container,

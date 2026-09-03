@@ -1,8 +1,0 @@
-{
-  "changelog": "@changesets/cli/changelog",
-  "commit": false,
-  "access": "restricted",
-  "baseBranch": "main",
-  "updateInternalDependencies": "patch",
-  "ignore": ["catalog"]
-}

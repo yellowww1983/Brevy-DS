@@ -1,6 +1,7 @@
 {
   "name": "@brevy/ui",
   "version": "0.0.0",
+  "private": true,
   "license": "UNLICENSED",
   "type": "module",
   "sideEffects": false,
