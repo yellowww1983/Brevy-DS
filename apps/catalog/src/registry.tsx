@@ -1103,6 +1103,16 @@ const FOUNDATIONS: readonly Entry[] = [
     doc: () => import("./layout").then((module) => module.layoutDoc()),
   },
   {
+    slug: "how-to-use",
+    name: "How to use",
+    kind: "foundation",
+    href: "/getting-started/how-to-use",
+    icon: "Wrench",
+    summary:
+      "The two ways in: describing a page to Claude, or importing the blocks.",
+    doc: () => import("./how-to-use").then((module) => module.howToUseDoc()),
+  },
+  {
     slug: "logo",
     name: "Logo",
     kind: "foundation",

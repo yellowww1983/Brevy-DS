@@ -100,7 +100,15 @@ const SCREENS: readonly Entry[] = entriesOf("screen").map((entry) => ({
   href: entry.href,
 }))
 
-const FOUNDATIONS: readonly (Entry | Family)[] = grouped("foundation")
+/** Everything the registry calls a foundation, less whatever the head of the
+ *  list already shows. `How to use` is in the registry so that it reaches
+ *  `llms.txt` and can hand itself to Claude like every other page, and it is
+ *  at the top of the sidebar because that is where somebody looks for it on
+ *  their first visit. It should not be in both places at once. */
+const FOUNDATIONS: readonly (Entry | Family)[] = grouped("foundation").filter(
+  (entry) =>
+    !GETTING_STARTED.some((row) => "href" in entry && row.href === entry.href),
+)
 
 /** A list read from the registry rather than written again here. An entry
  *  arriving used to mean two edits, and the second one was easy to skip.
