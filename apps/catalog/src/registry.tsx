@@ -1103,6 +1103,15 @@ const FOUNDATIONS: readonly Entry[] = [
     doc: () => import("./layout").then((module) => module.layoutDoc()),
   },
   {
+    slug: "logo",
+    name: "Logo",
+    kind: "foundation",
+    href: "/getting-started/logo",
+    icon: "Fingerprint",
+    summary: "The lockup, the mark, and the rules its own geometry gives.",
+    doc: () => import("./logo").then((module) => module.logoDoc()),
+  },
+  {
     slug: "animations-lottie",
     name: "Lottie",
     kind: "foundation",

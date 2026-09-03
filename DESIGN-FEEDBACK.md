@@ -1467,3 +1467,44 @@ answer is a decision rather than a measurement.
 
 Please confirm the single green is intended, and say whether the serif
 heading's two values in the file are a split worth resolving.
+
+### 93. The logo has no guidelines, so the catalog derived some
+
+**brand**
+
+There is nothing to quote. The logo was drawn without a set of rules, and the
+system needed clear space, a minimum size and a statement about proportions
+before it could put a Logo page in front of anybody.
+
+So they were read off the drawing. Every number is a measurement of the lockup
+expressed against its own height, which the mark happens to define: the mark is
+40 in a 115 by 40 box, so one mark is one height.
+
+- **Clear space, 0.5 h on every side.** The lockup's own parts sit 0.300 h
+  apart, so half a height keeps anything outside it further off than the
+  wordmark sits from the mark. A quarter would let a neighbour crowd as close
+  as the logo's own pieces; a full height costs a navbar more than it returns.
+  It lands near one quadrant of the mark, 0.444 h, which is the drawing's own
+  unit, and half a height is the easier of the two to check by eye.
+- **The exception.** A descriptor locked to the logo is part of the signature
+  rather than a neighbour and owes it nothing. The catalog's own head is the
+  case: `Design System` sits directly under the lockup on purpose. Measured
+  against the rule, three of the four placements clear it and only that one
+  does not, which is what a carve-out is for.
+- **Minimum 24px for the lockup.** Rendered at 1x, the wordmark stops painting
+  a single fully opaque pixel below 20: 255 at 20, 244 at 18, 214 at 14. 24
+  keeps a step in hand and is the smallest the system already ships.
+- **Minimum 16px for the mark.** It goes lower because it carries no text.
+  What limits it is the gap between its quadrants, measured at 11.06% of its
+  size, which falls under one pixel at about 9px and closes the mark into a
+  blob. 16 leaves it at 1.8px.
+- **Proportions fixed at 2.875 to 1 and square.** This one the code already
+  says: the lockup's mark mask deliberately carries no
+  `preserveAspectRatio='none'`, unlike the mask that cuts photographs.
+
+The page states in its first section that these are read off the drawing rather
+than handed down.
+
+Please confirm them or replace them. An official set is better than a
+reasonable reading, and the reading is only here because there was nothing else
+to put on the page.
