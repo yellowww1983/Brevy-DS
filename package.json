@@ -14,14 +14,11 @@
     "typecheck": "turbo run typecheck",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "release": "turbo run build --filter=\"./packages/*\" && changeset publish",
     "test": "turbo run test",
     "prepare": "husky",
-    "test:e2e": "turbo run test:e2e",
-    "changeset": "changeset"
+    "test:e2e": "turbo run test:e2e"
   },
   "devDependencies": {
-    "@changesets/cli": "2.31.1",
     "@eslint/js": "10.0.1",
     "@next/eslint-plugin-next": "15.5.23",
     "eslint": "10.8.1",
