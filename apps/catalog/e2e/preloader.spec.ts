@@ -168,7 +168,45 @@ test("dark mode repaints the animation to the dark logo colour", async ({
       ),
     )
 
-  expect(painted).toContain("rgb(215,228,201)")
+  /** Against the token rather than a hex, the way `brand-green.spec` reads
+   *  the other seven places the brand lights in the dark. This one cannot be
+   *  read there: every spec but this file's own seeds the flag that keeps the
+   *  overlay from swallowing clicks, so the preloader is the one logo the
+   *  guard never sees. Pinning the value here would have to be edited by hand
+   *  the day the brand green moves, which is how it came to be olive while
+   *  everything around it was green.
+   *
+   *  The player writes `rgb(r,g,b)` without the spaces `getComputedStyle`
+   *  returns, so the token is squeezed to match rather than the other way
+   *  round. */
+  const green = await page.evaluate(() =>
+    getComputedStyle(document.documentElement)
+      .getPropertyValue("--primary")
+      .trim(),
+  )
+  const squeezed = await page.evaluate((value) => {
+    const canvas = document.createElement("canvas")
+    canvas.width = canvas.height = 1
+
+    const context = canvas.getContext("2d")
+
+    if (!context) {
+      return ""
+    }
+
+    /* Sizing the canvas resets the context, so the fill is set after it. */
+    context.fillStyle = value
+    context.fillRect(0, 0, 1, 1)
+
+    const [r, g, b] = context.getImageData(0, 0, 1, 1).data
+
+    return `rgb(${String(r)},${String(g)},${String(b)})`
+  }, green)
+
+  expect(squeezed, "--primary has to resolve to something").not.toBe("")
+  expect(painted, "the animation wears the brand's one green").toContain(
+    squeezed,
+  )
 
   await context.close()
 })
