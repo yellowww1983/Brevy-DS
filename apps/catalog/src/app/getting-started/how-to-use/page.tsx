@@ -1,119 +1,123 @@
 import Link from "next/link"
 
+import { docFor } from "@/registry"
 import {
   ContentPage,
   HEADING,
   ImageSlot,
   LINK,
 } from "@/components/content-page"
+import { MarkdownText } from "@/components/markdown-text"
 import type { Section } from "@/components/table-of-contents"
+import {
+  API_PLACES,
+  CLAUDE_CODE,
+  CODE_INTRO,
+  COMPOSING,
+  COMPOSING_NOTE,
+  INTERNAL,
+  INTRO,
+  NO_CODE,
+  NO_CODE_INTRO,
+  SNIPPET,
+  WHERE_THE_API_IS,
+} from "@/how-to-use"
 
+const CODE = [INTERNAL, COMPOSING, CLAUDE_CODE, WHERE_THE_API_IS]
+
+/** Both paths are headings and their parts sit under them, so the contents
+ *  column reads as two routes rather than eleven unrelated stops. */
 const SECTIONS: readonly Section[] = [
-  {
-    id: "start-with-what-youre-making",
-    title: "Start with what you’re making",
-  },
-  {
-    id: "point-claude-at-the-pieces",
-    title: "Point Claude at the pieces you want",
-  },
-  { id: "describe-the-content", title: "Describe the content, not the design" },
-  { id: "review-then-refine", title: "Review, then refine" },
-  {
-    id: "when-you-need-something-else",
-    title: "When you need something that isn’t here",
-  },
+  { id: "if-you-dont-write-code", title: "If you don't write code" },
+  ...NO_CODE.map((section) => ({ id: section.id, title: section.title })),
+  { id: "if-you-write-code", title: "If you write code" },
+  ...CODE.map((section) => ({ id: section.id, title: section.title })),
 ]
 
-export default function HowToUsePage() {
+const SUB = "mt-10 scroll-mt-8 text-lg font-semibold tracking-tight"
+
+export default async function HowToUsePage() {
   return (
-    <ContentPage sections={SECTIONS}>
+    <ContentPage sections={SECTIONS} markdown={await docFor("how-to-use")}>
       <h1 className="text-4xl font-bold tracking-tight">How to use</h1>
 
-      <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-        You work with this system through Claude. You describe what you want,
-        Claude builds it from the Brevy pieces. No design tools, no code editor.
-        Here&rsquo;s how to get the most out of it.
+      <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
+        {INTRO}
       </p>
+
+      <h2 id="if-you-dont-write-code" className={HEADING}>
+        If you don&rsquo;t write code
+      </h2>
+      <p className="mt-4 max-w-3xl leading-relaxed">{NO_CODE_INTRO}</p>
 
       <ImageSlot>
         A person typing a request to Claude, with the page assembling
       </ImageSlot>
 
-      <h2 id="start-with-what-youre-making" className={HEADING}>
-        Start with what you&rsquo;re making
-      </h2>
-
-      <p className="mt-4 leading-relaxed">
-        Tell Claude the goal first, not the parts. &ldquo;A landing page for the
-        spring caregiver campaign&rdquo; gives Claude more to work with than
-        &ldquo;a hero and three cards.&rdquo; It can suggest which blocks fit.
-        That&rsquo;s what the catalog is for.
-      </p>
-
-      <h2 id="point-claude-at-the-pieces" className={HEADING}>
-        Point Claude at the pieces you want
-      </h2>
-
-      <p className="mt-4 leading-relaxed">
-        Browse Components and Blocks here. When you find something that fits,
-        use Copy for Claude. It hands over that page&rsquo;s whole
-        documentation: what the piece is for, which variant to reach for, every
-        prop it takes and an example you can paste. Claude then builds with the
-        real thing instead of guessing from a name.
-      </p>
-
-      <p className="mt-6 leading-relaxed">
-        That is one page at a time. When the page you are building needs several
-        blocks at once, use Copy entire system in the top bar instead: it hands
-        over every component, block and foundation in one paste, so Claude has
-        the whole catalog in front of it rather than the one piece you happened
-        to be looking at.
-      </p>
+      {NO_CODE.map((section) => (
+        <section key={section.id}>
+          <h3 id={section.id} className={SUB}>
+            {section.title}
+          </h3>
+          {section.body.map((paragraph) => (
+            <p key={paragraph} className="mt-3 max-w-3xl leading-relaxed">
+              {paragraph}
+            </p>
+          ))}
+        </section>
+      ))}
 
       <ImageSlot>
         Copy for Claude on a component, and its documentation pasted into Claude
       </ImageSlot>
 
-      <h2 id="describe-the-content" className={HEADING}>
-        Describe the content, not the design
+      <h2 id="if-you-write-code" className={HEADING}>
+        If you write code
       </h2>
+      <p className="mt-4 max-w-3xl leading-relaxed">{CODE_INTRO}</p>
 
-      <p className="mt-4 leading-relaxed">
-        You bring the words and the intent; the system brings the look.
-        &ldquo;Headline about saving caregivers time, three benefits, a sign-up
-        button at the bottom&rdquo; is enough. You never pick colors, fonts, or
-        spacing. Those are already decided, and that&rsquo;s what keeps every
-        page on-brand.
+      <h3 id={INTERNAL.id} className={SUB}>
+        {INTERNAL.title}
+      </h3>
+      <p className="mt-3 max-w-3xl leading-relaxed">
+        <MarkdownText>{INTERNAL.body}</MarkdownText>
       </p>
 
-      <h2 id="review-then-refine" className={HEADING}>
-        Review, then refine
-      </h2>
+      <h3 id={COMPOSING.id} className={SUB}>
+        {COMPOSING.title}
+      </h3>
+      <p className="mt-3 max-w-3xl leading-relaxed">{COMPOSING.body}</p>
 
-      <p className="mt-4 leading-relaxed">
-        Claude shows you the result. If something&rsquo;s off, say so in plain
-        language: &ldquo;make the hero shorter,&rdquo; &ldquo;swap the second
-        and third sections.&rdquo; You&rsquo;re editing by conversation, not by
-        hand.
+      <pre className="mt-6 max-w-3xl overflow-x-auto rounded-xl border border-border bg-muted/40 p-5 text-sm leading-relaxed">
+        <code>{SNIPPET.join("\n")}</code>
+      </pre>
+
+      <p className="mt-4 max-w-3xl leading-relaxed text-muted-foreground">
+        {COMPOSING_NOTE}
       </p>
 
-      <ImageSlot>Before and after a refinement</ImageSlot>
+      <h3 id={CLAUDE_CODE.id} className={SUB}>
+        {CLAUDE_CODE.title}
+      </h3>
+      <p className="mt-3 max-w-3xl leading-relaxed">{CLAUDE_CODE.body}</p>
 
-      <h2 id="when-you-need-something-else" className={HEADING}>
-        When you need something that isn&rsquo;t here
-      </h2>
+      <h3 id={WHERE_THE_API_IS.id} className={SUB}>
+        {WHERE_THE_API_IS.title}
+      </h3>
+      <p className="mt-3 max-w-3xl leading-relaxed">{WHERE_THE_API_IS.body}</p>
 
-      <p className="mt-4 leading-relaxed">
-        If the catalog doesn&rsquo;t have the piece you need, don&rsquo;t force
-        it and don&rsquo;t ask Claude to invent one. That&rsquo;s how pages
-        drift off-brand. Reach out to the Brevy team and we&rsquo;ll add it
-        properly, so it works everywhere including your page.
-      </p>
+      <dl className="mt-6 grid max-w-3xl gap-x-6 gap-y-3 tablet:grid-cols-[auto_1fr]">
+        {API_PLACES.map((place) => (
+          <div key={place.where} className="contents">
+            <dt className="font-medium">{place.where}</dt>
+            <dd className="text-muted-foreground">{place.what}</dd>
+          </div>
+        ))}
+      </dl>
 
       <hr className="mt-14 border-border" />
 
-      <p className="mt-8 leading-relaxed">
+      <p className="mt-8 max-w-3xl leading-relaxed">
         Ready? Browse the{" "}
         <Link href="/components" className={LINK}>
           Components
