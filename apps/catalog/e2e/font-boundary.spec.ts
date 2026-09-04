@@ -96,6 +96,13 @@ test("components carry no font family of their own", async ({ page }) => {
 })
 
 test("client-side navigation keeps the app alive", async ({ page }) => {
+  /** Thirty-nine navigations in one test, because the subject is that none of
+   *  them throws and leaving any route out is leaving the answer out. That was
+   *  already close to a single test's budget and the shell pushed it over on
+   *  CI: the nav list scrolls now, so each click brings its link into view
+   *  first. Three seconds here, past thirty on a shared runner. */
+  test.setTimeout(120_000)
+
   const failures: string[] = []
   page.on("pageerror", (error) =>
     failures.push(error.message.split("\n")[0] ?? error.message),
