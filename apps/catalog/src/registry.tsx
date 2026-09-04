@@ -403,11 +403,12 @@ const COMPONENTS: readonly ComponentEntry[] = [
     axes: [
       {
         label: "Variant",
-        values: ["Eyebrow", "Suggestion", "Filter"],
+        values: ["Eyebrow", "Suggestion", "Filter", "Prompt"],
         phrasing: {
           Eyebrow: "an eyebrow over a section heading",
           Suggestion: "a suggested line of chat",
           Filter: "a category filter",
+          Prompt: "a question the reader can send",
         },
       },
       {
@@ -422,6 +423,7 @@ const COMPONENTS: readonly ComponentEntry[] = [
     omitted: [
       { key: "Suggestion/Counter + label", note: "not drawn" },
       { key: "Filter/Counter + label", note: "not drawn" },
+      { key: "Prompt/Counter + label", note: "not drawn" },
     ],
     render: (combination) => {
       const variant = combination.Variant ?? "Eyebrow"
@@ -433,6 +435,14 @@ const COMPONENTS: readonly ComponentEntry[] = [
 
       if (variant === "Filter") {
         return <Chip variant="filter">Daily Routines</Chip>
+      }
+
+      if (variant === "Prompt") {
+        return (
+          <Chip variant="prompt">
+            Can I get help with transportation to appointments?
+          </Chip>
+        )
       }
 
       return (
