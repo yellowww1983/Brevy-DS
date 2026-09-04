@@ -1,6 +1,7 @@
 import { docFor } from "@/registry"
 import { ContainerFrame } from "@/components/container-frame"
 import { ContentPage, HEADING } from "@/components/content-page"
+import { GridFrame } from "@/components/grid-frame"
 import { MarkdownText } from "@/components/markdown-text"
 import type { Section } from "@/components/table-of-contents"
 import { CONTAINER, GRID, GUTTER, INTRO, WIDTHS } from "@/layout"
@@ -53,6 +54,10 @@ export default async function LayoutPage() {
         <p key={paragraph} className="mt-4 leading-relaxed">
           <MarkdownText>{paragraph}</MarkdownText>
         </p>
+      ))}
+
+      {WIDTHS.map((entry) => (
+        <GridFrame key={entry.width} label={entry.label} width={entry.width} />
       ))}
     </ContentPage>
   )
