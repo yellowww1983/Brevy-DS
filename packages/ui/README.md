@@ -19,9 +19,9 @@ every colour, size and radius is a token.
 Container, Form, IconList, IllustrationPanel, Input, Label, LineMarker, Marker,
 QuoteCard, ShapedImage, SocialProof, StatFigure.
 
-**Blocks** — whole sections of a page. Navbar, HeroCentered, HeroSplit,
-CardGrid, LogoCloud, MediaCopy, SegmentRows, FAQ, Steps, Tiles, Testimonials,
-CtaBand, Footer.
+**Blocks** — whole sections of a page. Navbar, Banner, HeroCentered,
+HeroSplit, CardGrid, LogoCloud, MediaCopy, SegmentRows, Faq, Steps, Tiles,
+Testimonials, CtaBand, Footer.
 
 **Screens** — AuthSplit, the signed-in product's way in.
 
@@ -51,6 +51,13 @@ export function Actions() {
 documented on its catalog page, which is generated from the same source as the
 component.
 
+A variant names what a thing is, so it can decide more than the paint. `Chip`
+is the one place that shows: `eyebrow`, `suggestion` and `filter` are things a
+page says, and render a `span`; `prompt` is a question the reader sends, so it
+renders a `<button type="button">` and takes a button's props. Do not wrap a
+chip in a button of your own to make it pressable — that is what `prompt` is,
+and it nests a button inside a button.
+
 ## Using a block
 
 A block is a section: it brings its own padding, its own container and its own
@@ -73,9 +80,9 @@ export function Closing() {
 ```
 
 What a block will not do is rearrange itself. Where the design draws one
-skeleton in several shapes, that is a prop — `Steps` has `layout="cards"` and
-`layout="panel"` — and where it draws two different things, they are two
-blocks.
+skeleton in several shapes, that is a prop — `Steps` has `layout="cards"`,
+`layout="panel"` and `layout="app"` — and where it draws two different things,
+they are two blocks.
 
 Artwork is a slot rather than a shape. A block that holds a picture takes a
 node, because the drawings are hand-placed compositions rather than something
