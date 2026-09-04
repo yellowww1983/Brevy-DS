@@ -55,13 +55,17 @@ test("every badge draws the website's box", async ({ page }) => {
   )
 })
 
-test("the chip family draws its three shapes on the gradient", async ({
+test("the chip family draws its speaking shapes on the gradient", async ({
   page,
 }) => {
   await page.goto("/components/chip")
 
+  /** The three shapes that only speak. `prompt` is the fourth member of the
+   *  family and deliberately outside this: it is a control, so it stands on
+   *  the brand surface and carries the shadow everything pressable carries.
+   *  `chip.spec.ts` holds it to that. */
   const chips = await page
-    .locator("main [data-slot='chip']")
+    .locator("main span[data-slot='chip']")
     .evaluateAll((nodes) =>
       nodes.map((node) => {
         const style = getComputedStyle(node)
@@ -95,7 +99,7 @@ test("the chip family draws its three shapes on the gradient", async ({
     expect(chip.shadow, "and no shadow stands in for it any more").toBe("none")
   }
 
-  /** The three drawn shapes and nothing else. */
+  /** The three shapes that speak, and nothing else. */
   const shapes = new Set(
     chips.map(
       (chip) => `${String(chip.height)}|${chip.pad}|${chip.font}|${chip.color}`,
@@ -172,7 +176,7 @@ test("the suggestion chip darkens under the pointer and nothing else moves", asy
 
   /** The hover belongs to the one shape the file draws it for. */
   const others = await page
-    .locator("main [data-slot='chip']")
+    .locator("main span[data-slot='chip']")
     .filter({ hasNotText: "How do I get paid?" })
     .evaluateAll((nodes) =>
       nodes.map((node) => getComputedStyle(node).backgroundImage),

@@ -33,6 +33,15 @@ type HeroCenteredAction =
       placeholder: string
       /** The accessible name of the round send button. */
       sendLabel: string
+      /** Each becomes a `prompt` chip, which is a real button: focusable,
+       *  pressable, announced as a control, because that is what the design
+       *  draws under the chat.
+       *
+       *  It carries no handler and this block cannot give it one. A handler is
+       *  a function, a server component may not pass one, and wiring a press
+       *  to the chat's own value would mean making `Chat` controlled — a
+       *  change to that component rather than to this block. A page that wants
+       *  the press to do something drives it from its own client boundary. */
       suggestions: readonly string[]
     }
   | { kind: "button"; label: string; href: string; note?: string }
@@ -227,7 +236,7 @@ function HeroCentered({
                   {action.suggestions.map((suggestion) => (
                     <Chip
                       key={suggestion}
-                      variant="suggestion"
+                      variant="prompt"
                       className="w-full tablet:w-fit"
                     >
                       {suggestion}
