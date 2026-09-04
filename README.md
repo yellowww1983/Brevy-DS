@@ -19,13 +19,20 @@ shipped brevy.com does, and where neither does, the decision is written down in
 |                   |                                                                                                                                                                        |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/tokens` | One stylesheet. Colour ramps, the type scale, spacing, radii, shadows, and the brand's own masks. Everything else reads from here.                                     |
-| `packages/ui`     | The components: 18 of them, 13 page blocks and one screen. Internal to this workspace, not published. See its own README.                                              |
+| `packages/ui`     | The components: 18 of them, 14 page blocks and one screen. Internal to this workspace, not published. See its own README.                                              |
 | `apps/catalog`    | The Next.js site that documents the package. Also the only consumer of it, which is deliberate: if the catalog cannot show a component, the component is not finished. |
 
-The catalog's `src/registry.tsx` lists all 36 entries — 12 components, 13
-blocks, 10 foundations, 1 screen — and everything else reads from it: the
+The catalog's `src/registry.tsx` lists all 38 entries — 12 components, 14
+blocks, 11 foundations, 1 screen — and everything else reads from it: the
 sidebar, `/llms.txt`, `/llms-full.txt`, and the test that checks nobody wrote a
 page without wiring it in.
+
+The foundations are wider than the token pages the name suggests: `Logo` and
+the two animation libraries, `Animations: Lottie` and `Animations: Video`, are
+in there beside colour and spacing, because they are things a page is built out
+of rather than components it imports. The blocks run from `Navbar` and `Banner`
+at the top of a page to `Footer` at the foot of it. The registry is the list;
+this paragraph is not, and will be out of date before the registry is.
 
 ## Running it
 
@@ -46,9 +53,26 @@ pnpm build                    # tsup for the package, next build for the catalog
 The first four run in the pre-commit hook. The end-to-end suite needs a
 production build, so it runs in CI and by hand.
 
+### Three ways to lose an afternoon
+
+None of these is visible in the code, and each has cost one.
+
 **`pnpm build` deletes `.next`.** A dev server started before it is serving
-nothing afterwards, and the failure looks like the app rather than the build.
-Restart it after every build.
+nothing afterwards, and the failure looks like the app rather than the build:
+the page still answers 200 and its stylesheet 404s. Restart the server after
+every build.
+
+**Port 3100 belongs to the end-to-end suite.** Playwright starts the catalog
+there and, outside CI, reuses whatever is already listening. Put another
+project on 3100 and the whole suite silently runs against it — every spec
+fails, none of them because of your change. Use any other port for anything
+else.
+
+**iCloud writes `filename 2.ts` beside files it syncs.** A duplicate of a
+`*Doc` module makes the registry guard see a page written twice, and a
+duplicate under `.next/types` breaks `typecheck` with errors in files nobody
+wrote. `.gitignore` keeps them out of commits but not off disk;
+`find . -name "* [0-9].*" -not -path "*/node_modules/*" -delete` clears them.
 
 ## The rules worth knowing before reading the code
 
@@ -81,7 +105,7 @@ than the dev server. Wait on the condition the sleep was standing in for:
 ### The registry is one file on purpose
 
 `registry.tsx` is the largest file here and it is deliberately not split. It is
-the single source for 36 entries, and a guard checks that every doc written is
+the single source for 38 entries, and a guard checks that every doc written is
 in it and every entry in it is checked. Splitting it into a file per kind would
 reintroduce exactly the drift it exists to prevent: a page written, wired
 nowhere, and nobody noticing.
@@ -95,12 +119,41 @@ three. That is recorded as DESIGN-FEEDBACK 92 and guarded by
 `e2e/brand-green.spec.ts`, which checks seven places at once because they are
 never on screen together.
 
+### A variant is a role, and the element follows from it
+
+`variant` names what a thing _is_, never how it is painted. `Chip` has
+`eyebrow`, `suggestion`, `filter` and `prompt` because those are four jobs; a
+pill that did the same job in a different skin would be a second axis, not a
+fifth variant.
+
+The point of the rule is what it decides. A prompt is a question the reader
+sends, so it renders a `<button>` where the other three render a `<span>`, and
+its props are typed as a union so an `onClick` on an eyebrow does not compile.
+The role picks the element; nobody passes `as`.
+
+It is worth stating because the alternative was shipped once. The hero's
+questions were chips that looked exactly like controls and were spans:
+`tabIndex -1`, no role, nothing to click. The doc even told a reader to wrap
+one in a button of their own.
+
+### A doc's claims are checked against the package
+
+A fenced snippet has to compile against `@brevy/ui`, a props table has to name
+props the component takes, and the values in a table's `Values` column have to
+be the values the type allows — in both directions, so a variant left out fails
+and one invented fails too. That last check exists because a fourth `Chip`
+variant shipped and its table went on listing three.
+
+It reaches the component docs, which write props tables. Blocks and foundations
+list their choices as bullets under a heading and are outside it, which is
+known rather than assumed.
+
 ### Two export conventions, split along a line
 
-`packages/ui` exports with a list at the foot of each file, all 31 of them.
-`apps/catalog` exports inline, all 56. The line is published surface against
-application code, and each side is consistent within itself. It looks like an
-inconsistency and is not one.
+`packages/ui` exports with a list at the foot of each file. `apps/catalog`
+exports inline. The line is published surface against application code, and
+each side is consistent within itself. It looks like an inconsistency and is
+not one.
 
 ## House rules for changes
 
@@ -121,6 +174,6 @@ inconsistency and is not one.
 ## Also here
 
 - `CLAUDE.md` — the same ground rules, aimed at an agent working in the repo.
-- `DESIGN-FEEDBACK.md` — 93 entries of things the design file leaves open,
+- `DESIGN-FEEDBACK.md` — 96 entries of things the design file leaves open,
   contradicts itself on, or draws in a way worth confirming.
 - `BACKLOG.md` — what is not built yet.
