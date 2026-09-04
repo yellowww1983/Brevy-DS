@@ -1,12 +1,8 @@
+import Image from "next/image"
 import Link from "next/link"
 
 import { docFor } from "@/registry"
-import {
-  ContentPage,
-  HEADING,
-  ImageSlot,
-  LINK,
-} from "@/components/content-page"
+import { ContentPage, HEADING, LINK } from "@/components/content-page"
 import { MarkdownText } from "@/components/markdown-text"
 import type { Section } from "@/components/table-of-contents"
 import {
@@ -22,6 +18,66 @@ import {
   SNIPPET,
   WHERE_THE_API_IS,
 } from "@/how-to-use"
+
+/** One sentence for both drawings of a path: whichever the page is showing,
+ *  it is the same picture of the same thing. */
+/** A path's two drawings and the size each was exported at.
+ *
+ *  The widths are carried rather than assumed because the pair is not always
+ *  the same size to the pixel: `nondev-dark` came back 1026 wide where its
+ *  light twin is 1027. `next/image` reserves the box from these numbers, so a
+ *  rounded-up one is a page that moves when the picture lands. */
+type Drawing = { readonly src: string; readonly width: number }
+
+type Picture = {
+  readonly alt: string
+  readonly light: Drawing
+  readonly dark: Drawing
+}
+
+/** Every drawing in the set is 765 tall. */
+const HEIGHT = 765
+
+const NON_DEV: Picture = {
+  alt: "Someone at a laptop asking Claude for a component, with the component assembling on the screen beside them",
+  light: { src: "/catalog/nondev-light.webp", width: 1027 },
+  dark: { src: "/catalog/nondev-dark.webp", width: 1026 },
+}
+
+const DEV: Picture = {
+  alt: "A component's documentation copied out of the catalog and handed to Claude, with the code coming back",
+  light: { src: "/catalog/dev-light.webp", width: 1027 },
+  dark: { src: "/catalog/dev-dark.webp", width: 1027 },
+}
+
+/** The same swap the Introduction makes, for the same reason: the theme here
+ *  is a class on the root, so a `<picture media>` would answer the reader's
+ *  system rather than the toggle.
+ *
+ *  Each drawing carries its own ground rather than being cut out, so the frame
+ *  gives it an edge and a painted rectangle does not end in mid-air. */
+function Illustration({ picture }: { picture: Picture }) {
+  return (
+    <figure className="my-10">
+      <Image
+        src={picture.light.src}
+        alt={picture.alt}
+        width={picture.light.width}
+        height={HEIGHT}
+        sizes="(min-width: 48rem) 48rem, 100vw"
+        className="w-full rounded-xl border border-border dark:hidden"
+      />
+      <Image
+        src={picture.dark.src}
+        alt={picture.alt}
+        width={picture.dark.width}
+        height={HEIGHT}
+        sizes="(min-width: 48rem) 48rem, 100vw"
+        className="hidden w-full rounded-xl border border-border dark:block"
+      />
+    </figure>
+  )
+}
 
 const CODE = [INTERNAL, COMPOSING, CLAUDE_CODE, WHERE_THE_API_IS]
 
@@ -50,9 +106,7 @@ export default async function HowToUsePage() {
       </h2>
       <p className="mt-4 max-w-3xl leading-relaxed">{NO_CODE_INTRO}</p>
 
-      <ImageSlot>
-        A person typing a request to Claude, with the page assembling
-      </ImageSlot>
+      <Illustration picture={NON_DEV} />
 
       {NO_CODE.map((section) => (
         <section key={section.id}>
@@ -67,9 +121,7 @@ export default async function HowToUsePage() {
         </section>
       ))}
 
-      <ImageSlot>
-        Copy for Claude on a component, and its documentation pasted into Claude
-      </ImageSlot>
+      <Illustration picture={DEV} />
 
       <h2 id="if-you-write-code" className={HEADING}>
         If you write code

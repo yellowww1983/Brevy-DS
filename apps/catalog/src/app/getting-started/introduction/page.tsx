@@ -1,12 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 
-import {
-  ContentPage,
-  HEADING,
-  ImageSlot,
-  LINK,
-} from "@/components/content-page"
+import { ContentPage, HEADING, LINK } from "@/components/content-page"
 import type { Section } from "@/components/table-of-contents"
 
 /** One sentence for both drawings: whichever the page is showing, it is the
@@ -39,8 +34,11 @@ export default function IntroductionPage() {
 
           Two pictures rather than one tinted. The file draws the dark page as
           its own artwork — dark cards, dark foliage, the same hands — so this
-          is a second drawing, not the first one dimmed. Both are cut out, and
-          the ground under them is the page's own.
+          is a second drawing, not the first one dimmed. Each carries its own
+          ground rather than being cut out, which the drawing before this one
+          was: measured at 51% clear where these are opaque throughout. So the
+          frame gives them an edge, or a painted rectangle would end in mid-air
+          against the page.
 
           Swapped by class rather than by `<picture media>`, because the theme
           here is a class on the root and a media query would answer the
@@ -49,18 +47,18 @@ export default function IntroductionPage() {
         <Image
           src="/catalog/overview-light.webp"
           alt={OVERVIEW_ALT}
-          width={1417}
-          height={1110}
+          width={1027}
+          height={765}
           sizes="(min-width: 48rem) 48rem, 100vw"
-          className="w-full dark:hidden"
+          className="w-full rounded-xl border border-border dark:hidden"
         />
         <Image
           src="/catalog/overview-dark.webp"
           alt={OVERVIEW_ALT}
-          width={1410}
-          height={1115}
+          width={1026}
+          height={765}
           sizes="(min-width: 48rem) 48rem, 100vw"
-          className="hidden w-full dark:block"
+          className="hidden w-full rounded-xl border border-border dark:block"
         />
       </figure>
 
@@ -95,8 +93,6 @@ export default function IntroductionPage() {
         when the person putting them together isn&rsquo;t a designer.
       </p>
 
-      <ImageSlot>Browsing the blocks gallery</ImageSlot>
-
       <p className="mt-6 leading-relaxed">
         <strong className="font-semibold">2. Pick.</strong> Decide which blocks
         your page needs and in what order: hero at the top, then benefits, then
@@ -110,8 +106,6 @@ export default function IntroductionPage() {
         puts the page together using only these blocks, fills in your content,
         and shows you the result.
       </p>
-
-      <ImageSlot>Claude Code composing a page from a prompt</ImageSlot>
 
       <p className="mt-6 leading-relaxed">
         You don&rsquo;t touch colors, fonts, or spacing. You choose blocks and
@@ -156,8 +150,6 @@ export default function IntroductionPage() {
         Before assuming a piece is faulty, check whether a different block fits
         better.
       </p>
-
-      <ImageSlot>Before and after: a page assembled from blocks</ImageSlot>
 
       <hr className="mt-14 border-border" />
 
