@@ -10,18 +10,21 @@ import { IllustrationPanel } from "../components/illustration-panel.js"
 import { Marker as SharedMarker } from "../components/marker.js"
 import { cn } from "../lib/utils.js"
 
-/** The two arrangements the file draws under one name.
+/** The three arrangements the file draws under one name.
  *
  *  `cards` is Caregiving (`22614:7570`): a row of cards, each an illustration
  *  over a title and a line. `panel` is For Organizations (`23259:576`): a
  *  numbered list down one half and, beside it, one illustration that belongs to
- *  whichever step the list has reached.
+ *  whichever step the list has reached. `app` is the Mobile App landing
+ *  (`24974:4784`): the same row of three, with the card turned over — the copy
+ *  on top and the artwork under it, running to the card's own edges.
  *
- *  They are one block because everything above the steps is identical in all
- *  eight frames the file draws — the same column, the same 96, the same chip,
- *  the same serif heading, the same 48 down to the steps. They part at the
- *  arrangement and nowhere else. */
-type StepsLayout = "cards" | "panel"
+ *  They are one block because everything above the steps is identical in every
+ *  frame the file draws — the same column, the same 96, the same chip, the same
+ *  serif heading, the same 48 down to the steps. They part at the arrangement
+ *  and nowhere else, and `app` parts from `cards` at the card alone: measured
+ *  side by side, both are `content:grid-cols-3` at a 16 gutter. */
+type StepsLayout = "cards" | "panel" | "app"
 
 /** The ground the section stands on: three of the four pages paint the olive
  *  gradient, the app page paints white. */
@@ -127,6 +130,54 @@ function Tick({ reached }: { reached: boolean }) {
  *  olive-to-white gradient inside a thread of its own. The height belongs to
  *  the thread rather than what it wraps, so the frame measures the drawn 290
  *  and not 292. */
+
+/** The step's number on the app page, which is a word rather than a disc.
+ *
+ *  Counted here rather than taken as a prop, for the reason the chip's count
+ *  beside the section eyebrow is counted here: a number a caller types is a
+ *  number that can disagree with the list it is numbering. `STEP 3` on the
+ *  second of three is not a variant anybody wants.
+ *
+ *  `text-caption` rather than the 14/22.4 the landing page sets. The size is
+ *  the same; the leading is the system's 1.429 against that page's 1.6, and a
+ *  block does not get to fork a type role. DESIGN-FEEDBACK 96. */
+function StepEyebrow({ index }: { index: number }) {
+  return (
+    <span
+      data-slot="steps-step-eyebrow"
+      className="text-caption text-brand-500 uppercase dark:text-primary"
+    >
+      Step {index + 1}
+    </span>
+  )
+}
+
+/** The tray the app card's artwork sits in.
+ *
+ *  Not an `IllustrationPanel`, and the measurement is why. That panel is five
+ *  things — a fixed 290, a 16 radius, a gradient thread as a padding ring, an
+ *  olive-300 ground and centred contents — and this tray keeps the last of
+ *  them. It grows instead of standing at 290, carries no radius and no ring,
+ *  and its ground is beige-500 rather than olive-300. Four of five overridden
+ *  is not a variant of that panel; it is a different object wearing its name.
+ *
+ *  It stays here rather than becoming a component for the same reason the panel
+ *  became one: a second block asking is what makes a component, and nothing
+ *  else asks for this yet.
+ *
+ *  It has no radius of its own because it does not need one. The card clips,
+ *  so the tray meets the card's corners exactly, and a radius written here
+ *  would be a second number to keep in step with the first. */
+function AppTray({ children }: { children?: ReactNode }) {
+  return (
+    <div
+      data-slot="steps-tray"
+      className="flex flex-1 flex-col justify-center gap-4 bg-linear-to-b from-beige-500 to-white p-6 dark:from-card dark:to-background"
+    >
+      {children}
+    </div>
+  )
+}
 
 /** What a step in the panel layout says, whether or not it can be clicked. */
 function StepBody({
@@ -249,12 +300,8 @@ function useSlider(enabled: boolean) {
  *  nothing else, so below the width where the list and the plate stand side by
  *  side there is no slider to run.
  *
- *  The app page draws a fifth version of this section and it is not here. It
- *  keeps the frame and changes six things inside the card at once — the
- *  illustration goes under the text rather than over it and runs to the card's
- *  edges, the number becomes a `STEP 1` eyebrow, the line drops to 16/24, the
- *  card takes a thread instead of a shadow. That is a dialect, not a variant,
- *  and it is parked until a page needs it. */
+ *  `app` runs none of this. It is a still row like `cards`, so the slider is
+ *  asked for by `panel` alone and both of the others are outside it. */
 function Steps({
   eyebrow,
   heading,
@@ -342,7 +389,47 @@ function Steps({
             </div>
           </div>
 
-          {layout === "cards" ? (
+          {layout === "app" ? (
+            /* The same row `cards` draws, at the same gutter: three across
+               where there is room and a column where there is not. What is
+               different is the card, and the card is different all the way
+               through, so the two arrangements do not share one.
+
+               `min-h` rather than a height. The row is levelled — the file
+               draws all three trays starting on one line — but a card whose
+               copy runs long is allowed to grow and take the row with it. */
+            <ul
+              data-slot="steps-list"
+              className="grid gap-4 content:grid-cols-3"
+            >
+              {steps.map((step, index) => (
+                <li
+                  key={index}
+                  data-slot="steps-step"
+                  className="hairline flex min-h-(--steps-app-card) flex-col overflow-hidden rounded-2xl bg-white shadow-xs dark:bg-card"
+                >
+                  {/* The copy first and the artwork under it, which is the one
+                      thing a reader notices between this and the Caregiving
+                      row. */}
+                  <div className="flex flex-col gap-2 p-6">
+                    {showMarkers ? <StepEyebrow index={index} /> : null}
+
+                    <h3
+                      data-slot="steps-step-title"
+                      className="text-h3 text-zinc-800 dark:text-foreground"
+                    >
+                      {step.title}
+                    </h3>
+                    <p className="text-body text-zinc-700 dark:text-muted-foreground">
+                      {step.description}
+                    </p>
+                  </div>
+
+                  <AppTray>{step.illustration}</AppTray>
+                </li>
+              ))}
+            </ul>
+          ) : layout === "cards" ? (
             /* A row where there is room and a column where there is not, at the
                16 the file sets either way. Three across, which is what it draws
                every time; a fourth step wraps onto a second row rather than

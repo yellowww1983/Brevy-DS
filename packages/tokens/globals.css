@@ -609,6 +609,13 @@
   --steps-plate: 32.5rem;
   --steps-plate-tall: 38rem;
 
+  /* The app card's floor, 488. The landing page levels its row of three by
+     giving every card the same minimum and letting the trays start on one
+     line; the drawn cards then stand at 512, because the copy in the longest
+     of them pushes past it. A floor rather than a height, so that is allowed
+     to happen. */
+  --steps-app-card: 30.5rem;
+
   /* The CTA band. 560 is a floor rather than the drawn fixed height: the file
      sets each band's height by hand and centres the copy in it, so 96 above
      and below is what the subtraction left over. Written as padding instead,
