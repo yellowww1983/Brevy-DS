@@ -1,3 +1,5 @@
+import type { Page } from "@playwright/test"
+
 import { expect, test } from "./catalog-test"
 
 test("the way in is the introduction, not the component list", async ({
@@ -190,4 +192,117 @@ test("the rail marks the active component and nothing else", async ({
     )
 
   expect(marked).toEqual(["Badge"])
+})
+
+/** The label of every row a section shows, in the order it shows them.
+ *
+ *  A family is one row here, named for the family, because that is what the
+ *  reader sees: `Hero` with its shapes indented under it. The shapes are read
+ *  separately by whoever cares about them. */
+async function rowsOf(page: Page, section: string) {
+  return await page
+    .locator("aside details", { has: page.getByText(section, { exact: true }) })
+    .first()
+    .locator(":scope > div")
+    .evaluate((root) =>
+      [...root.children].flatMap((node) => {
+        if (node instanceof HTMLElement && node.dataset.family !== undefined) {
+          const heading = node.querySelector("p")
+
+          return heading ? [heading.textContent.trim()] : []
+        }
+
+        if (node.tagName === "UL") {
+          return [...node.querySelectorAll("li > a")].map((link) =>
+            link.textContent.trim(),
+          )
+        }
+
+        return [node.textContent.trim()]
+      }),
+    )
+}
+
+const alphabetical = (rows: readonly string[]) =>
+  [...rows].sort((left, right) => left.localeCompare(right))
+
+test("the three lists you look a name up in are alphabetical", async ({
+  page,
+}) => {
+  await page.goto("/components/button")
+
+  /** These three have no order of their own: a component is not before or
+   *  after another component, so the registry's order was only the order they
+   *  happened to be written in, and a reader looking for `Label` had to read
+   *  all twelve to find out it was last. */
+  for (const section of ["Components", "Blocks", "Screens"]) {
+    const rows = await rowsOf(page, section)
+
+    expect(
+      rows.length,
+      `${section} is empty, so it would pass on nothing`,
+    ).toBeGreaterThan(0)
+    expect(rows, `${section} is not in alphabetical order`).toEqual(
+      alphabetical(rows),
+    )
+  }
+})
+
+test("a family sorts under its own name, and keeps its shapes in order", async ({
+  page,
+}) => {
+  await page.goto("/components/button")
+
+  /** `Hero` sorts as `Hero` rather than as `Centered`, which is where sorting
+   *  before the grouping would have put it. Underneath, the file's order
+   *  stands: the centered hero is the one it draws first. */
+  const blocks = await rowsOf(page, "Blocks")
+  expect(blocks).toContain("Hero")
+
+  const shapes = await page
+    .locator('aside [data-family="Hero"] a')
+    .allTextContents()
+  expect(shapes.map((text) => text.trim())).toEqual(["Centered", "Split"])
+})
+
+test("the two lists that already read as a sequence are left alone", async ({
+  page,
+}) => {
+  await page.goto("/components/button")
+
+  /** The guard on the paragraph above. A sort applied to the sidebar as a
+   *  whole would pass every check up to here and quietly destroy the only
+   *  order these two have: Foundations moves from the tokens outward, and
+   *  Getting Started from the first page somebody reads to the second. */
+  for (const section of ["Getting Started", "Foundations"]) {
+    const rows = await rowsOf(page, section)
+
+    expect(
+      rows,
+      `${section} has an order of its own and must keep it`,
+    ).not.toEqual(alphabetical(rows))
+  }
+})
+
+test("the registry's own order is by kind, and the sidebar did not touch it", async ({
+  page,
+}) => {
+  /** The sort lives in the sidebar because the sidebar is presentation. The
+   *  registry feeds `llms-full.txt`, which reads as a document rather than an
+   *  index: foundations, then components, then blocks, then the screens. If
+   *  the sort ever reaches the registry this is what notices. */
+  const map = await (await page.request.get("/llms.txt")).text()
+
+  const sections = [...map.matchAll(/^## (.+)$/gm)].map((match) => match[1])
+  expect(sections).toEqual(["Foundations", "Components", "Blocks", "Optional"])
+
+  const components = map
+    .slice(map.indexOf("## Components"), map.indexOf("## Blocks"))
+    .match(/^- \[([^\]]+)\]/gm)
+
+  expect(components?.[0]).toContain("Button")
+  expect(
+    components?.slice(0, 3).join(),
+    "the map lists components in the order the registry writes them",
+  ).toContain("Input")
 })
