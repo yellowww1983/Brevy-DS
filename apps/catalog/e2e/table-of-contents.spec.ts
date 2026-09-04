@@ -1,24 +1,35 @@
 import { expect, test, type Page } from "./catalog-test"
-import { atFoot } from "./settled"
+import { atFoot, SCROLLER } from "./settled"
 
 test.use({ viewport: { width: 1440, height: 900 } })
 
 const PAGE = "/getting-started/introduction"
 
 /** Puts a heading where a reader would have it, near the top of the viewport,
- *  which is the band the contents list watches. */
+ *  which is the band the contents list watches.
+ *
+ *  The reading column is what scrolls, not the window. The catalog is a shell:
+ *  the window holds it and scrolls nothing. Everything here that used to ask
+ *  the window how far it had come now asks the column, which is the thing that
+ *  actually moved. */
 async function bringToReadingPosition(page: Page, id: string) {
   await page.evaluate((target: string) => {
     const heading = document.getElementById(target)
-    if (!heading) {
+    const column = document.querySelector("main")
+
+    if (!heading || !column) {
       return
     }
-    window.scrollTo(
+
+    column.scrollTo(
       0,
-      window.scrollY + heading.getBoundingClientRect().top - 150,
+      column.scrollTop + heading.getBoundingClientRect().top - 150,
     )
   }, id)
 }
+
+const scrolled = (page: Page) =>
+  page.evaluate(() => document.querySelector("main")?.scrollTop ?? -1)
 
 test("the contents list matches the headings on the page", async ({ page }) => {
   await page.goto(PAGE)
@@ -50,7 +61,7 @@ test("a contents link scrolls its section into view", async ({ page }) => {
   await page.goto(PAGE)
 
   const target = page.locator("#two-things-worth-knowing")
-  expect(await page.evaluate(() => window.scrollY)).toBe(0)
+  expect(await scrolled(page), "the column starts at the top").toBe(0)
 
   await page
     .locator(
@@ -59,7 +70,10 @@ test("a contents link scrolls its section into view", async ({ page }) => {
     .click()
 
   await expect(target).toBeInViewport()
-  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0)
+  expect(
+    await scrolled(page),
+    "and the column is what moved to get there",
+  ).toBeGreaterThan(0)
 })
 
 test("scrolling marks the section being read", async ({ page }) => {
@@ -72,7 +86,8 @@ test("scrolling marks the section being read", async ({ page }) => {
   await expect(current).toHaveText("How it works")
 
   await page.evaluate(() => {
-    window.scrollTo(0, document.documentElement.scrollHeight)
+    const column = document.querySelector("main")
+    column?.scrollTo(0, column.scrollHeight)
   })
   await expect(
     current,
@@ -106,7 +121,7 @@ for (const path of WITH_CONTENTS) {
     const links = page.locator('nav[aria-label="On this page"] a')
     const last = await links.last().textContent()
 
-    await atFoot(page)
+    await atFoot(page, SCROLLER.content)
 
     await expect(
       page.locator('nav[aria-label="On this page"] a[aria-current]'),
