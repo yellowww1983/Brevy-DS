@@ -297,7 +297,7 @@ export function Sidebar() {
       /** Out of the way entirely rather than narrowed to a rail. What the
        *  room is wanted for is a preview drawn at 1440, and a rail of icons
        *  standing beside it is 72px of nothing anybody asked to see. */
-      className="flex w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar"
+      className="flex h-full w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar"
     >
       <div className="flex h-14 shrink-0 items-center border-b border-sidebar-border px-6">
         <Link

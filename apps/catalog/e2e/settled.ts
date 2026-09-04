@@ -45,6 +45,15 @@ export async function measured(page: Page) {
     .toBe(0)
 }
 
+/** What scrolls, named rather than spelled out at every call site. */
+export const SCROLLER = {
+  /** A document of its own: every specimen route, and anything outside the
+   *  catalog's shell. */
+  window: "",
+  /** The catalog's reading column, which is what scrolls inside the shell. */
+  content: "main",
+} as const
+
 /** The end of a page that measures itself is not where it first appears to be:
  *  labels arriving and frames reporting their height push it further down. The
  *  colours page grows by 320px this way, which is 320px of foot that stops
@@ -52,17 +61,36 @@ export async function measured(page: Page) {
  *  enough to get there first.
  *
  *  Each round scrolls to whatever the foot currently is; only two rounds
- *  agreeing on the height end it. */
-export async function atFoot(page: Page) {
+ *  agreeing on the height end it.
+ *
+ *  Which thing scrolls is a parameter because the catalog is a shell rather
+ *  than a long page: the window holds it and scrolls nothing, and the reading
+ *  column scrolls itself. A page outside the shell, which is every specimen,
+ *  is still the window's own scroller and gets the default. */
+export async function atFoot(page: Page, scroller: string = SCROLLER.window) {
   let previous = -1
 
   await expect
     .poll(async () => {
-      const height = await page.evaluate(() => {
-        const room = document.documentElement.scrollHeight - window.innerHeight
-        window.scrollTo({ top: room, behavior: "instant" })
-        return document.documentElement.scrollHeight
-      })
+      const height = await page.evaluate((selector) => {
+        const node = selector
+          ? document.querySelector(selector)
+          : document.documentElement
+
+        if (!node) {
+          return -1
+        }
+
+        const room = node.scrollHeight - node.clientHeight
+
+        if (selector) {
+          node.scrollTo({ top: room, behavior: "instant" })
+        } else {
+          window.scrollTo({ top: room, behavior: "instant" })
+        }
+
+        return node.scrollHeight
+      }, scroller)
 
       const stable = height === previous
       previous = height

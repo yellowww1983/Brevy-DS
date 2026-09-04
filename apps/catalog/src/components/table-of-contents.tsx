@@ -2,11 +2,33 @@
 
 import { cn } from "@brevy/ui"
 import { List } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export type Section = {
   id: string
   title: string
+}
+
+/** Whatever actually scrolls above this list.
+ *
+ *  The catalog is a shell: the window holds it and scrolls nothing, and the
+ *  reading column scrolls itself. Both effects below need to know which, and
+ *  asking the tree beats taking a prop, because the same list has to work on a
+ *  page that is its own scroller. Nothing found means the document is it. */
+function scrollerOf(node: Element | null): Element | null {
+  for (
+    let parent = node?.parentElement;
+    parent;
+    parent = parent.parentElement
+  ) {
+    const overflow = getComputedStyle(parent).overflowY
+
+    if (overflow === "auto" || overflow === "scroll") {
+      return parent
+    }
+  }
+
+  return null
 }
 
 export function TableOfContents({
@@ -16,14 +38,19 @@ export function TableOfContents({
 }) {
   const [spied, setSpied] = useState(sections[0]?.id ?? "")
   const [atEnd, setAtEnd] = useState(false)
+  /** The list's own place in the tree, which is how it finds what scrolls
+   *  above it without being told. */
+  const list = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const headings = sections
       .map((section) => document.getElementById(section.id))
       .filter((heading) => heading !== null)
 
-    /** The band is the top of the viewport, so a heading counts as current once
-     *  it reaches the reading position rather than when it first appears. */
+    /** The band is the top of whatever scrolls, so a heading counts as current
+     *  once it reaches the reading position rather than when it first appears.
+     *  Left on the window inside a shell the band would sit over the column's
+     *  own frame rather than over the text moving through it. */
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries.filter((entry) => entry.isIntersecting)
@@ -36,7 +63,7 @@ export function TableOfContents({
         )
         setSpied(topmost.target.id)
       },
-      { rootMargin: "-80px 0px -65% 0px" },
+      { root: scrollerOf(list.current), rootMargin: "-80px 0px -65% 0px" },
     )
 
     headings.forEach((heading) => {
@@ -56,22 +83,32 @@ export function TableOfContents({
    *  highlight wherever it happened to be. Running out of document says the
    *  same thing the band does: there is nothing after this left to read. */
   useEffect(() => {
+    const scroller = scrollerOf(list.current)
+    const target = scroller ?? document.documentElement
+
     const check = () => {
-      const room = document.documentElement.scrollHeight - window.innerHeight
-      setAtEnd(room > 0 && window.scrollY >= room - 2)
+      const seen = scroller ? scroller.clientHeight : window.innerHeight
+      const from = scroller ? scroller.scrollTop : window.scrollY
+      const room = target.scrollHeight - seen
+
+      setAtEnd(room > 0 && from >= room - 2)
     }
 
     check()
 
     /** Content that settles late, such as a frame that measures itself or an
-     *  image arriving, moves the end of the document without a scroll event. */
+     *  image arriving, moves the end without a scroll event. */
     const observer = new ResizeObserver(check)
-    observer.observe(document.documentElement)
-    window.addEventListener("scroll", check, { passive: true })
+
+    observer.observe(target)
+
+    const listener: EventTarget = scroller ?? window
+
+    listener.addEventListener("scroll", check, { passive: true })
 
     return () => {
       observer.disconnect()
-      window.removeEventListener("scroll", check)
+      listener.removeEventListener("scroll", check)
     }
   }, [])
 
@@ -79,6 +116,7 @@ export function TableOfContents({
 
   return (
     <nav
+      ref={list}
       aria-label="On this page"
       className="sticky top-8 ml-auto hidden h-fit w-56 shrink-0 xl:block"
     >
