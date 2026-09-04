@@ -52,6 +52,7 @@ const frameFor = (page: Page, query: string) =>
 
 const cards = (page: Page) => frameFor(page, "")
 const panel = (page: Page) => frameFor(page, "?layout=panel")
+const app = (page: Page) => frameFor(page, "?layout=app")
 
 const sectionIn = (frame: ReturnType<typeof cards>) =>
   frame.locator("iframe").contentFrame().locator("[data-slot='steps']")
@@ -642,4 +643,225 @@ test("on a dark page the section follows the app and the disc holds", async ({
   )
 
   expect(ground, "the app's dark page").toBe(NEUTRAL_950)
+})
+
+/** Reads one card of the app row: the grid it stands in, the card itself, and
+ *  the tray under the copy. */
+async function appCard(page: Page) {
+  return await sectionIn(app(page))
+    .locator("[data-slot='steps-step']")
+    .first()
+    .evaluate((card) => {
+      const list = card.parentElement
+
+      if (!list) {
+        throw new Error("a step outside its list")
+      }
+
+      const style = getComputedStyle(card)
+      const box = card.getBoundingClientRect()
+      const kids = [...card.children]
+      const tray = card.querySelector("[data-slot='steps-tray']")
+
+      if (!tray) {
+        throw new Error("the app card draws no tray")
+      }
+
+      const trayStyle = getComputedStyle(tray)
+
+      return {
+        tracks: getComputedStyle(list).gridTemplateColumns,
+        gap: getComputedStyle(list).columnGap,
+        width: Math.round(box.width),
+        minHeight: style.minHeight,
+        radius: style.borderRadius,
+        overflow: style.overflow,
+        shadow: style.boxShadow
+          .split(", rgba(0, 0, 0, 0) 0px 0px 0px 0px")
+          .join("")
+          .replace(/^rgba\(0, 0, 0, 0\) 0px 0px 0px 0px, /, ""),
+        border: style.borderTopWidth,
+        thread: getComputedStyle(card, "::before").backgroundImage,
+        trayIsLast: kids.at(-1) === tray,
+        trayWidth: Math.round(tray.getBoundingClientRect().width),
+        trayRadius: trayStyle.borderRadius,
+        trayStops: trayStyle.backgroundImage.match(/rgba?\([^)]*\)/g) ?? [],
+      }
+    })
+}
+
+test("app runs the row cards runs, and parts at the card", async ({ page }) => {
+  await page.goto(PAGE)
+  await measured(page)
+
+  /** The research said the arrangement is not what `app` brings: it brings a
+   *  card. So the grid is compared against the other row's rather than against
+   *  a number, and if one of them ever moves this is what notices. */
+  const tracksOf = (frame: ReturnType<typeof cards>) =>
+    sectionIn(frame)
+      .locator("[data-slot='steps-list']")
+      .evaluate((list) => {
+        const style = getComputedStyle(list)
+
+        return { tracks: style.gridTemplateColumns, gap: style.columnGap }
+      })
+
+  const row = await tracksOf(cards(page))
+  const appRow = await tracksOf(app(page))
+
+  expect(appRow.tracks.split(" ")).toHaveLength(3)
+  expect(appRow, "the two rows are one grid drawn twice").toEqual(row)
+})
+
+test("the app card is turned over, and its tray runs to the edges", async ({
+  page,
+}) => {
+  await page.goto(PAGE)
+  await measured(page)
+
+  const read = await appCard(page)
+
+  expect(read.trayIsLast, "the copy comes first and the artwork under it").toBe(
+    true,
+  )
+  expect(read.trayRadius, "the tray has no corner of its own").toBe("0px")
+  expect(read.overflow, "the card clips, which is what shapes the tray").toBe(
+    "hidden",
+  )
+  expect(read.trayWidth, "the tray runs the whole width of the card").toBe(
+    read.width,
+  )
+  /** The stops rather than the whole declaration: a browser serialises the
+   *  first one as `0%` or `0px` depending on its build, and the claim here is
+   *  which two colours the tray runs between. */
+  expect(
+    read.trayStops,
+    "beige-500 to white, which is what the page draws",
+  ).toEqual(["rgb(245, 242, 239)", "rgb(255, 255, 255)"])
+})
+
+test("the app card reads as a thread rather than a lift", async ({ page }) => {
+  await page.goto(PAGE)
+  await measured(page)
+
+  const read = await appCard(page)
+
+  /** The whole difference in how the card sits on the page. `cards` is lifted
+   *  and `app` is outlined, so the two shadows are checked against each other
+   *  as well as against the file — a change to either one shows here. */
+  expect(read.shadow, "the small shadow, not the larger one").toBe(
+    DRAWN.shadow.xs,
+  )
+  expect(read.border, "the thread is drawn, not bordered").toBe("0px")
+  expect(
+    read.thread,
+    "and it is a gradient, which is what `hairline` is",
+  ).not.toBe("none")
+
+  const lifted = await sectionIn(cards(page))
+    .locator("[data-slot='steps-step']")
+    .first()
+    .evaluate((card) =>
+      getComputedStyle(card)
+        .boxShadow.split(", rgba(0, 0, 0, 0) 0px 0px 0px 0px")
+        .join("")
+        .replace(/^rgba\(0, 0, 0, 0\) 0px 0px 0px 0px, /, ""),
+    )
+
+  expect(lifted, "the row of cards keeps the lift it always had").toBe(
+    DRAWN.shadow.md,
+  )
+})
+
+test("the app eyebrow counts itself, so it cannot disagree", async ({
+  page,
+}) => {
+  await page.goto(PAGE)
+  await measured(page)
+
+  const section = sectionIn(app(page))
+  const eyebrows = section.locator("[data-slot='steps-step-eyebrow']")
+  const steps = section.locator("[data-slot='steps-step']")
+
+  const said = await eyebrows.allTextContents()
+  const count = await steps.count()
+
+  expect(count, "an empty row would pass on nothing").toBeGreaterThan(0)
+  expect(
+    said.map((text) => text.trim()),
+    "the number is the position, the way the chip's count is the length",
+  ).toEqual(
+    Array.from({ length: count }, (_, index) => `Step ${String(index + 1)}`),
+  )
+})
+
+test("the three arrangements are disjoint", async ({ page }) => {
+  await page.goto(PAGE)
+  await measured(page)
+
+  /** One list each, and the section says which it drew. A fourth branch or a
+   *  fall-through would show as two lists in one frame. */
+  for (const [name, frame] of [
+    ["cards", cards(page)],
+    ["panel", panel(page)],
+    ["app", app(page)],
+  ] as const) {
+    const section = sectionIn(frame)
+
+    await expect(section).toHaveAttribute("data-layout", name)
+    await expect(section.locator("[data-slot='steps-list']")).toHaveCount(1)
+  }
+
+  /** `app` is a still row like `cards`: the slider belongs to `panel` alone,
+   *  and a step you can click is how it shows. */
+  await expect(
+    sectionIn(app(page)).locator("[data-slot='steps-step'] button"),
+  ).toHaveCount(0)
+  await expect(sectionIn(panel(page)).locator("button")).not.toHaveCount(0)
+})
+
+test("the app trays carry the app's own artwork, not the row's", async ({
+  page,
+}) => {
+  await page.goto(PAGE)
+  await measured(page)
+
+  /** This shipped once with the cards' mocks in it. The preset's copy was the
+   *  landing's and its pictures were not, which reads as the right block
+   *  holding the wrong product — so the source of every tray is checked, and
+   *  checked against the other row's as well as for its own name. */
+  const sources = await sectionIn(app(page))
+    .locator("[data-slot='steps-tray'] img")
+    .evaluateAll((images) =>
+      images.map((image) =>
+        image instanceof HTMLImageElement
+          ? decodeURIComponent(image.currentSrc)
+              .replace(/^.*?url=/, "")
+              .split("&")[0]
+          : "",
+      ),
+    )
+
+  expect(sources, "one export per card").toEqual([
+    "/steps/app-1.webp",
+    "/steps/app-2.webp",
+    "/steps/app-3.webp",
+  ])
+
+  const row = await sectionIn(cards(page))
+    .locator("img")
+    .evaluateAll((images) =>
+      images.map((image) =>
+        image instanceof HTMLImageElement
+          ? decodeURIComponent(image.currentSrc)
+              .replace(/^.*?url=/, "")
+              .split("&")[0]
+          : "",
+      ),
+    )
+
+  expect(
+    sources.filter((source) => row.includes(source)),
+    "no card in the app row is showing a picture from the other one",
+  ).toEqual([])
 })

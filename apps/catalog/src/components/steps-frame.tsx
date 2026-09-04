@@ -22,7 +22,7 @@ export function StepsFrame({
   tail,
   ground,
 }: {
-  layout?: "panel"
+  layout?: "panel" | "app"
   markers?: "on" | "off"
   tail?: "on"
   ground?: "white"

@@ -1,7 +1,7 @@
 import { Steps } from "@brevy/ui"
 import Image from "next/image"
 
-import { CARDS_PRESET, PANEL_PRESET, TAIL } from "@/steps"
+import { APP_PRESET, CARDS_PRESET, PANEL_PRESET, TAIL } from "@/steps"
 
 /** The mock interface the file draws inside each card, exported per step.
  *
@@ -31,6 +31,33 @@ import { CARDS_PRESET, PANEL_PRESET, TAIL } from "@/steps"
  *
  *  The wide one is `aria-hidden` with an empty alt: it is the same picture of
  *  the same step, and a reader who meets both hears it twice. */
+/** The app card's mock, which is one export rather than the two `Art` swaps.
+ *
+ *  `cards` needs two because its panel is a fixed 290 and the file redraws the
+ *  mock for the wider one. This tray has no fixed height and the picture is the
+ *  same drawing at every width, so it is scaled to the tray instead: `h-auto`
+ *  against the tray's own `justify-center`. */
+function AppArt({
+  art,
+  alt,
+  priority,
+}: {
+  art: { src: string; width: number; height: number }
+  alt: string
+  priority?: boolean
+}) {
+  return (
+    <Image
+      src={art.src}
+      alt={alt}
+      width={art.width}
+      height={art.height}
+      priority={priority}
+      className="h-auto w-full"
+    />
+  )
+}
+
 function Art({
   art,
   wide,
@@ -84,6 +111,32 @@ export default async function StepsSpecimenPage({
 }) {
   const query = await searchParams
   const panel = query.layout === "panel"
+  const app = query.layout === "app"
+
+  if (app) {
+    return (
+      <Steps
+        layout="app"
+        ground={query.ground === "gradient" ? "gradient" : APP_PRESET.ground}
+        eyebrow={APP_PRESET.eyebrow}
+        heading={APP_PRESET.heading}
+        description={APP_PRESET.description}
+        showMarkers={query.markers !== "off"}
+        tail={query.tail === "on" ? TAIL : undefined}
+        steps={APP_PRESET.steps.map((step, index) => ({
+          title: step.title,
+          description: step.description,
+          illustration: (
+            <AppArt
+              art={step.art}
+              alt={`Step ${String(index + 1)}: ${step.title}`}
+              priority={index === 0}
+            />
+          ),
+        }))}
+      />
+    )
+  }
 
   if (panel) {
     return (

@@ -1544,3 +1544,36 @@ already exists, filled with a gradient the way the closing band fills it.
 At the size it is drawn the difference is a fraction of a pixel and most of the
 shape is clipped away. Confirm the shipped mark is the intended one, or say
 which of the three is.
+
+### 96. The app landing sets its own leading, 1.6 against the system's
+
+**website** `24974:4784`
+
+The Mobile App landing's step cards run their copy at a line height the rest of
+the system does not use. Measured on that page against the roles this system
+ships:
+
+|                          | the landing   | the system  | role                  |
+| ------------------------ | ------------- | ----------- | --------------------- |
+| `STEP 1` eyebrow         | 14px / 22.4px | 14px / 20px | `text-caption`, 1.429 |
+| the line under the title | 16px / 25.6px | 16px / 24px | `text-body`, 1.5      |
+
+Both of the landing's are 1.6, which is that page's own `leading-body`. Every
+other size matches to the pixel: the title is 20/29 and semibold on both, the
+eyebrow is the same 14px at the same weight in the same `#066e3d`, and the
+card's shadow is the same `0 1px 2px` at 5%.
+
+The block ships the system's roles. A block that forked a type role would be a
+block whose text is a different size from every other block's for no reason a
+reader could name, and 1.6 is not drawn anywhere else in the file. The
+difference is 2.4px per line on the eyebrow and 1.6px per line on the copy.
+
+Confirm the system's leading is right here, or say that 1.6 is the intended
+body rhythm — in which case it is a change to the type scale rather than to
+this block, because `text-body` is what every other block sets its copy in.
+
+One more, smaller: the landing's card is outlined with a flat `1px #e5e5e5`
+where this block uses `hairline`, the gradient thread the card grid, the
+testimonial and the chat already sit on. Same weight, same family, and the
+thread runs a shade darker at the foot. Not worth a change unless the flat
+edge is deliberate.
