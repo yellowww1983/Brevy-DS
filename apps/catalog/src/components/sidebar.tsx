@@ -81,6 +81,28 @@ const ICONS: Readonly<Record<string, ComponentType<{ className?: string }>>> = {
   Type,
 }
 
+/** The one order the sidebar imposes of its own.
+ *
+ *  The registry is ordered by kind, and that order is not decoration: it is
+ *  what `llms-full.txt` reads out as a document, tokens before pieces before
+ *  sections. Nothing here may disturb it, so this sorts a copy and the
+ *  registry never learns about it.
+ *
+ *  The sidebar is a different job. Nobody arrives at it wanting the third
+ *  block; they arrive knowing a name and looking for where it sits, and a
+ *  list you look a name up in is alphabetical. Three lists get it, and the
+ *  two that already read as a sequence do not: Foundations moves from tokens
+ *  outward, Getting Started from the first page to the second, and sorting
+ *  either would be throwing away the only order they have.
+ *
+ *  A family sorts under its own heading rather than under its first variant,
+ *  because by then `grouped` has folded it into a single row labelled `Hero`
+ *  or `Animations`. What sits under that heading keeps the registry's order,
+ *  which is the file's: centered before split. */
+function sorted<T>(rows: readonly T[], name: (row: T) => string): readonly T[] {
+  return [...rows].sort((left, right) => name(left).localeCompare(name(right)))
+}
+
 const GETTING_STARTED: readonly Entry[] = [
   {
     label: "Introduction",
@@ -94,11 +116,14 @@ const GETTING_STARTED: readonly Entry[] = [
  *  shows, drawn in the app file but built from this system's parts. Their own
  *  group so a reader assembling a landing page does not reach for one by
  *  mistake. */
-const SCREENS: readonly Entry[] = entriesOf("screen").map((entry) => ({
-  label: entry.name,
-  icon: ICONS[entry.icon ?? ""] ?? Shapes,
-  href: entry.href,
-}))
+const SCREENS: readonly Entry[] = sorted(
+  entriesOf("screen").map((entry) => ({
+    label: entry.name,
+    icon: ICONS[entry.icon ?? ""] ?? Shapes,
+    href: entry.href,
+  })),
+  (entry) => entry.label,
+)
 
 /** Everything the registry calls a foundation, less whatever the head of the
  *  list already shows. `How to use` is in the registry so that it reaches
@@ -153,7 +178,14 @@ function grouped(kind: Kind): readonly (Entry | Family)[] {
   }, [])
 }
 
-const BLOCKS: readonly (Entry | Family)[] = grouped("block")
+/** Sorted once here rather than on every render, and filtered below: a filter
+ *  keeps the order it was given. */
+const COMPONENTS = sorted(components, (entry) => entry.name)
+
+const BLOCKS: readonly (Entry | Family)[] = sorted(
+  grouped("block"),
+  (row) => row.label,
+)
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -286,7 +318,7 @@ export function Sidebar() {
   const matched = new Set(
     filterComponents(searchable ? query : "").map((entry) => entry.slug),
   )
-  const matches = components.filter(
+  const matches = COMPONENTS.filter(
     (entry) => matched.has(entry.slug) || entry.slug === activeSlug,
   )
 
