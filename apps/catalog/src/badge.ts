@@ -8,7 +8,7 @@ export const USE = [
   "`outline` is the default and reads on any ground. `olive` is the brand's own and is for something good: enrolled, approved, covered. `beige` is the quiet one, for a category rather than a state.",
   "It is not a control. Nothing on it answers a pointer, and nothing in the design draws one that does. If it has to be pressed or dismissed it is a button, not a badge.",
   "Use it beside the thing it describes rather than on its own. A badge with nothing next to it is a label for the page, which is a heading.",
-  "Reach for a `Chip` instead when the thing is part of the page's furniture: an eyebrow over a heading, a suggestion to tap, a filter. A badge states a fact; a chip is a piece of interface.",
+  "Reach for a `Chip` instead when the thing is part of the page's furniture rather than something said about an item on it. A badge states a fact; a chip is a piece of interface. Which shapes a chip comes in is `Chip`'s own page to say — listing them here is a second copy that goes stale the day a shape is added, which is how this sentence came to name three of four.",
   "`asChild` renders the child in the badge's place, for a badge that is also a link.",
 ]
 
