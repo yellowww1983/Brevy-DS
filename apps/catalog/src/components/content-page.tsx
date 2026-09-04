@@ -46,18 +46,3 @@ export const HEADING = "mt-14 scroll-mt-8 text-2xl font-semibold tracking-tight"
 
 export const LINK =
   "rounded-sm font-medium text-primary underline underline-offset-4 hover:decoration-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-
-/** Real artwork lands later. Until then the frame states what belongs in it,
- *  so an empty page never reads as a finished one. */
-export function ImageSlot({ children }: { children: string }) {
-  return (
-    <figure className="my-10 flex min-h-56 items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-12">
-      <figcaption className="max-w-md text-center">
-        <span className="mb-2 block text-xs font-medium tracking-wide text-muted-foreground uppercase">
-          Image placeholder
-        </span>
-        <span className="block text-sm text-muted-foreground">{children}</span>
-      </figcaption>
-    </figure>
-  )
-}

@@ -1,12 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 
-import {
-  ContentPage,
-  HEADING,
-  ImageSlot,
-  LINK,
-} from "@/components/content-page"
+import { ContentPage, HEADING, LINK } from "@/components/content-page"
 import type { Section } from "@/components/table-of-contents"
 
 /** One sentence for both drawings: whichever the page is showing, it is the
@@ -98,8 +93,6 @@ export default function IntroductionPage() {
         when the person putting them together isn&rsquo;t a designer.
       </p>
 
-      <ImageSlot>Browsing the blocks gallery</ImageSlot>
-
       <p className="mt-6 leading-relaxed">
         <strong className="font-semibold">2. Pick.</strong> Decide which blocks
         your page needs and in what order: hero at the top, then benefits, then
@@ -113,8 +106,6 @@ export default function IntroductionPage() {
         puts the page together using only these blocks, fills in your content,
         and shows you the result.
       </p>
-
-      <ImageSlot>Claude Code composing a page from a prompt</ImageSlot>
 
       <p className="mt-6 leading-relaxed">
         You don&rsquo;t touch colors, fonts, or spacing. You choose blocks and
@@ -159,8 +150,6 @@ export default function IntroductionPage() {
         Before assuming a piece is faulty, check whether a different block fits
         better.
       </p>
-
-      <ImageSlot>Before and after: a page assembled from blocks</ImageSlot>
 
       <hr className="mt-14 border-border" />
 
