@@ -39,8 +39,11 @@ export default function IntroductionPage() {
 
           Two pictures rather than one tinted. The file draws the dark page as
           its own artwork — dark cards, dark foliage, the same hands — so this
-          is a second drawing, not the first one dimmed. Both are cut out, and
-          the ground under them is the page's own.
+          is a second drawing, not the first one dimmed. Each carries its own
+          ground rather than being cut out, which the drawing before this one
+          was: measured at 51% clear where these are opaque throughout. So the
+          frame gives them an edge, or a painted rectangle would end in mid-air
+          against the page.
 
           Swapped by class rather than by `<picture media>`, because the theme
           here is a class on the root and a media query would answer the
@@ -49,18 +52,18 @@ export default function IntroductionPage() {
         <Image
           src="/catalog/overview-light.webp"
           alt={OVERVIEW_ALT}
-          width={1417}
-          height={1110}
+          width={1027}
+          height={765}
           sizes="(min-width: 48rem) 48rem, 100vw"
-          className="w-full dark:hidden"
+          className="w-full rounded-xl border border-border dark:hidden"
         />
         <Image
           src="/catalog/overview-dark.webp"
           alt={OVERVIEW_ALT}
-          width={1410}
-          height={1115}
+          width={1026}
+          height={765}
           sizes="(min-width: 48rem) 48rem, 100vw"
-          className="hidden w-full dark:block"
+          className="hidden w-full rounded-xl border border-border dark:block"
         />
       </figure>
 
