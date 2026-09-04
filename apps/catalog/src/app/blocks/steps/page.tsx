@@ -33,6 +33,16 @@ export default async function StepsPage() {
         </p>
         <StepsFrame layout="panel" />
 
+        <h2 className={HEADING}>The card turned over</h2>
+        <p className="mt-4 max-w-3xl leading-relaxed text-muted-foreground">
+          <MarkdownText>
+            {
+              "`app` is the Mobile App landing, and it runs the row the cards run: measured against each other, both are three columns at a 16px gutter on the content column. What changes is the card. The copy comes first and the artwork under it, the tray runs to the card's own edges rather than sitting inside a frame, the card carries a thread and the small shadow rather than the larger one, and the number is a `STEP 1` over the title instead of a disc in the corner. The mocks are that page's own, exported: over there they are live components, and a preset owes the picture rather than the machinery behind it."
+            }
+          </MarkdownText>
+        </p>
+        <StepsFrame layout="app" />
+
         <h2 className={HEADING}>The discs</h2>
         <p className="mt-4 max-w-3xl leading-relaxed text-muted-foreground">
           <MarkdownText>
