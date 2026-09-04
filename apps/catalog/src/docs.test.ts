@@ -39,7 +39,9 @@ const HERE = dirname(fileURLToPath(import.meta.url))
 
 type Doc = { source: string; subject: string; markdown: string }
 type Snippet = { source: string; code: string }
-type Table = { source: string; subject: string; props: readonly string[] }
+type Row = { prop: string; values: readonly string[] }
+
+type Table = { source: string; subject: string; rows: readonly Row[] }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null
@@ -156,9 +158,9 @@ function tablesOf(
   markdown: string,
   subject: string,
   exports: ReadonlySet<string>,
-): { subject: string; props: string[] }[] {
+): { subject: string; rows: Row[] }[] {
   const lines = markdown.split("\n")
-  const found: { subject: string; props: string[] }[] = []
+  const found: { subject: string; rows: Row[] }[] = []
   const headings: string[] = []
 
   for (const [index, line] of lines.entries()) {
@@ -173,23 +175,32 @@ function tablesOf(
       continue
     }
 
-    const props: string[] = []
+    const rows: Row[] = []
 
     for (const row of lines.slice(index + 2)) {
       if (!row.startsWith("|")) {
         break
       }
 
-      const first = row.split("|")[1]?.trim().replaceAll("`", "")
+      const cells = row.split("|")
+      const first = cells[1]?.trim().replaceAll("`", "")
 
       if (first) {
-        props.push(first)
+        /** The second column as the doc set it: every backticked token in it,
+         *  so `\`gradient\` or \`white\`` and `\`a\` \`b\`` both read as two
+         *  values and the prose between them is ignored. */
+        rows.push({
+          prop: first,
+          values: [...(cells[2] ?? "").matchAll(/`([^`]+)`/g)].map(
+            (match) => match[1] ?? "",
+          ),
+        })
       }
     }
 
     found.push({
       subject: headings.find((name) => exports.has(name)) ?? subject,
-      props,
+      rows,
     })
   }
 
@@ -208,7 +219,7 @@ const tables: Table[] = docs.flatMap((doc) =>
   tablesOf(doc.markdown, doc.subject, exported).map((table) => ({
     source: `${doc.source} · ${table.subject}`,
     subject: table.subject,
-    props: table.props,
+    rows: table.rows,
   })),
 )
 
@@ -495,8 +506,36 @@ function propertiesIn(checker: ts.TypeChecker, type: ts.Type): ts.Symbol[] {
  *  variants, whatever HTML element it renders, and the aria attributes that
  *  come with it. So `variant` and `aria-label` are both in it and the table
  *  needs no second column saying which kind a row is. */
+/** The values a prop is allowed to take, when that is a knowable list.
+ *
+ *  Only a union of string literals answers. `string`, `ReactNode` and
+ *  `number` have no list to compare a table against, and `boolean` is a union
+ *  of two literals that are not strings — a table saying `true` `false` is
+ *  prose rather than a claim about an API. So anything with a non-literal
+ *  branch in it returns nothing and is left alone. */
+function literalsOf(checker: ts.TypeChecker, type: ts.Type): string[] | null {
+  const branches = type.isUnion() ? type.types : [type]
+  const values: string[] = []
+
+  for (const branch of branches) {
+    if (branch.flags & ts.TypeFlags.Undefined) {
+      continue
+    }
+
+    if (!branch.isStringLiteral()) {
+      return null
+    }
+
+    values.push(branch.value)
+  }
+
+  return values.length > 0 ? values : null
+}
+
 function propertiesOf(component: string): {
   names: Set<string>
+  /** Prop name to the values it accepts, for the props that have a list. */
+  choices: Map<string, string[]>
   diagnostics: readonly ts.Diagnostic[]
 } {
   const run = compiler(join(HERE, "__props__.tsx"))
@@ -511,6 +550,7 @@ function propertiesOf(component: string): {
 
   const diagnostics = diagnosticsOf(program, source)
   const names = new Set<string>()
+  const choices = new Map<string, string[]>()
 
   if (source) {
     const checker = program.getTypeChecker()
@@ -530,12 +570,28 @@ function propertiesOf(component: string): {
         checker,
         checker.getTypeAtLocation(declaration),
       )) {
-        names.add(property.getName())
+        const name = property.getName()
+
+        names.add(name)
+
+        const values = literalsOf(
+          checker,
+          checker.getTypeOfSymbolAtLocation(property, declaration),
+        )
+
+        if (values) {
+          /** A prop can arrive from more than one branch of a union of props,
+           *  which is how `Chip` types the one variant that renders a button.
+           *  The allowed values are all of them together. */
+          choices.set(name, [
+            ...new Set([...(choices.get(name) ?? []), ...values]),
+          ])
+        }
       }
     })
   }
 
-  return { names, diagnostics }
+  return { names, choices, diagnostics }
 }
 
 function report(diagnostics: readonly ts.Diagnostic[]) {
@@ -661,17 +717,60 @@ describe.each(snippets)("$source", ({ code }) => {
   })
 })
 
-describe.each(tables)("$source", ({ subject, props }) => {
+describe.each(tables)("$source", ({ subject, rows }) => {
   test("names only props the component takes", () => {
     expect(subject, "the doc's heading names what it documents").not.toBe("")
 
     const { names, diagnostics } = propertiesOf(subject)
 
     expect(report(diagnostics), `asking ${subject} for its props`).toBe("")
-    expect(props.length).toBeGreaterThan(0)
+    expect(rows.length).toBeGreaterThan(0)
 
-    const missing = props.filter((prop) => !names.has(prop))
+    const missing = rows
+      .map((row) => row.prop)
+      .filter((prop) => !names.has(prop))
 
     expect(missing, `documented but not on ${subject}`).toEqual([])
+  })
+
+  /** The half the name check could not see.
+   *
+   *  A row was held to naming a real prop and nothing held its second column
+   *  to anything, so `variant | \`eyebrow\` \`suggestion\` \`filter\`` went on
+   *  passing after a fourth variant shipped. The table read as an exhaustive
+   *  list, was one short, and the only reader who would find out was the one
+   *  reaching for the value it left out.
+   *
+   *  Only props whose type is a list answer this: a union of string literals
+   *  is a claim a table can be wrong about, and `string` or `ReactNode` is
+   *  not. Order is not checked — a doc may lead with the one worth reaching
+   *  for — but membership is, in both directions, because a value invented in
+   *  a table is as bad as one left out of it. */
+  test("lists every value a prop takes, and none it does not", () => {
+    const { choices } = propertiesOf(subject)
+    const wrong: string[] = []
+
+    for (const row of rows) {
+      const allowed = choices.get(row.prop)
+
+      if (!allowed || row.values.length === 0) {
+        continue
+      }
+
+      const missing = allowed.filter((value) => !row.values.includes(value))
+      const invented = row.values.filter((value) => !allowed.includes(value))
+
+      if (missing.length > 0) {
+        wrong.push(`${row.prop} does not list ${missing.join(", ")}`)
+      }
+
+      if (invented.length > 0) {
+        wrong.push(
+          `${row.prop} lists ${invented.join(", ")}, which it cannot take`,
+        )
+      }
+    }
+
+    expect(wrong, `${subject}'s table against its own type`).toEqual([])
   })
 })
