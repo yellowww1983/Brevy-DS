@@ -167,7 +167,13 @@ export function ContainerFrame({
               come out the same on all three frames. Its size is the size that
               was measured inside, so this draws what is there rather than what
               it ought to be. Centred without arithmetic: the column is centred
-              in the band and the band fills the frame. */}
+              in the band and the band fills the frame.
+
+              The dashes go neutral on a dark page for the same reason the
+              grid's do, and to the same value: brand green composited on the
+              dark band reads at almost its luminance, so the edge is drawn in
+              `neutral-500` instead of stained in brand. Two frames on one
+              page showing the same idea, so one answer rather than two. */}
           {reading ? (
             <div className="pointer-events-none absolute inset-0 grid place-items-center">
               <div
@@ -175,7 +181,7 @@ export function ContainerFrame({
                   width: reading.content * scale,
                   height: reading.height * scale,
                 }}
-                className="grid place-items-center rounded-lg border border-dashed border-brand-500/40 bg-background"
+                className="grid place-items-center rounded-lg border border-dashed border-brand-500/40 bg-background dark:border-neutral-500"
               >
                 <span className="font-mono text-xs text-muted-foreground">
                   Container

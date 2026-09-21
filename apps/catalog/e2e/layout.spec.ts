@@ -288,3 +288,197 @@ test("the grid is live above 1200 and a guide below it", async ({ page }) => {
     page.locator(`${GRID_FRAME(1440)} [data-guide-only]`),
   ).toHaveCount(0)
 })
+
+/** Opens the page with a theme on the root before anything computes a style.
+ *
+ *  Registering on `DOMContentLoaded` and nothing sooner, because an init
+ *  script runs before the root element is parsed: reaching for
+ *  `document.documentElement` there is reading a property of null, and the
+ *  throw takes the rest of the script with it. That is not theoretical — it is
+ *  how the first version of this helper left a dark page reading as a light
+ *  one, and the reason the theme is asserted below rather than assumed.
+ *
+ *  Setting the class afterwards and measuring in the same task is no use
+ *  either: the values that come back are the ones from before the toggle. */
+async function layoutIn(page: Page, theme: "light" | "dark") {
+  await page.addInitScript((name) => {
+    document.addEventListener("DOMContentLoaded", () => {
+      document.documentElement.classList.remove("light", "dark")
+      document.documentElement.classList.add(name)
+    })
+  }, theme)
+
+  await page.goto(PAGE)
+  await measured(page)
+
+  await expect(page.locator("html")).toHaveClass(new RegExp(`\\b${theme}\\b`))
+}
+
+/** Resolves a colour the way the screen does: laid into a one pixel canvas and
+ *  read back as channels.
+ *
+ *  Nothing on this page declares a colour the same way twice. A token arrives
+ *  as `oklch(0.145 0 none)`, a wash as `oklab(...)` with an alpha, an empty
+ *  ground as `rgba(0, 0, 0, 0)`, and none of the three compares against
+ *  another as text. Painted, they do. */
+async function painted(page: Page, css: string) {
+  return await page.evaluate((value) => {
+    const canvas = document.createElement("canvas")
+    canvas.width = 1
+    canvas.height = 1
+
+    const context = canvas.getContext("2d")
+
+    if (!context) {
+      throw new Error("no 2d context to paint into")
+    }
+
+    context.fillStyle = value
+    context.fillRect(0, 0, 1, 1)
+
+    return [...context.getImageData(0, 0, 1, 1).data].join(",")
+  }, css)
+}
+
+/** The colour of the inset layer a ring paints, picked out of the shadow it
+ *  shares with four empty layers Tailwind keeps in place. */
+const RING = /([a-z]+\([^)]*\))\s+0px 0px 0px 1px inset/
+
+/** What the three outlined boxes declare, read and not yet resolved. */
+async function edges(page: Page) {
+  return await page.evaluate(() => {
+    const pick = (selector: string) => {
+      const node = document.querySelector(selector)
+
+      if (!node) {
+        throw new Error(`nothing at ${selector}`)
+      }
+
+      const style = getComputedStyle(node)
+
+      return {
+        ground: style.backgroundColor,
+        border: style.borderTopColor,
+        dashed: style.borderTopStyle === "dashed",
+        shadow: style.boxShadow,
+      }
+    }
+
+    return {
+      container: pick(
+        "figure[data-viewport='810']:not(:has([data-columns])) .border-dashed",
+      ),
+      guide: pick(
+        "figure[data-viewport='810']:has([data-columns]) [data-columns] > span",
+      ),
+      live: pick(
+        "figure[data-viewport='1440']:has([data-columns]) [data-columns] > span",
+      ),
+    }
+  })
+}
+
+/** The band the specimen paints, which lives inside the frame rather than on
+ *  the page, so it is reached through the iframe it is drawn in. */
+async function band(page: Page, width: number) {
+  return await page
+    .frameLocator(`iframe[title="The grid at ${String(width)}px"]`)
+    .locator("[data-bleed]")
+    .evaluate((node) => getComputedStyle(node).backgroundColor)
+}
+
+/** Every painted value the dark page is built out of, in one place so the
+ *  three below read as a set rather than three unrelated numbers. */
+const DARK = {
+  band: "23,23,23,255",
+  column: "10,10,10,255",
+  edge: "115,115,115,255",
+}
+
+test("the dark page is built out of three colours and no others", async ({
+  page,
+}) => {
+  await layoutIn(page, "dark")
+
+  const { container, guide, live } = await edges(page)
+
+  /** The wash the specimen paints is `olive-500/40`, which is right over white
+   *  and composites to a mid olive-grey over black — measured rgb(92, 97, 86),
+   *  near enough the brand green drawn on it that a scan across a frame found
+   *  four pixels differing from the band, against 412 in the light. So the
+   *  dark band steps to `--card`, one neutral off `--background`. */
+  expect(
+    await painted(page, await band(page, 810)),
+    "the band is the card",
+  ).toBe(DARK.band)
+
+  /** A column stands on `--background`, which is what the container frame
+   *  paints inside its own outline. The same value rather than a second answer
+   *  to the same question. */
+  expect(await painted(page, container.ground), "the container box").toBe(
+    DARK.column,
+  )
+  expect(await painted(page, guide.ground), "the guide column").toBe(
+    DARK.column,
+  )
+  expect(await painted(page, live.ground), "the live column").toBe(DARK.column)
+
+  /** And every edge is drawn rather than stained: `neutral-500` at full
+   *  strength, 4.18 to 1 against the column it encloses whatever the band
+   *  does. The brand edge was only legible while the band behind it was pale,
+   *  which is the dependency this removes. */
+  const ring = RING.exec(live.shadow)?.[1]
+
+  expect(ring, "the live column carries a ring").toBeDefined()
+  expect(await painted(page, container.border), "the container dashes").toBe(
+    DARK.edge,
+  )
+  expect(await painted(page, guide.border), "the guide dashes").toBe(DARK.edge)
+  expect(await painted(page, ring ?? ""), "the live ring").toBe(DARK.edge)
+})
+
+test("the guide and the live row still tell apart in the dark", async ({
+  page,
+}) => {
+  await layoutIn(page, "dark")
+
+  const { guide, live } = await edges(page)
+
+  /** Sharing a ground and now a colour too, so what separates them is the only
+   *  thing that ever did: dashes on one, a continuous ring on the other. If a
+   *  change ever left both the same, the page would be saying the grid is live
+   *  at every width, which is the one thing it exists to deny. */
+  expect(guide.dashed, "the guide is drawn in dashes").toBe(true)
+  expect(guide.shadow, "and carries no ring").toBe("none")
+  expect(RING.test(live.shadow), "the live row carries one").toBe(true)
+  expect(live.dashed, "and no dashes").toBe(false)
+})
+
+test("the light page keeps the columns it always had", async ({ page }) => {
+  await layoutIn(page, "light")
+
+  const { guide, live } = await edges(page)
+
+  /** Nothing above is the light page's. The band is still the olive wash, a
+   *  guide column is still empty, the live one still carries its brand tint,
+   *  and the edges are still brand green. This fails if a `dark:` is ever
+   *  dropped from the front of one of them. */
+  expect(
+    await painted(page, await band(page, 810)),
+    "the band is the wash",
+  ).toBe("215,227,200,102")
+  expect(
+    await painted(page, guide.ground),
+    "a guide column paints nothing",
+  ).toBe("0,0,0,0")
+  expect(
+    await painted(page, live.ground),
+    "and the live one is not the page's own ground",
+  ).not.toBe("0,0,0,0")
+  /** brand-500 at 45%, as painted: the nominal 6,110,61 comes back a channel
+   *  brighter because the colour makes a round trip through oklab on the way
+   *  to the screen. The painted value is the one the reader sees. */
+  expect(await painted(page, guide.border), "the dashes are brand green").toBe(
+    "7,111,62,115",
+  )
+})
