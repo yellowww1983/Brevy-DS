@@ -57,7 +57,24 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: `rounded-leaf border border-primary bg-primary text-primary-foreground hover:bg-transparent hover:text-primary active:bg-transparent active:text-primary`,
+        /** Pointed at or pressed, the ground goes and the label takes the
+         *  green it stood on. The icon does something the label cannot: it
+         *  fills with the olive it was drawn in, so what was an outline on a
+         *  dark ground becomes an outline around a pale one. Measured on the
+         *  shipped site, where every button on this ground carries it —
+         *  `New chat`, `Contact us` and `Subscribe` — so it belongs to the
+         *  variant rather than to one button. The ones with no icon simply
+         *  have nothing to fill.
+         *
+         *  Pressed as well as pointed at, for the same reason the ground and
+         *  the label change on both: this variant's active state is its hover
+         *  state, and filling on one alone would blink the icon empty while
+         *  the button is held.
+         *
+         *  A brand mark is left out. Those carry their own fills and are
+         *  already outside the stroke the base sets, so olive through a
+         *  wordmark would be a shape nobody drew. */
+        primary: `rounded-leaf border border-primary bg-primary text-primary-foreground hover:bg-transparent hover:text-primary hover:[&_svg:not([data-brand])]:fill-olive-500 active:bg-transparent active:text-primary active:[&_svg:not([data-brand])]:fill-olive-500`,
         outline: `rounded-leaf border border-primary bg-transparent text-primary hover:bg-primary hover:text-primary-foreground ${OUTLINE_ICON_ONLY}`,
         secondary: `rounded-leaf border border-transparent bg-surface-olive text-surface-olive-foreground hover:border-surface-olive-outline hover:bg-transparent hover:text-surface-olive-outline`,
         ghost: `rounded-lg text-foreground hover:bg-surface-hover active:bg-surface-active ${GHOST_ICON_ONLY}`,
