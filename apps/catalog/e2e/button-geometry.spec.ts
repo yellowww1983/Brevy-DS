@@ -1,3 +1,5 @@
+import type { Page } from "@playwright/test"
+
 import { expect, test } from "./catalog-test"
 
 /** The board draws ghost as a square when it holds nothing but an icon and as a
@@ -157,4 +159,76 @@ test("pointed at, a social button trades its thread for a ring", async ({
     { width: hovered.width, height: hovered.height },
     "the box does not move",
   ).toEqual({ width: resting.width, height: resting.height })
+})
+
+/** olive-500, the colour the primary button's label stands in at rest. */
+const OLIVE_500 = "rgb(215, 228, 201)"
+
+/** Reads every button on the board that carries an icon, grouped by whether it
+ *  is the primary variant and which state the board is forcing on it.
+ *
+ *  `bg-primary` is matched as a whole class rather than as a substring, because
+ *  `outline` carries `hover:bg-primary` and a looser test counts it as primary. */
+async function fills(page: Page) {
+  return await page
+    .locator("main [data-slot='button']")
+    .evaluateAll((buttons) =>
+      buttons.flatMap((button) => {
+        const icon = button.querySelector("svg")
+
+        if (!icon || !(button instanceof HTMLElement)) {
+          return []
+        }
+
+        return [
+          {
+            primary: /(^|\s)bg-primary(\s|$)/.test(button.className),
+            state: button.getAttribute("data-force") ?? "rest",
+            fill: getComputedStyle(icon).fill,
+          },
+        ]
+      }),
+    )
+}
+
+test("the primary button fills its icon when it is pointed at or pressed", async ({
+  page,
+}) => {
+  await page.goto("/components/button")
+
+  /** Measured on the shipped site: every button on that ground carries
+   *  `hover:[&_svg]:fill-olive-500`, so what was an outline on a dark ground
+   *  becomes an outline around a pale one. The catalog drew the label and the
+   *  ground changing and left the icon alone. */
+  const icons = await fills(page)
+  const primary = icons.filter((icon) => icon.primary)
+
+  expect(
+    primary.length,
+    "an empty board would pass on nothing",
+  ).toBeGreaterThan(0)
+
+  for (const icon of primary) {
+    const owed = icon.state === "hover" || icon.state === "active"
+
+    expect(
+      icon.fill,
+      `primary at ${icon.state}: ${owed ? "olive" : "nothing"}`,
+    ).toBe(owed ? OLIVE_500 : "none")
+  }
+})
+
+test("no other variant fills an icon, in any state", async ({ page }) => {
+  await page.goto("/components/button")
+
+  /** The rule lives on one variant. Written as a whole-board check rather than
+   *  a list of the others, so a variant added next month is covered without
+   *  anyone remembering this file. */
+  const others = (await fills(page)).filter((icon) => !icon.primary)
+
+  expect(others.length).toBeGreaterThan(0)
+  expect(
+    [...new Set(others.map((icon) => icon.fill))],
+    "every other variant leaves its icon unfilled",
+  ).toEqual(["none"])
 })
