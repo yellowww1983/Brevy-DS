@@ -59,6 +59,11 @@ export type { CardGridBackground, CardGridItem } from "./blocks/card-grid.js"
 export { CtaBand } from "./blocks/cta-band.js"
 export type { CtaBandButton, CtaBandTone } from "./blocks/cta-band.js"
 export { Faq } from "./blocks/faq.js"
+export { FeatureSlider } from "./blocks/feature-slider.js"
+export type {
+  FeatureSliderItem,
+  FeatureSliderTint,
+} from "./blocks/feature-slider.js"
 export { LogoCloud } from "./blocks/logo-cloud.js"
 export { MediaCopy } from "./blocks/media-copy.js"
 export type { MediaCopyStep, MediaCopyTone } from "./blocks/media-copy.js"

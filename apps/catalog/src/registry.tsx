@@ -1001,6 +1001,16 @@ const BLOCKS: readonly Entry[] = [
       import("./segment-rows").then((module) => module.segmentRowsDoc()),
   },
   {
+    slug: "feature-slider",
+    name: "Feature slider",
+    kind: "block",
+    href: "/blocks/feature-slider",
+    icon: "GalleryHorizontal",
+    summary: "Five features one at a time, each on a ground tinted for it.",
+    doc: () =>
+      import("./feature-slider").then((module) => module.featureSliderDoc()),
+  },
+  {
     slug: "faq",
     name: "FAQ",
     kind: "block",
