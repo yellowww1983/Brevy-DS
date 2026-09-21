@@ -71,10 +71,25 @@ const buttonVariants = cva(
          *  state, and filling on one alone would blink the icon empty while
          *  the button is held.
          *
+         *  The light page only, which is the one measurement that decided
+         *  something rather than recording it. The fill works there because it
+         *  is nearly the ground: olive on white is 1.33 to 1, a tint under the
+         *  outline's 13.54. On a dark page the same olive sits on near black at
+         *  14.92 and the outline at 4.49, so the quietest part of the icon
+         *  becomes the loudest thing on the button and the hierarchy turns over.
+         *  Nothing paler would fix it; anything visible on black outshouts the
+         *  outline by construction.
+         *
+         *  Withheld rather than restated in another colour, because the ground
+         *  flipping from brand-vivid to nothing is already a 4.49 to 1 change
+         *  and the signal is made. Olive is still the icon's own colour at rest
+         *  and still the brand's accent everywhere else; there is simply no
+         *  hover effect here on a dark page.
+         *
          *  A brand mark is left out. Those carry their own fills and are
          *  already outside the stroke the base sets, so olive through a
          *  wordmark would be a shape nobody drew. */
-        primary: `rounded-leaf border border-primary bg-primary text-primary-foreground hover:bg-transparent hover:text-primary hover:[&_svg:not([data-brand])]:fill-olive-500 active:bg-transparent active:text-primary active:[&_svg:not([data-brand])]:fill-olive-500`,
+        primary: `rounded-leaf border border-primary bg-primary text-primary-foreground hover:bg-transparent hover:text-primary light:hover:[&_svg:not([data-brand])]:fill-olive-500 active:bg-transparent active:text-primary light:active:[&_svg:not([data-brand])]:fill-olive-500`,
         outline: `rounded-leaf border border-primary bg-transparent text-primary hover:bg-primary hover:text-primary-foreground ${OUTLINE_ICON_ONLY}`,
         secondary: `rounded-leaf border border-transparent bg-surface-olive text-surface-olive-foreground hover:border-surface-olive-outline hover:bg-transparent hover:text-surface-olive-outline`,
         ghost: `rounded-lg text-foreground hover:bg-surface-hover active:bg-surface-active ${GHOST_ICON_ONLY}`,

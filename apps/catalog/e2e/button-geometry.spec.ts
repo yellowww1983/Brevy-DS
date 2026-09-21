@@ -191,17 +191,26 @@ async function fills(page: Page) {
     )
 }
 
-test("the primary button fills its icon when it is pointed at or pressed", async ({
-  page,
-}) => {
+/** Reads the board in one theme, set before the first style is computed so the
+ *  fill is not read off a stale computed style. */
+async function fillsIn(page: Page, theme: "light" | "dark") {
+  await page.addInitScript((name) => {
+    document.addEventListener("DOMContentLoaded", () => {
+      document.documentElement.classList.remove("light", "dark")
+      document.documentElement.classList.add(name)
+    })
+  }, theme)
   await page.goto("/components/button")
 
-  /** Measured on the shipped site: every button on that ground carries
-   *  `hover:[&_svg]:fill-olive-500`, so what was an outline on a dark ground
-   *  becomes an outline around a pale one. The catalog drew the label and the
-   *  ground changing and left the icon alone. */
-  const icons = await fills(page)
-  const primary = icons.filter((icon) => icon.primary)
+  return await fills(page)
+}
+
+test("on a light page the primary button fills its icon", async ({ page }) => {
+  /** Measured on the shipped site, where every button on that ground carries
+   *  it: what was an outline on a dark ground becomes an outline around a pale
+   *  one. Pressed as well as pointed at, because this variant's active state is
+   *  its hover state and filling on one alone blinks the icon empty. */
+  const primary = (await fillsIn(page, "light")).filter((icon) => icon.primary)
 
   expect(
     primary.length,
@@ -218,13 +227,31 @@ test("the primary button fills its icon when it is pointed at or pressed", async
   }
 })
 
-test("no other variant fills an icon, in any state", async ({ page }) => {
-  await page.goto("/components/button")
+test("on a dark page it does not, in any state", async ({ page }) => {
+  /** The one thing here that was decided rather than measured off a drawing,
+   *  and the numbers that decided it. Olive on white is 1.33 to 1 against the
+   *  ground against the outline's 13.54, so the fill reads as a tint. On near
+   *  black the same olive is 14.92 and the outline 4.49, so the quietest part
+   *  of the icon becomes the loudest thing on the button.
+   *
+   *  Nothing takes its place. The ground going from brand-vivid to nothing is
+   *  already a 4.49 to 1 change, so the signal is made without it. */
+  const primary = (await fillsIn(page, "dark")).filter((icon) => icon.primary)
 
+  expect(primary.length).toBeGreaterThan(0)
+  expect(
+    [...new Set(primary.map((icon) => icon.fill))],
+    "the icon is the same in every state on a dark page",
+  ).toEqual(["none"])
+})
+
+test("no other variant fills an icon, in any state or theme", async ({
+  page,
+}) => {
   /** The rule lives on one variant. Written as a whole-board check rather than
    *  a list of the others, so a variant added next month is covered without
    *  anyone remembering this file. */
-  const others = (await fills(page)).filter((icon) => !icon.primary)
+  const others = (await fillsIn(page, "light")).filter((icon) => !icon.primary)
 
   expect(others.length).toBeGreaterThan(0)
   expect(
