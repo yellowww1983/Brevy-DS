@@ -1142,6 +1142,16 @@ const FOUNDATIONS: readonly Entry[] = [
     doc: () => import("./logo").then((module) => module.logoDoc()),
   },
   {
+    slug: "illustrations",
+    name: "Illustrations",
+    kind: "foundation",
+    href: "/getting-started/illustrations",
+    icon: "Paintbrush",
+    summary: "The brand's watercolours, and the hand they are drawn with.",
+    doc: () =>
+      import("./illustrations").then((module) => module.illustrationsDoc()),
+  },
+  {
     slug: "animations-lottie",
     name: "Lottie",
     kind: "foundation",
