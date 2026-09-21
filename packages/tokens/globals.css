@@ -14,6 +14,26 @@
    "nearest wins" here without :has. */
 @custom-variant dark (&:is(.dark *):not(.light *):not(.light));
 
+/* The complement of the one above, for the few places where a rule belongs to
+   the light page rather than to both. `dark:` can only add; this can withhold.
+   Written out rather than reached for often: the system's default is that a
+   rule holds in both themes, and this is the exception that says out loud it
+   does not.
+
+   The two arms are the two ways an element is light. It is outside any `.dark`
+   subtree, or it is inside one and pinned back by a `.light` the way the logo
+   page pins a swatch. */
+@custom-variant light {
+  &:not(.dark *) {
+    @slot;
+  }
+
+  &:is(.light *),
+  &.light {
+    @slot;
+  }
+}
+
 /* `static` because a design system ships its palette whether or not this build
    happens to use it. Left to itself Tailwind emits only the variables some
    generated utility references, so a ramp nothing has reached for yet resolves
