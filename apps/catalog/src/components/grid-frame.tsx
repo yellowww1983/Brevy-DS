@@ -178,7 +178,28 @@ export function GridFrame({ label, width }: { label: string; width: number }) {
               of the track it stands on and the space between two of them is
               the measured gutter, so this draws the division that is there
               rather than twelve equal guesses. Centred without arithmetic: the
-              row is as wide as the container and the container is centred. */}
+              row is as wide as the container and the container is centred.
+
+              On a dark page the brand edge stops working, and the reason is
+              luminance rather than strength. Composited on the band, the dash
+              and the ring both land near rgb(8, 39, 24); a horizontal scan
+              found four pixels differing from the band around them, against
+              412 in the light, and raising the alpha moves none of that.
+
+              So on a dark page the edge is drawn rather than stained. The
+              column takes `--background` inside it, which is what the
+              container frame above already paints inside its own outline, and
+              the edge itself takes `neutral-500` at full strength: measured
+              rgb(115, 115, 115), which is 4.18 to 1 against the column it
+              encloses and the same figure whatever the band does. That last
+              part is the point of choosing it. The brand edge was only ever
+              legible when the band behind it was pale, which is why it went
+              with the band; a light edge is legible on its own.
+
+              Both stay behind `dark:`, and the light page keeps the stain it
+              always had. What separates guide from live is unchanged in
+              either theme, because it was never the colour: dashes on one, a
+              continuous ring on the other. */}
           {reading ? (
             <div
               className="pointer-events-none absolute inset-0 grid place-items-center"
@@ -198,8 +219,8 @@ export function GridFrame({ label, width }: { label: string; width: number }) {
                     style={{ width: track * scale }}
                     className={
                       reading.live
-                        ? "rounded-xs bg-brand-500/15 ring-1 ring-brand-500/30 ring-inset"
-                        : "rounded-xs border border-dashed border-brand-500/45"
+                        ? "rounded-xs bg-brand-500/15 ring-1 ring-brand-500/30 ring-inset dark:bg-background dark:ring-neutral-500"
+                        : "rounded-xs border border-dashed border-brand-500/45 dark:border-neutral-500 dark:bg-background"
                     }
                   />
                 ))}

@@ -23,9 +23,23 @@ import { Container } from "@brevy/ui"
  *  Nothing is drawn in here. A hairline and a dash are sizes in pixels and the
  *  frame is scaled to fit the column beside it, so both would arrive shrunk.
  *  The bands are painted from outside at the size the measurement says. */
+/** The band, and on a dark page a neutral one.
+ *
+ *  `olive-500/40` lands pale over white, which is the point of it: the frame
+ *  outside is showing what a container leaves at the edges, and the leftover
+ *  has to read as leftover. Over a dark page the same wash composites to
+ *  rgb(92, 97, 86), a mid olive-grey that is neither the page nor the brand,
+ *  and the columns drawn on top of it were measured four pixels different
+ *  from it. So the dark page takes `--card`, the neutral one step off
+ *  `--background` that the system already ships for a raised surface.
+ *
+ *  Only the ground moves. The wash is the light page's and stays. */
 export default function GridSpecimenPage() {
   return (
-    <div data-bleed className="flex h-dvh items-center bg-olive-500/40">
+    <div
+      data-bleed
+      className="flex h-dvh items-center bg-olive-500/40 dark:bg-card"
+    >
       <Container data-container className="h-3/5">
         <div data-guide className="grid h-full grid-cols-12 gap-4" />
         <div
