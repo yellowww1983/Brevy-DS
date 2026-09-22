@@ -103,3 +103,73 @@ test("the FAQ shows the two columns the desktop tab promises", async ({
   expect(read.paired, "the list stands beside the intro").toBe(true)
   expect(read.level, "and starts level with it").toBe(true)
 })
+
+/** A frame lands on a whole pixel, and the drawings inside it land with it.
+ *
+ *  The prose above a frame is a few lines whose heights do not add up to a
+ *  round number, so a figure would start at 361.75 and its document at
+ *  362.75. Everything inside then inherited the fraction: a 16px social icon
+ *  in the footer landed on 614.75, half a device pixel on a 2x screen, and a
+ *  sharp vector drawn across two rows of pixels is a blurred one.
+ *
+ *  Read off the rendered box rather than off the style that produces it. The
+ *  correction is a transform, and a transform is exactly the kind of thing
+ *  that reads as applied while the element it is on has not moved — the
+ *  number that matters is where the browser put the thing. */
+test("every frame lands on a whole pixel, in both themes", async ({ page }) => {
+  for (const theme of ["light", "dark"] as const) {
+    await page.addInitScript((name) => {
+      document.addEventListener("DOMContentLoaded", () => {
+        document.documentElement.classList.remove("light", "dark")
+        document.documentElement.classList.add(name)
+      })
+    }, theme)
+
+    for (const [path] of PAGES) {
+      await page.goto(path)
+      await measured(page)
+      await expect(page.locator("html")).toHaveClass(
+        new RegExp(`\\b${theme}\\b`),
+      )
+
+      const tops = await page.evaluate(() =>
+        [...document.querySelectorAll("iframe")].map(
+          (frame) => frame.getBoundingClientRect().top + window.scrollY,
+        ),
+      )
+
+      expect(tops.length, `${path} has frames to measure`).toBeGreaterThan(0)
+
+      for (const top of tops) {
+        expect(
+          top % 1,
+          `${path} in the ${theme}: a frame at ${String(top)} would blur what it holds`,
+        ).toBe(0)
+      }
+    }
+  }
+})
+
+test("the icons in the footer land on a whole device pixel", async ({
+  page,
+}) => {
+  await page.goto("/blocks/footer")
+  await measured(page)
+
+  const frame = page.locator("iframe").first()
+  const top = await frame.evaluate(
+    (node) => node.getBoundingClientRect().top + window.scrollY,
+  )
+
+  /** Four 16px icons in a row, which is why the footer is where this was
+   *  noticed rather than where it happened. */
+  const icon = await frame
+    .contentFrame()
+    .locator("a[aria-label='Facebook'] svg")
+    .evaluate((node) => node.getBoundingClientRect().top)
+
+  const screen = top + icon
+
+  expect(screen % 1, "on the page").toBe(0)
+  expect((screen * 2) % 1, "and on a 2x screen").toBe(0)
+})
