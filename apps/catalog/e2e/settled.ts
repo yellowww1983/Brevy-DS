@@ -1,4 +1,4 @@
-import { expect, type Page } from "@playwright/test"
+import { expect, type Locator, type Page } from "@playwright/test"
 
 /** Waits for work the browser does after a navigation resolves.
  *
@@ -131,4 +131,38 @@ export async function slotFaces(page: Page) {
     .toBe(0)
 
   return faces
+}
+
+/** Waits until every image in a set has actually decoded.
+ *
+ *  A lazy image is in the DOM long before it has anything to show, and while
+ *  it is waiting it reports `currentSrc` as an empty string rather than as the
+ *  file it will load. A spec that reads the source the moment the page settles
+ *  gets `""` and compares it against a path, which is a failure that looks
+ *  like the wrong picture shipped.
+ *
+ *  It cost two specs before it was worth sharing. The illustrations page
+ *  compared two empty strings and called them equal; `steps` read three tray
+ *  exports and got one name and two blanks, about one run in eight and only
+ *  under the load of the full suite, which is the sort of thing that reads as
+ *  the suite being unreliable rather than as a missing wait.
+ *
+ *  Scrolled into view first, because that is what a lazy image is waiting for.
+ *  The condition is the browser's own: `complete` with a decoded width, which
+ *  is true the instant there is something to read and cannot be true early. */
+export async function loaded(images: Locator) {
+  const count = await images.count()
+
+  for (let index = 0; index < count; index++) {
+    const image = images.nth(index)
+
+    await image.scrollIntoViewIfNeeded()
+    await image.evaluate((node) =>
+      node instanceof HTMLImageElement && node.complete && node.naturalWidth > 0
+        ? null
+        : new Promise((resolve) => {
+            node.addEventListener("load", resolve, { once: true })
+          }),
+    )
+  }
 }

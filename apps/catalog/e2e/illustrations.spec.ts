@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "./catalog-test"
+import { loaded as sharedLoaded } from "./settled"
 
 test.use({ viewport: { width: 1280, height: 1100 } })
 
@@ -12,25 +13,7 @@ const FIGURE = "figure[data-slot='illustration']"
  *  not loaded reports an empty `currentSrc`. Reading straight after `goto`
  *  gets that empty string and compares it happily against another one. */
 async function loaded(page: Page) {
-  const figures = page.locator(FIGURE)
-
-  for (let index = 0; index < (await figures.count()); index++) {
-    const figure = figures.nth(index)
-
-    await figure.scrollIntoViewIfNeeded()
-    await figure
-      .locator("img:visible")
-      .first()
-      .evaluate((image) =>
-        image instanceof HTMLImageElement &&
-        image.complete &&
-        image.naturalWidth > 0
-          ? null
-          : new Promise((resolve) => {
-              image.addEventListener("load", resolve, { once: true })
-            }),
-      )
-  }
+  await sharedLoaded(page.locator(FIGURE).locator("img:visible"))
 }
 
 /** Reads every drawing on the page: which file is showing, how it is drawn,
