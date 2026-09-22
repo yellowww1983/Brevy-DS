@@ -22,18 +22,25 @@ import { cn } from "../lib/utils.js"
  *
  *  `blue` is the one that is not the file's. The fourth slide is drawn in
  *  `indigo/200`, a ramp this system does not ship. Measured across the whole
- *  palette, `blue-200` is the closest thing to it that exists — 0.0246 in
- *  OKLab against the next candidate's 0.0301 — and the only one that keeps the
- *  five apart: the violets that come next sit 0.023 from the purple already
- *  on slide five, which is tighter than any two of the drawn colours. */
-type FeatureSliderTint = "yellow" | "olive" | "emerald" | "blue" | "purple"
+ *  palette, `blue-200` is the closest thing to it that exists, 0.0246 in
+ *  OKLab, and the two that rank closer behind it are both violets — which
+ *  slide five now holds, so neither was ever available for this one. As
+ *  built, the fourth and the fifth sit 0.0560 apart, the third widest gap in
+ *  the set.
+ *
+ *  `violet` is `violet-200` and not the `purple-200` the file draws, because
+ *  `SegmentRows` already paints a violet segment and paints it in
+ *  `violet-200`. The two were 0.0231 apart, close enough to read as a
+ *  mistake rather than a distinction, and one system should not have two
+ *  violets a page apart. The measured one wins. */
+type FeatureSliderTint = "yellow" | "olive" | "emerald" | "blue" | "violet"
 
 const TINTS: Record<FeatureSliderTint, string> = {
   yellow: "from-yellow-200",
   olive: "from-olive-300",
   emerald: "from-emerald-100",
   blue: "from-blue-200",
-  purple: "from-purple-200",
+  violet: "from-violet-200",
 }
 
 type FeatureSliderItem = {

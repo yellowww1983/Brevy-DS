@@ -37,7 +37,7 @@ export const FEATURES: readonly FeatureSliderItem[] = [
     title: "Texas EVV, built right in",
     description:
       "Clock-in and clock-out with automatic GPS and time capture, fully compliant with Texas HHSC. It's the one piece that arrives after launch, and it lives in the same app you already use, so there's nothing new to learn.",
-    tint: "purple",
+    tint: "violet",
   },
 ]
 
@@ -66,7 +66,8 @@ export const MOTION = [
 export const TINTS = [
   "The tint is the top stop of the gradient behind the artwork, running down to the page's own beige. The ground under the copy does not move with it: that gradient is beige to white on all five, which is what keeps the reading side steady while the picture side turns.",
   "The steps are not even, and they are written out rather than derived. Three of the five are the 200, the olive is a 300 and the emerald a 100 — the file picked what looked right at that weight, and a rule that derived them from the ramp name would quietly correct the drawing.",
-  "The fourth is not the file's colour. It is drawn in `indigo/200`, a ramp this system does not ship, so it takes `blue-200` instead: measured across the whole palette, the closest thing that exists at 0.0246 in OKLab, and the only candidate that keeps the five apart. The violets that rank next sit 0.023 from the purple already on the fifth slide, which is tighter than any two of the drawn colours.",
+  "The fourth is not the file's colour. It is drawn in `indigo/200`, a ramp this system does not ship, so it takes `blue-200` instead: measured across the whole palette, the closest thing that exists at 0.0246 in OKLab. The two that rank closer behind it are both violets, which the fifth slide now holds, so neither was available for this one. As built, the fourth and fifth sit 0.0560 apart — the third widest gap of the ten.",
+  "The fifth is not the file's colour either, and for a different reason. It is drawn in `purple/200`, but `SegmentRows` already paints a violet segment and paints it `violet-200`. The two sat 0.0231 apart, which is close enough to read as a slip rather than a decision, so this takes the one that was there first. One system, one violet.",
 ]
 
 export const LAYOUT = [
@@ -107,7 +108,11 @@ export function featureSliderDoc() {
       FEATURES.map((feature) => [
         feature.title,
         feature.tint,
-        feature.tint === "blue" ? "indigo/200, not shipped" : "as drawn",
+        feature.tint === "blue"
+          ? "indigo/200, not shipped"
+          : feature.tint === "violet"
+            ? "purple/200, already a violet here"
+            : "as drawn",
       ]),
     ),
     "",
