@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "./catalog-test"
-import { measured } from "./settled"
+import { loaded, measured } from "./settled"
 
 test.use({ viewport: { width: 1440, height: 1600 } })
 
@@ -830,17 +830,23 @@ test("the app trays carry the app's own artwork, not the row's", async ({
    *  landing's and its pictures were not, which reads as the right block
    *  holding the wrong product — so the source of every tray is checked, and
    *  checked against the other row's as well as for its own name. */
-  const sources = await sectionIn(app(page))
-    .locator("[data-slot='steps-tray'] img")
-    .evaluateAll((images) =>
-      images.map((image) =>
-        image instanceof HTMLImageElement
-          ? decodeURIComponent(image.currentSrc)
-              .replace(/^.*?url=/, "")
-              .split("&")[0]
-          : "",
-      ),
-    )
+  /** The trays are lazy, and a lazy image names no source until it has one.
+   *  Read without this, two of the three came back as empty strings — about
+   *  one run in eight, and only under the load of the full suite, which reads
+   *  as the wrong artwork shipping rather than as a missing wait. */
+  const trays = sectionIn(app(page)).locator("[data-slot='steps-tray'] img")
+
+  await loaded(trays)
+
+  const sources = await trays.evaluateAll((images) =>
+    images.map((image) =>
+      image instanceof HTMLImageElement
+        ? decodeURIComponent(image.currentSrc)
+            .replace(/^.*?url=/, "")
+            .split("&")[0]
+        : "",
+    ),
+  )
 
   expect(sources, "one export per card").toEqual([
     "/steps/app-1.webp",
