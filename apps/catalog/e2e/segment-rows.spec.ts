@@ -496,11 +496,12 @@ test("a tonal ground is a tint, so it darkens", async ({ page }) => {
 test("the artwork keeps its place and turns with the page", async ({
   page,
 }) => {
-  /** Every surface inside the white card is a token, so the mock is the same
-   *  arrangement in either theme rather than a light picture that has to be
-   *  hidden on a dark page. The bubbles take `--popover`, a step above
-   *  `--card`; the field takes `--background`, a step below. In the light all
-   *  three are white and the hairline does the separating, which is what the
+  /** Every surface inside the card is a token and the card is pinned to the
+   *  light palette, so those tokens resolve to their light values on a dark
+   *  page too: the mock is the same object in both themes rather than a light
+   *  picture that has to be hidden on a dark one. The bubble takes
+   *  `--popover` and the field `--background`, both white in the light, so
+   *  the hairline and the shadow do the separating — which is what the
    *  drawing does. */
   const read = async () =>
     page
@@ -559,14 +560,25 @@ test("the artwork keeps its place and turns with the page", async ({
             pixel(getComputedStyle(node).backgroundColor),
             paint("[data-slot='icon-list-face']", "color"),
           ),
-          /** Nothing may be left painted a fixed pale colour on a dark card. */
-          strays: [...node.querySelectorAll("*")].filter(
-            (child) =>
-              child.getClientRects().length > 0 &&
-              /^rgb\(2[3-9]\d, 2[3-9]\d, 2[3-9]\d\)$/.test(
-                getComputedStyle(child).backgroundColor,
-              ),
-          ).length,
+          /** Every painted surface in the card, in tree order.
+           *
+           *  The card is pale in both themes now, so the risk runs the other
+           *  way than it used to: a surface the pin missed stays dark and
+           *  leaves a black patch in a white card. Rather than guess at a
+           *  luminance a stray would have — the pill is legitimately near
+           *  black, and a threshold called it a leak — the two themes are
+           *  compared against each other. Anything that moves is a leak by
+           *  definition, whatever colour it moved to. */
+          surfaces: [...node.querySelectorAll("*")]
+            .filter((child) => child.getClientRects().length > 0)
+            .map((child) => {
+              const ground = getComputedStyle(child).backgroundColor
+
+              return ground === "rgba(0, 0, 0, 0)"
+                ? "-"
+                : pixel(ground).join(",")
+            })
+            .join(" "),
         }
       })
 
@@ -601,7 +613,10 @@ test("the artwork keeps its place and turns with the page", async ({
     expect(set.glyph, `${name} check`).toBeGreaterThanOrEqual(4.5)
   }
 
-  expect(dark.strays, "no pale patch left on a dark card").toBe(0)
+  expect(
+    dark.surfaces,
+    "every painted surface in the card is the one the light page paints",
+  ).toBe(light.surfaces)
 })
 
 test("the section and the words on it follow the page", async ({ page }) => {
@@ -652,4 +667,131 @@ test("the catalog frames the section at all three widths", async ({ page }) => {
       .first()
       .evaluate((node) => Math.round(node.getBoundingClientRect().width)),
   ).toBe(390)
+})
+
+/** Opens the specimen with a theme already on the root.
+ *
+ *  Registered on `DOMContentLoaded` and nothing sooner: an init script runs
+ *  before the root element is parsed, so reaching for
+ *  `document.documentElement` there throws and takes the listener with it,
+ *  which is how a dark page quietly reads as a light one. */
+async function specimenIn(page: Page, theme: "light" | "dark") {
+  await page.addInitScript((name) => {
+    document.addEventListener("DOMContentLoaded", () => {
+      document.documentElement.classList.remove("light", "dark")
+      document.documentElement.classList.add(name)
+    })
+  }, theme)
+
+  await page.goto(SPECIMEN)
+  await expect(page.locator("[data-slot='segment-rows-card']")).not.toHaveCount(
+    0,
+  )
+  await expect(page.locator("html")).toHaveClass(new RegExp(`\\b${theme}\\b`))
+}
+
+/** Every surface and ink inside the illustration card, painted rather than
+ *  named. The values arrive as `oklch()`, `rgb()` and `lab()` depending on
+ *  which token they came from, and none of the three compares against another
+ *  as text. */
+async function insideCard(page: Page) {
+  return await page.evaluate(() => {
+    const canvas = document.createElement("canvas")
+    canvas.width = 1
+    canvas.height = 1
+
+    const context = canvas.getContext("2d")
+
+    if (!context) {
+      throw new Error("no 2d context to paint into")
+    }
+
+    const paint = (css: string) => {
+      context.clearRect(0, 0, 1, 1)
+      context.fillStyle = css
+      context.fillRect(0, 0, 1, 1)
+
+      return [...context.getImageData(0, 0, 1, 1).data].join(",")
+    }
+
+    const card = document.querySelector(
+      "[data-slot='segment-rows-card'][data-tone='violet'] [data-slot='segment-rows-illustration']",
+    )
+
+    if (!card) {
+      throw new Error("no illustration card to read")
+    }
+
+    const inside = (selector: string, part: "ground" | "ink") => {
+      const node = card.querySelector(selector)
+
+      if (!node) {
+        throw new Error(`nothing at ${selector}`)
+      }
+
+      const style = getComputedStyle(node)
+
+      return paint(part === "ink" ? style.color : style.backgroundColor)
+    }
+
+    return {
+      card: paint(getComputedStyle(card).backgroundColor),
+      bubble: inside("[data-mock='bubble']", "ground"),
+      bubbleInk: inside("[data-mock='bubble-ink']", "ink"),
+      field: inside("[data-mock='field']", "ground"),
+      fieldInk: inside("[data-mock='field-ink']", "ink"),
+      pill: inside("[data-mock='pill']", "ground"),
+      /** The icon list is here because it is where the pin first leaked.
+       *  Its label carries its own colour and followed; its check carries
+       *  none, inherited the dark page's ink from outside the card, and came
+       *  through at #fafafa on white. Reading only the mock would have
+       *  called that a pass. */
+      listLabel: inside("[data-slot='icon-list-label']", "ink"),
+      listFace: inside("[data-slot='icon-list-face']", "ink"),
+    }
+  })
+}
+
+test("the illustration card is the same object in both themes", async ({
+  page,
+}) => {
+  await specimenIn(page, "light")
+
+  const light = await insideCard(page)
+
+  await specimenIn(page, "dark")
+
+  const dark = await insideCard(page)
+
+  /** The card is pinned light while the tone around it turns, so this is the
+   *  one part of a segment where the two themes have to agree exactly.
+   *
+   *  It is the whole interior rather than the card alone on purpose: pinning
+   *  only the ground would give a white panel with a black field in it, and
+   *  a test that read the ground alone would have called that a pass. */
+  expect(dark, "every surface and ink inside the card").toEqual(light)
+
+  /** And the ground it sits on still turns, which is what the pin is for. A
+   *  segment that stopped turning would pass the check above while losing
+   *  the thing it was protecting. */
+  const grounds = async () =>
+    await page.evaluate(() => {
+      const card = document.querySelector(
+        "[data-slot='segment-rows-card'][data-tone='violet']",
+      )
+
+      if (!card) {
+        throw new Error("no card to read")
+      }
+
+      return getComputedStyle(card).backgroundImage
+    })
+
+  const darkGround = await grounds()
+
+  await specimenIn(page, "light")
+
+  expect(await grounds(), "the tonal ground is not pinned with it").not.toBe(
+    darkGround,
+  )
 })

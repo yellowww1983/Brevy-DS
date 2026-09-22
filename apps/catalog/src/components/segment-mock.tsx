@@ -14,13 +14,16 @@ import { PROGRAMS, PROGRAMS_HEADING } from "@/icon-list"
  *  question somebody asked, the programs it turned up, and the field they
  *  asked it in.
  *
- *  Every surface here is a token rather than a colour, so the mock is the same
- *  arrangement in either theme instead of a light picture that has to be
- *  hidden on a dark page. The bubbles take `--popover`, which sits a step
- *  above `--card` in the dark and is what separates them from the card they
- *  lie on; the field takes `--background`, a step below, which is what a
- *  recessed input reads as. In the light all three are white and the hairline
- *  does the separating, which is what the drawing does too.
+ *  Every surface here is a token rather than a colour, and the card this sits
+ *  in is pinned to the light palette, so the tokens resolve to their light
+ *  values on a dark page too: the mock is the same object in both themes
+ *  rather than a light picture that has to be hidden on a dark one.
+ *
+ *  The bubble takes `--popover` and the field `--background`, which in the
+ *  light are both white, so the hairline and the shadow do the separating —
+ *  which is what the drawing does too. Those two tokens used to be doing a
+ *  second job, stepping above and below `--card` to separate themselves on a
+ *  dark page. They no longer need to, because there is no dark page in here.
  *
  *  Catalog furniture. A client brings their own. */
 export function SegmentMock({ index }: { index: number }) {

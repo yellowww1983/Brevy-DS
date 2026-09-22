@@ -17,7 +17,9 @@ import { cn } from "../lib/utils.js"
  *  background in the dark — which is the one thing all three agree on.
  *
  *  A tonal ground is a tint rather than an accent, and a tint darkens. So the
- *  whole palette turns end for end in the dark: the ground drops from the
+ *  tonal palette turns end for end in the dark — the illustration card beside
+ *  it is the exception and is pinned light, for the reason given where it is
+ *  built: the ground drops from the
  *  200 to the 950, the ink climbs from the 900 to the 100, and each tone
  *  keeps whichever ramps it owns. Every pair below was measured rather than
  *  picked, and every one clears AA:
@@ -245,7 +247,38 @@ function SegmentRows({
 
                     <div
                       data-slot="segment-rows-illustration"
-                      className="min-h-(--segment-illustration) min-w-0 flex-1 overflow-hidden rounded-2xl bg-white p-6 shadow-md tablet:basis-1/2 dark:bg-card"
+                      /** The one thing in a segment that does not turn with
+                       *  the theme.
+                       *
+                       *  Everything around it does — the ground drops to the
+                       *  950, the ink climbs to the 100, the beam lightens —
+                       *  and this card followed, down to `--card` with its
+                       *  bubble and field going with it. That measured 1.44
+                       *  against the ground it sits on, against 12.43 white,
+                       *  so the card that is meant to read as a lit panel of
+                       *  product all but disappeared into the segment.
+                       *
+                       *  `light` rather than a white background and a list of
+                       *  pinned children. It redefines the whole token set on
+                       *  the subtree and takes it out of reach of the `dark:`
+                       *  variant, so the card, its bubble, its field, its inks
+                       *  and its icon list all resolve to their light values
+                       *  together. Pinning only the card would give a white
+                       *  panel with black fields in it. Measured against the
+                       *  light page, every pair inside comes out identical.
+                       *
+                       *  `text-foreground` is part of the pin rather than a
+                       *  choice about the ink. `color` inherits, and it
+                       *  inherits resolved: an ancestor outside this card
+                       *  turns `var(--foreground)` into a colour, and what
+                       *  arrives here is that colour rather than the variable,
+                       *  so redefining the token on this subtree cannot reach
+                       *  it. Anything inside without a colour of its own would
+                       *  keep the dark page's ink — measured, the icon list's
+                       *  check came through at #fafafa on a white card, 1.04
+                       *  to 1. Setting it here restarts the inheritance inside
+                       *  the pin, where the token is the light one. */
+                      className="light min-h-(--segment-illustration) min-w-0 flex-1 overflow-hidden rounded-2xl bg-white p-6 text-foreground shadow-md tablet:basis-1/2"
                     >
                       {item.illustration}
                     </div>
