@@ -1,38 +1,53 @@
 # Brevy Design System
 
 The components Brevy's product and marketing pages are built from, and a
-catalog that documents them well enough for someone to assemble a page without
-a designer in the room.
+catalog that documents them well enough to assemble a page without a designer
+in the room.
 
-That last part is the point. The audience is a product manager working with
-Claude: they describe a page, Claude reaches for the blocks, and the result
-looks like Brevy because the blocks are Brevy rather than because anybody
-remembered the brand guidelines. Every page in the catalog can hand itself over
-as text, and `/llms-full.txt` hands over all of it at once.
+That last part is the point. Brevy is eldercare software, and the person
+building a page is a product manager, not a designer. They describe what the
+page should say, Claude reaches for the blocks, and the result looks like
+Brevy — not because anyone remembered the brand guidelines, but because the
+blocks are the brand. Every page in the catalog can hand itself over as text,
+and `/llms-full.txt` hands over all of it at once, which is how Claude knows
+what exists without being told.
+
+The division of labour is deliberate and worth stating, because it is easy to
+get backwards:
+
+- **The blocks are measured, not invented.** Every value here was read off the
+  Figma file or off the shipped brevy.com and written down with the number
+  beside it. Nothing is approximated to taste.
+- **A person decides how it should look.** Colour, arrangement, which of three
+  candidates ships — those are judgements, and they are made by a human
+  looking at the thing on screen, not argued into existence.
+- **Claude writes the code and proves it.** Measurement, implementation and
+  the test that pins it. Where two sources disagree, or where a decision would
+  change how something reads, it stops and asks rather than picking.
 
 The design is a Figma file. Where the file does not answer a question, the
-shipped brevy.com does, and where neither does, the decision is written down in
-`DESIGN-FEEDBACK.md` and asked about rather than quietly made.
+shipped brevy.com does, and where neither does, the decision goes in
+`DESIGN-FEEDBACK.md` and gets asked about rather than quietly made.
 
 ## What is where
 
 |                   |                                                                                                                                                                        |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/tokens` | One stylesheet. Colour ramps, the type scale, spacing, radii, shadows, and the brand's own masks. Everything else reads from here.                                     |
-| `packages/ui`     | The components: 18 of them, 14 page blocks and one screen. Internal to this workspace, not published. See its own README.                                              |
+| `packages/ui`     | The components: 18 of them, 15 page blocks and one screen. Internal to this workspace, not published. See its own README.                                              |
 | `apps/catalog`    | The Next.js site that documents the package. Also the only consumer of it, which is deliberate: if the catalog cannot show a component, the component is not finished. |
 
-The catalog's `src/registry.tsx` lists all 38 entries — 12 components, 14
-blocks, 11 foundations, 1 screen — and everything else reads from it: the
+The catalog's `src/registry.tsx` lists all 40 entries — 12 components, 15
+blocks, 12 foundations, 1 screen — and everything else reads from it: the
 sidebar, `/llms.txt`, `/llms-full.txt`, and the test that checks nobody wrote a
 page without wiring it in.
 
-The foundations are wider than the token pages the name suggests: `Logo` and
-the two animation libraries, `Animations: Lottie` and `Animations: Video`, are
-in there beside colour and spacing, because they are things a page is built out
-of rather than components it imports. The blocks run from `Navbar` and `Banner`
-at the top of a page to `Footer` at the foot of it. The registry is the list;
-this paragraph is not, and will be out of date before the registry is.
+The foundations are wider than the token pages the name suggests. `Logo`, the
+two animation libraries and `Illustrations` sit in there beside colour and
+spacing, because they are things a page is built out of rather than components
+it imports. The blocks run from `Navbar` at the top of a page to `Footer` at
+the foot of it. The registry is the list; this paragraph is not, and will be
+out of date before the registry is.
 
 ## Running it
 
@@ -105,7 +120,7 @@ than the dev server. Wait on the condition the sleep was standing in for:
 ### The registry is one file on purpose
 
 `registry.tsx` is the largest file here and it is deliberately not split. It is
-the single source for 38 entries, and a guard checks that every doc written is
+the single source for 40 entries, and a guard checks that every doc written is
 in it and every entry in it is checked. Splitting it into a file per kind would
 reintroduce exactly the drift it exists to prevent: a page written, wired
 nowhere, and nobody noticing.
