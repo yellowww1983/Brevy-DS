@@ -55,6 +55,31 @@ type Family = {
   variants: readonly { label: string; href: string }[]
 }
 
+/** The sidebar does not prefetch, and the whole of it agrees on that.
+ *
+ *  Next prefetches every link in view. Forty routes are in view here, so each
+ *  page arrives and immediately asks for forty more — measured, 26 `?_rsc=`
+ *  requests against 147 of everything else, on every single page load.
+ *
+ *  A reader never noticed. The suite did: five workers each opening a page
+ *  that frames five documents, behind a burst like that, and the navigation
+ *  to `/blocks/steps` stopped completing at all. Eighteen tests timing out in
+ *  `page.goto`, and not a slow navigation either — raised to a 120s budget
+ *  they failed at two minutes rather than passing.
+ *
+ *  Measured across eight full runs per setting, each built immediately before
+ *  it because the fault lives in the minutes after a build: as it was, three
+ *  clean runs out of eight; with prefetch off, eight out of eight. Halving
+ *  the workers instead gave five out of eight and still produced one full
+ *  eighteen, which is a smaller chance of the same fault rather than the end
+ *  of it.
+ *
+ *  The cost is a click waiting for its route. This is an internal catalog on
+ *  a local or a preview server, the documents are small, and nothing here is
+ *  a funnel where a hundred milliseconds is money. A product site with real
+ *  readers would weigh this the other way. */
+const PREFETCH = false
+
 /** A registry entry names its icon; this is where the name becomes one. It
  *  lives in the sidebar because lucide is the sidebar's business, and keeping
  *  it out of the registry is what lets the registry stay a list of data. */
@@ -256,6 +281,7 @@ function NavFamily({
           return (
             <li key={variant.href} className="relative">
               <Link
+                prefetch={PREFETCH}
                 href={variant.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
@@ -296,6 +322,7 @@ function NavEntry({
 
   return (
     <Link
+      prefetch={PREFETCH}
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
@@ -337,6 +364,7 @@ export function Sidebar() {
     >
       <div className="flex h-14 shrink-0 items-center border-b border-sidebar-border px-6">
         <Link
+          prefetch={PREFETCH}
           /** Where the root goes. The two used to disagree, so the way in
            *  depended on whether you typed the address or pressed the logo. */
           href="/getting-started/introduction"
@@ -369,6 +397,7 @@ export function Sidebar() {
               return (
                 <li key={entry.slug} className="relative">
                   <Link
+                    prefetch={PREFETCH}
                     href={href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
