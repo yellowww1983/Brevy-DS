@@ -17,14 +17,20 @@ const DRAWN = {
   hover: "0.15s",
   copyFloor: "240px",
   mediaFloor: "420px",
-  /** The top stop of each panel, painted. The fourth is `blue-200` standing
-   *  in for an `indigo/200` this system does not ship. */
+  /** The top stop of each panel, painted.
+   *
+   *  Two are not the colours the file draws. The fourth is `blue-200`
+   *  standing in for an `indigo/200` this system does not ship. The fifth is
+   *  `violet-200` rather than the drawn `purple/200`, because `SegmentRows`
+   *  already paints a violet and paints it `violet-200`; the two sat 0.0231
+   *  apart, which is close enough to read as a slip. The test below is what
+   *  holds the two blocks together; this only pins what the slider paints. */
   tints: {
     yellow: "253,228,178,255",
     olive: "220,231,207,255",
     emerald: "207,230,222,255",
     blue: "191,219,254,255",
-    purple: "233,213,255,255",
+    violet: "233,222,255,255",
   },
   ground: {
     beige: "245,242,239,255",
@@ -165,7 +171,7 @@ test("each feature brings the tint the file gives it", async ({ page }) => {
     "olive",
     "emerald",
     "blue",
-    "purple",
+    "violet",
   ])
 })
 
@@ -382,6 +388,56 @@ test("the tints do not turn on a dark page, and the panel beside them does", asy
     await painted(page, copy.ground),
     "and the copy panel stands on the page's own ground",
   ).toBe(DRAWN.ground.dark)
+})
+
+test("one system, one violet: the slider and the segment rows agree", async ({
+  page,
+}) => {
+  /** The regression this exists for. Both blocks were read out of the design
+   *  file on their own and both got a violet, but not the same one: the file
+   *  draws this slide in `purple/200` and the segment in `violet/200`, 0.0231
+   *  apart in OKLab. Close enough that neither page looked wrong by itself,
+   *  and only wrong when someone put them side by side.
+   *
+   *  Pinning the slider's hex alone would not have caught it, because the
+   *  slider was never the one that drifted. So this reads both, and a change
+   *  to either fails it. */
+  const stop = async (path: string, selector: string) => {
+    await page.goto(path)
+    await expect(page.locator(selector)).toHaveCount(1)
+
+    return await page.evaluate((target) => {
+      const node = document.querySelector(target)
+
+      if (!node) {
+        throw new Error(`nothing at ${target}`)
+      }
+
+      const found = /rgb\([^)]*\)|oklch\([^)]*\)|oklab\([^)]*\)/.exec(
+        getComputedStyle(node).backgroundImage,
+      )
+
+      if (!found) {
+        throw new Error(`no gradient at ${target}`)
+      }
+
+      return found[0]
+    }, selector)
+  }
+
+  const slider = await stop(SPECIMEN, "[data-tint='violet']")
+  const segment = await stop(
+    "/specimens/segment-rows",
+    "[data-slot='segment-rows-card'].from-violet-200",
+  )
+
+  expect(await painted(page, slider), "the slider's violet").toBe(
+    DRAWN.tints.violet,
+  )
+  expect(
+    await painted(page, segment),
+    "and the segment rows paint the same one",
+  ).toBe(DRAWN.tints.violet)
 })
 
 test("the two halves stack below the one breakpoint there is", async ({
