@@ -37,7 +37,7 @@ shipped brevy.com does, and where neither does, the decision goes in
 | `packages/ui`     | The components: 18 of them, 15 page blocks and one screen. Internal to this workspace, not published. See its own README.                                              |
 | `apps/catalog`    | The Next.js site that documents the package. Also the only consumer of it, which is deliberate: if the catalog cannot show a component, the component is not finished. |
 
-The catalog's `src/registry.tsx` lists all 40 entries — 12 components, 15
+The catalog's `src/registry.tsx` lists all 43 entries — 15 components, 15
 blocks, 12 foundations, 1 screen — and everything else reads from it: the
 sidebar, `/llms.txt`, `/llms-full.txt`, and the test that checks nobody wrote a
 page without wiring it in.
@@ -120,7 +120,7 @@ than the dev server. Wait on the condition the sleep was standing in for:
 ### The registry is one file on purpose
 
 `registry.tsx` is the largest file here and it is deliberately not split. It is
-the single source for 40 entries, and a guard checks that every doc written is
+the single source for 43 entries, and a guard checks that every doc written is
 in it and every entry in it is checked. Splitting it into a file per kind would
 reintroduce exactly the drift it exists to prevent: a page written, wired
 nowhere, and nobody noticing.
