@@ -12,12 +12,16 @@ import {
   Chip,
   Facebook,
   IconList,
+  IllustrationPanel,
   LineMarker,
   IconListItem,
   Input,
   Instagram,
   Label,
   LinkedIn,
+  Marker,
+  QuoteCard,
+  StatFigure,
   TikTok,
   type BadgeProps,
   type ButtonProps,
@@ -32,6 +36,7 @@ import {
   Plus,
   X,
 } from "lucide-react"
+import Image from "next/image"
 import type { ReactNode } from "react"
 
 import { MISSING_PHOTO, PEOPLE } from "./avatar"
@@ -746,6 +751,119 @@ const COMPONENTS: readonly ComponentEntry[] = [
         </Avatar>
       )
     },
+  },
+  {
+    slug: "illustration-panel",
+    name: "Illustration panel",
+    kind: "component",
+    href: "/components/illustration-panel",
+    summary: "The soft green frame the product's artwork sits in.",
+    doc: () =>
+      import("./illustration-panel").then((module) =>
+        module.illustrationPanelDoc(),
+      ),
+    wide: true,
+    // Drawn from Brevy Website · 44 nodes across two blocks, every one the
+    // same construction at the three widths its column gives it. Documented
+    // as it stands, light ground and all: nothing in it turns on a dark page,
+    // which is the state today rather than a decision.
+    //
+    // The badge is the one choice the file makes twice: the step cards hang
+    // one in the corner, the benefit cards paint theirs into the artwork and
+    // leave the corner empty.
+    axes: [
+      {
+        label: "Corner",
+        values: ["A badge", "Empty"],
+        phrasing: {
+          "A badge": "with a badge in the corner",
+          Empty: "with nothing in the corner",
+        },
+      },
+    ],
+    omitted: [],
+    render: (combination) => (
+      <IllustrationPanel
+        className="w-72"
+        marker={
+          combination.Corner === "Empty" ? undefined : (
+            <Marker tone="olive">1</Marker>
+          )
+        }
+      >
+        <Image
+          src="/steps/panel-1.webp"
+          alt=""
+          width={341}
+          height={290}
+          className="size-full object-cover"
+        />
+      </IllustrationPanel>
+    ),
+  },
+  {
+    slug: "stat-figure",
+    name: "Stat figure",
+    kind: "component",
+    href: "/components/stat-figure",
+    summary: "A headline number with its unit beside it.",
+    doc: () => import("./stat-figure").then((module) => module.statFigureDoc()),
+    // Drawn from Brevy Website · 39 of them in three containers that agree on
+    // nothing but the type. The preview wears the olive card's colour because
+    // a figure with no container has none of its own.
+    //
+    // The unit is the choice: two of the three containers hang one beside the
+    // number and the pill carries its own inside it, so a bare figure is a
+    // form the file draws rather than an omission.
+    axes: [
+      {
+        label: "Unit",
+        values: ["With a unit", "Bare"],
+        phrasing: {
+          "With a unit": "with its unit beside it",
+          Bare: "as a number on its own",
+        },
+      },
+    ],
+    omitted: [],
+    render: (combination) => (
+      <StatFigure
+        value="1500"
+        unit={combination.Unit === "Bare" ? undefined : "+"}
+        className="text-emerald-500"
+      />
+    ),
+  },
+  {
+    slug: "quote-card",
+    name: "Quote card",
+    kind: "component",
+    href: "/components/quote-card",
+    summary: "A quotation, the person who said it, and the mark behind both.",
+    doc: () => import("./quote-card").then((module) => module.quoteCardDoc()),
+    wide: true,
+    // Drawn from Brevy Website · twelve instances, eleven in the testimonial
+    // wall and one in the tile mosaic. The two marks are the two offsets the
+    // file hand-places rather than a rule. DESIGN-FEEDBACK 90.
+    axes: [
+      {
+        label: "Mark",
+        values: ["card", "tile"],
+        phrasing: {
+          card: "hung where the wall's cards hang it",
+          tile: "hung higher, for a wider and shorter card",
+        },
+      },
+    ],
+    omitted: [],
+    render: (combination) => (
+      <QuoteCard
+        className="max-w-md"
+        mark={combination.Mark === "tile" ? "tile" : "card"}
+        quote="They made it easy to get hired, and they answer every question."
+        author={PEOPLE[0] ?? { name: "Maria Wells", initials: "MW", photo: "" }}
+      />
+    ),
   },
   {
     slug: "social-proof",
