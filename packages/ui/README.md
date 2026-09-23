@@ -120,8 +120,8 @@ Container, Form, IconList, IllustrationPanel, Input, Label, LineMarker, Marker,
 QuoteCard, ShapedImage, SocialProof, StatFigure.
 
 **Blocks** — whole sections of a page. Navbar, Banner, HeroCentered,
-HeroSplit, CardGrid, LogoCloud, MediaCopy, SegmentRows, Faq, Steps, Tiles,
-Testimonials, CtaBand, Footer.
+HeroSplit, CardGrid, LogoCloud, ActivityMarquee, MediaCopy, SegmentRows, Faq,
+Steps, Tiles, Testimonials, CtaBand, Footer.
 
 **Screens** — AuthSplit, the signed-in product's way in.
 

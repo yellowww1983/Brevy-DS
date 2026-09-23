@@ -715,6 +715,28 @@
      each end rather than cutting them at the edge. */
   --logo-cloud-fade: 3rem;
 
+  /* The activity marquee. Measured off brevy.com, which draws it and runs it:
+     the rows stop widening at 1408 and run edge to edge below that, and the
+     words stand 48 apart. A pill drawn among words keeps the words' 48.
+
+     A row of nothing but pills is not drawn anywhere. Each pill already
+     carries 12 of padding on either side of its label, so the words' 48 would
+     put 72 between two labels — which is why it has its own number, 16, chosen
+     by eye against 24 and 32. */
+  --activity-marquee: 88rem;
+  --activity-marquee-gap: 3rem;
+  --activity-marquee-chips-gap: 1rem;
+  /* The floor on one set's width: half the rows' own width, because a lap
+     slides two sets. A set narrower than that leaves the far end of the row
+     empty for part of every lap. Ten words are 1144 at 48 apart, so the floor
+     holds only for a caller who passes a short row. */
+  --activity-marquee-set: calc(min(var(--activity-marquee), 100vw) / 2);
+  /* A lap per row, as the live page times them: three durations so no two
+     rows keep step, and the middle one run the other way. */
+  --activity-marquee-1: 80s;
+  --activity-marquee-2: 100s;
+  --activity-marquee-3: 90s;
+
   /* The benefit grid. 389 a card at the desktop, which is the 1200 column less
      two 16 gaps in three; the copy under the panel grows and the panel does
      not, which is what puts the drawn cards at 454 and 482 in one row. */
@@ -851,6 +873,35 @@
 
 @utility animate-marquee {
   animation: marquee 40s linear infinite;
+}
+
+/* The activity marquee's own slide, kept apart from the logo band's although
+   the two are the same shape today. They are different blocks timed by
+   different pages, and one moving should not move the other.
+
+   A row is four sets of the same items, and a lap is two of them: sliding half
+   the track lands the third set exactly where the first began. */
+@keyframes activity-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@utility animate-activity-marquee-1 {
+  animation: activity-marquee var(--activity-marquee-1) linear infinite;
+}
+
+/* The middle row runs the other way. The same slide played backwards, rather
+   than a second set of keyframes that would have to be kept its mirror. */
+@utility animate-activity-marquee-2 {
+  animation: activity-marquee var(--activity-marquee-2) linear infinite reverse;
+}
+
+@utility animate-activity-marquee-3 {
+  animation: activity-marquee var(--activity-marquee-3) linear infinite;
 }
 
 /* The dark tile's own thread: its fill one step darker, which is what the
