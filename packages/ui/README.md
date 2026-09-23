@@ -1,7 +1,9 @@
 # @brevy/ui
 
-Brevy's components and page blocks. Internal to this workspace: the catalog in
-`apps/catalog` consumes it, and nothing is published to npm.
+Brevy's components and page blocks, and the documentation for them. The
+catalog in `apps/catalog` is built from this package and documents it; a
+project of its own installs it and gets the same documentation inside
+`node_modules`.
 
 Everything comes out of the one entry point.
 
@@ -12,6 +14,104 @@ import { Button, CtaBand, Navbar } from "@brevy/ui"
 Styles come from `@brevy/tokens`, which the consuming app imports once. Without
 it the components render unstyled: the package ships no CSS of its own and
 every colour, size and radius is a token.
+
+## Using it in your own project
+
+The package is not on npm. It is installed from a tarball built in this repo,
+together with `@brevy/tokens`, which carries the stylesheet.
+
+This procedure follows from the code and from the packed tarball, and has not
+yet been through an install in a separate project. Treat it as the expected
+path rather than a tested one: the token override in step 2 and the `@source`
+path in step 3 are what the first real install will confirm.
+
+### 1. Build the tarballs
+
+In this repo:
+
+```sh
+pnpm --filter @brevy/ui pack --pack-destination <dir>
+pnpm --filter @brevy/tokens pack --pack-destination <dir>
+```
+
+Packing builds the package first and checks its documentation against the
+catalog, so a tarball cannot carry docs older than the code.
+
+### 2. Install
+
+Copy both into the project, say `vendor/`, then:
+
+```sh
+pnpm add ./vendor/brevy-ui-0.0.0.tgz ./vendor/brevy-tokens-0.0.0.tgz
+pnpm add react@19 react-dom@19 radix-ui lucide-react react-hook-form zod @hookform/resolvers
+pnpm add -D tailwindcss@4 @tailwindcss/postcss@4
+```
+
+and pin the tokens in `package.json`:
+
+```json
+"pnpm": {
+  "overrides": { "@brevy/tokens": "file:./vendor/brevy-tokens-0.0.0.tgz" }
+}
+```
+
+With npm the same field is `overrides`. `@brevy/ui` depends on
+`@brevy/tokens@0.0.0`, which is on no registry; without the override the
+install fails looking for it. `react-hook-form` is needed even on a page with
+no form: the one entry point re-exports `Form`, which imports it.
+
+### 3. Tailwind and the tokens
+
+`postcss.config.mjs` with `plugins: ["@tailwindcss/postcss"]`, and in the global
+stylesheet:
+
+```css
+@import "tailwindcss";
+@import "@brevy/tokens/globals.css";
+@source "../node_modules/@brevy/ui/dist";
+```
+
+In that order: the tokens build on Tailwind's palette. `@source` is not
+optional — Tailwind 4 does not scan `node_modules`, and without it every
+component renders unstyled. The path is relative to the stylesheet.
+
+### 4. Typefaces
+
+Rethink Sans for text, Hedvig Letters Serif (weight 400) for headings. With
+`next/font`, load both with `variable: "--font-rethink-sans"` and
+`variable: "--font-hedvig"`, put the variables on `<html>`, and point the
+tokens at them:
+
+```css
+@theme inline {
+  --font-sans: var(--font-rethink-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-hedvig), ui-serif, Georgia, serif;
+}
+```
+
+`next/font` renames the families it loads, so the names in the token file never
+reach them without this.
+
+### 5. The page
+
+`<body className="bg-background text-foreground font-sans antialiased">` — the
+tokens set no base styles. Light is the default; dark is the class `dark` on an
+ancestor, usually `<html>`. There is no provider.
+
+### 6. Check
+
+Render a `Button`. If it has no fill, the `@source` path is wrong.
+
+### Using it with Claude
+
+The documentation is in `dist/docs`: an index, one file per foundation,
+component, block and screen, and the rules for sections no block covers. It is
+generated from the catalog's registry when the package is built, so it is the
+same text the catalog pages hand over.
+
+Add the contents of `node_modules/@brevy/ui/dist/docs/claude-md-snippet.md` to
+the project's `CLAUDE.md`. It tells Claude to read the index first and open
+only what the page needs.
 
 ## What is in it
 
@@ -88,7 +188,9 @@ Artwork is a slot rather than a shape. A block that holds a picture takes a
 node, because the drawings are hand-placed compositions rather than something
 the system can name.
 
-## Conventions inside the package
+## Working on the package
+
+### Conventions inside the package
 
 - Every component and block carries a `data-slot`, which is how the specs, the
   catalog frames and one component styling the inside of another all find
@@ -99,14 +201,18 @@ the system can name.
 - Dark is a `dark:` variant on the same element, never a second component.
 - Anything that animates carries `motion-reduce`.
 
-## Building it
+### Building it
 
 ```sh
 pnpm --filter @brevy/ui test       # vitest
-pnpm --filter @brevy/ui build      # tsup, to dist
+pnpm --filter @brevy/ui build      # tsup to dist, then the docs to dist/docs
+pnpm --filter @brevy/ui pack       # build, check the docs, pack
 ```
 
 The package's `exports` points at `src/index.ts`, so the catalog reads the
-workspace source directly and a change shows up there without building. The
-`tsup` build is left in place for the day this is consumed from outside the
-workspace; nothing here depends on `dist` today.
+workspace source directly and a change shows up there without building. A
+packed tarball points at `dist` instead, through `publishConfig.exports`.
+
+The docs in `dist/docs` are written by `apps/catalog/scripts/emit-package-docs.ts`
+from the catalog's registry, after tsup has cleaned `dist`. They are never
+edited by hand: change the catalog page and rebuild.

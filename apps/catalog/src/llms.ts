@@ -20,7 +20,7 @@ const HOW = [
   "This is a signpost, not a warehouse. Reuse a block where one fits. Where none does, build the section yourself out of the tokens this file points at — never out of raw values.",
   "Foundations are the tokens everything is built from. Components are the parts. Blocks are whole sections a page is assembled out of, and are usually what you want to ask for by name.",
   "Two lines not to cross: nothing new is added to this catalog, and nothing in `@brevy/ui` is edited or given a variant of its own. Compose new sections out of what is there.",
-  "The package is `@brevy/ui`, private to its workspace and never installed from npm:",
+  "The package is `@brevy/ui`. It is not on npm: this repo's workspace provides it, and a project of its own installs it from a tarball built here, which carries this documentation in `dist/docs`:",
 ]
 
 /** What follows the worked line. Split in two rather than one list with the

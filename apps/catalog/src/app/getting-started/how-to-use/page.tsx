@@ -11,7 +11,7 @@ import {
   CODE_INTRO,
   COMPOSING,
   COMPOSING_NOTE,
-  INTERNAL,
+  INSTALLING,
   INTRO,
   NO_CODE,
   NO_CODE_INTRO,
@@ -79,7 +79,7 @@ function Illustration({ picture }: { picture: Picture }) {
   )
 }
 
-const CODE = [INTERNAL, COMPOSING, CLAUDE_CODE, WHERE_THE_API_IS]
+const CODE = [INSTALLING, COMPOSING, CLAUDE_CODE, WHERE_THE_API_IS]
 
 /** Both paths are headings and their parts sit under them, so the contents
  *  column reads as two routes rather than eleven unrelated stops. */
@@ -128,11 +128,11 @@ export default async function HowToUsePage() {
       </h2>
       <p className="mt-4 max-w-3xl leading-relaxed">{CODE_INTRO}</p>
 
-      <h3 id={INTERNAL.id} className={SUB}>
-        {INTERNAL.title}
+      <h3 id={INSTALLING.id} className={SUB}>
+        {INSTALLING.title}
       </h3>
       <p className="mt-3 max-w-3xl leading-relaxed">
-        <MarkdownText>{INTERNAL.body}</MarkdownText>
+        <MarkdownText>{INSTALLING.body}</MarkdownText>
       </p>
 
       <h3 id={COMPOSING.id} className={SUB}>

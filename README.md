@@ -31,16 +31,16 @@ shipped brevy.com does, and where neither does, the decision goes in
 
 ## What is where
 
-|                   |                                                                                                                                                                        |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/tokens` | One stylesheet. Colour ramps, the type scale, spacing, radii, shadows, and the brand's own masks. Everything else reads from here.                                     |
-| `packages/ui`     | The components: 18 of them, 15 page blocks and one screen. Internal to this workspace, not published. See its own README.                                              |
-| `apps/catalog`    | The Next.js site that documents the package. Also the only consumer of it, which is deliberate: if the catalog cannot show a component, the component is not finished. |
+|                   |                                                                                                                                                                                                         |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/tokens` | One stylesheet. Colour ramps, the type scale, spacing, radii, shadows, and the brand's own masks. Everything else reads from here.                                                                      |
+| `packages/ui`     | The components: 18 of them, 15 page blocks and one screen. Not on npm: a project of its own installs it from a tarball built here, and it carries its documentation in `dist/docs`. See its own README. |
+| `apps/catalog`    | The Next.js site that documents the package, and its first consumer, which is deliberate: if the catalog cannot show a component, the component is not finished.                                        |
 
 The catalog's `src/registry.tsx` lists all 43 entries — 15 components, 15
 blocks, 12 foundations, 1 screen — and everything else reads from it: the
-sidebar, `/llms.txt`, `/llms-full.txt`, and the test that checks nobody wrote a
-page without wiring it in.
+sidebar, `/llms.txt`, `/llms-full.txt`, the docs the package carries in
+`dist/docs`, and the test that checks nobody wrote a page without wiring it in.
 
 The foundations are wider than the token pages the name suggests. `Logo`, the
 two animation libraries and `Illustrations` sit in there beside colour and

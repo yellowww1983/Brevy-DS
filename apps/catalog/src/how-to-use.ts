@@ -12,7 +12,7 @@ import { join, preamble } from "./doc"
  *  One source, or the two would drift. */
 
 export const INTRO =
-  "There are two ways in. If you do not write code you work through Claude, describing what you want and letting it assemble the page from Brevy's own pieces. If you do write code you work in this repo and import the pieces yourself. Both end up with the same page, because both are reaching for the same components."
+  "There are two ways in. If you do not write code you work through Claude, describing what you want and letting it assemble the page from Brevy's own pieces. If you do write code you import the pieces yourself, in this repo or in a project that installs the package. Both end up with the same page, because both are reaching for the same components."
 
 /** The path this page has always described. Unchanged in substance. */
 export const NO_CODE_INTRO =
@@ -68,12 +68,12 @@ export const NO_CODE: readonly {
 
 /** The path that was missing. */
 export const CODE_INTRO =
-  "The system is a package in this monorepo. You will not install it, you will open the repo and import from it."
+  "The system is a package, @brevy/ui. Work in this repo and you import it straight from the workspace; work in a project of your own and you install it, and it brings its documentation with it."
 
-export const INTERNAL = {
-  id: "it-is-internal",
-  title: "It is internal, not a dependency",
-  body: "`@brevy/ui` is private and never goes to npm. There is no `npm install @brevy/ui` and there is no version to pin. It lives in `packages/ui` beside the app that consumes it, and the workspace resolves the import to the source, so a change to a component shows up in the catalog without a build step.",
+export const INSTALLING = {
+  id: "installing-it",
+  title: "Installing it",
+  body: "`@brevy/ui` is not on npm. Inside this repo the workspace resolves the import to the source, so a change to a component shows up in the catalog without a build step. A project of its own installs the package from a tarball built here, together with `@brevy/tokens`, and sets up Tailwind 4, the token stylesheet and the two typefaces; the package's README walks through each step. The documentation travels inside the package, so Claude in that project reads it from `node_modules` rather than from this catalog.",
 }
 
 export const COMPOSING = {
@@ -94,7 +94,7 @@ export const CLAUDE_CODE = {
 export const WHERE_THE_API_IS = {
   id: "where-the-api-is",
   title: "Where the API is written down",
-  body: "Three places, and they are the same documentation in three shapes.",
+  body: "Four places, and they are the same documentation in four shapes.",
 }
 
 export const API_PLACES: readonly { where: string; what: string }[] = [
@@ -109,6 +109,10 @@ export const API_PLACES: readonly { where: string; what: string }[] = [
   {
     where: "/llms-full.txt",
     what: "Every page at once, which is what Copy entire system hands over",
+  },
+  {
+    where: "node_modules/@brevy/ui/dist/docs",
+    what: "Every page as its own file, with an index to find them by, for Claude in a project that installs the package",
   },
 ]
 
@@ -171,7 +175,7 @@ export function howToUseDoc() {
     "",
     CODE_INTRO,
     "",
-    ...[INTERNAL, COMPOSING].flatMap((section) => [
+    ...[INSTALLING, COMPOSING].flatMap((section) => [
       `### ${section.title}`,
       "",
       section.body,
