@@ -3,6 +3,17 @@ import { join, preamble, table } from "./doc"
 export type TypeRole = {
   name: string
   sample: string
+  /** The numbers behind the class, written here so the documentation can
+   *  carry them: `llms-full.txt` is generated on a server and cannot measure
+   *  what a browser would. The specimen on the page still reads its own size
+   *  off the sample beside it, so the page measures and this declares.
+   *
+   *  That makes this the second place these values live, which is a risk
+   *  rather than a convenience. `docs.test.ts` reads `globals.css` and fails
+   *  if the two ever disagree. */
+  size: string
+  leading: string
+  tracking?: string
   /** The role's own classes. Everything a specimen shows comes from these, so
    *  the page cannot display one thing while the system does another. */
   style: string
@@ -24,18 +35,24 @@ export const TYPE_GROUPS: readonly TypeGroup[] = [
     roles: [
       {
         name: "display",
+        size: "clamp(2.25rem, 4vw + 1rem, 3.75rem)",
+        leading: "1.2",
         sample: "Your caregiver super app",
         style: "font-serif text-display",
         face: "Hedvig Letters Serif",
       },
       {
         name: "h1",
+        size: "clamp( 1.875rem, min(1.4286vw + 1.5268rem, 0.9524vw + 1.7679rem), 2.625rem )",
+        leading: "1.333",
         sample: "Eldercare benefits, made simple",
         style: "font-serif text-h1",
         face: "Hedvig Letters Serif",
       },
       {
         name: "h2",
+        size: "clamp(1.875rem, 2.5vw + 0.5rem, 2.25rem)",
+        leading: "1.333",
         sample: "How it works",
         style: "font-serif text-h2",
         face: "Hedvig Letters Serif",
@@ -49,12 +66,17 @@ export const TYPE_GROUPS: readonly TypeGroup[] = [
     roles: [
       {
         name: "h3",
+        size: "1.25rem",
+        leading: "1.45",
         sample: "Chat with Brevy",
         style: "font-sans text-h3",
         face: "Rethink Sans",
       },
       {
         name: "body-lg",
+        size: "1.25rem",
+        leading: "1.45",
+        tracking: "-0.009em",
         sample:
           "The free tool for discovering and enrolling in eldercare benefits.",
         style: "font-sans text-body-lg",
@@ -62,6 +84,8 @@ export const TYPE_GROUPS: readonly TypeGroup[] = [
       },
       {
         name: "body",
+        size: "1rem",
+        leading: "1.5",
         sample: "You’re mandated to serve a growing senior population.",
         style: "font-sans text-body",
         face: "Rethink Sans",
@@ -75,12 +99,16 @@ export const TYPE_GROUPS: readonly TypeGroup[] = [
     roles: [
       {
         name: "caption",
+        size: "0.875rem",
+        leading: "1.429",
         sample: "Join 2,000+ caregivers already using Brevy",
         style: "font-sans text-caption",
         face: "Rethink Sans",
       },
       {
         name: "label",
+        size: "0.75rem",
+        leading: "1.333",
         sample: "WHAT HAPPENS NEXT",
         style: "font-sans text-label",
         face: "Rethink Sans",
@@ -112,10 +140,13 @@ export function typographyDoc() {
       group.note,
       "",
       table(
-        ["Role", "Class", "Typeface"],
+        ["Role", "Class", "Size", "Line height", "Tracking", "Typeface"],
         group.roles.map((role) => [
           `\`${role.name}\``,
           `\`${role.style.split(" ").find((piece) => piece.startsWith("text-")) ?? role.style}\``,
+          `\`${role.size}\``,
+          role.leading,
+          role.tracking ? `\`${role.tracking}\`` : "none",
           role.face,
         ]),
       ),

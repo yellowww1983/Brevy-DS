@@ -56,9 +56,12 @@ export const NO_CODE: readonly {
   },
   {
     id: "when-you-need-something-else",
-    title: "When you need something that is not here",
+    title: "When the catalog does not have it",
     body: [
-      "If the catalog does not have the piece you need, do not force it and do not ask Claude to invent one. That is how pages drift off-brand. Reach out to the Brevy team and we will add it properly, so it works everywhere including your page.",
+      "The catalog is a signpost rather than a warehouse. It does not hold a block for every section a page might need, and it is not meant to. What it holds is the language — the tokens, the spacing, the grid, the type — that everything else is built in.",
+      "So when a section has no block, build it. Tell Claude what the section does and ask for it in the system's own values: a colour from the semantic tokens, padding from the spacing steps, a radius from the scale, type from the roles. What comes out belongs to your page, and it looks like Brevy because every value in it is Brevy's.",
+      "Two lines it does not cross. Nothing new is added to the catalog: this system is shared, and a section built for one landing page is not everyone's. And nothing in `@brevy/ui` is edited or given a variant of its own, because a component that behaves differently on one page is the drift the catalog exists to prevent. Compose new sections out of what is there, and leave the parts themselves alone.",
+      "Never a raw value. A hex in a class — `bg-[#\u2026]` — is wrong even when the colour is right, because the colour has a name: `bg-secondary`. The same goes for `p-[24px]` against `p-6` and `rounded-[16px]` against `rounded-2xl`. A hard-coded value is invisible to the theme and to the next change a token makes, so it looks correct exactly until something moves.",
     ],
   },
 ]

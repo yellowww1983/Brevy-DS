@@ -47,6 +47,31 @@ more honest than the duration.
 This matters most for whatever measures itself next. Phase 2 blocks will, and
 they should not have to discover any of this again.
 
+## When the catalog does not have it
+
+The catalog is a signpost rather than a warehouse. It documents the language a
+page is built in — tokens, spacing, the grid, the type roles — not a block for
+every section anybody might need.
+
+So a section with no block gets built rather than refused, in the system's own
+values: a colour from the semantic tokens, padding from the spacing steps, a
+radius from the scale, type from the roles.
+
+Two lines it does not cross.
+
+- **Nothing new is added to the catalog.** A section built for one page is not
+  everyone's, and the registry is what the whole system reads.
+- **Nothing in `@brevy/ui` is edited or given a variant of its own.** A
+  component that behaves differently on one page is the drift all of this
+  exists to prevent. Compose out of what is there; leave the parts alone.
+
+And never a raw value. `bg-[#f5f2ef]` is wrong even when the colour is right,
+because the colour is `bg-secondary`; the same goes for `p-[24px]` against
+`p-6`. Worth saying out loud here rather than leaving to the linter: the rule
+against hex colours and arbitrary values is enforced by lint **in this
+repository only**. Someone composing a page in their own project has the rule
+and no guard, so the rule has to travel in words.
+
 ## Before pushing
 
 `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test` and
