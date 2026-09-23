@@ -7,10 +7,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
     "test:e2e": "playwright test",
     "test": "vitest run",
-    "posters": "node scripts/lottie-posters.mjs && node scripts/video-posters.mjs"
+    "posters": "node scripts/lottie-posters.mjs && node scripts/video-posters.mjs",
+    "docs:emit": "tsx --tsconfig scripts/tsconfig.json scripts/emit-package-docs.ts",
+    "docs:check": "tsx --tsconfig scripts/tsconfig.json scripts/emit-package-docs.ts --check"
   },
   "dependencies": {
     "@brevy/tokens": "workspace:*",
@@ -32,6 +34,7 @@
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
     "tailwindcss": "4.3.3",
+    "tsx": "4.23.13",
     "typescript": "5.9.3",
     "vitest": "4.1.10"
   }

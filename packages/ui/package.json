@@ -9,7 +9,8 @@
     ".": "./src/index.ts"
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/**/* [0-9].*"
   ],
   "publishConfig": {
     "access": "restricted",
@@ -21,10 +22,11 @@
     }
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && pnpm --filter catalog docs:emit",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepack": "pnpm run build && pnpm --filter catalog docs:check"
   },
   "dependencies": {
     "@brevy/tokens": "workspace:*",
