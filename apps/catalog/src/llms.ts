@@ -1,3 +1,4 @@
+import { SNIPPET } from "./how-to-use"
 import { registry, type Kind } from "./registry"
 
 /** What the system is, in the two sentences an agent reads before anything
@@ -6,9 +7,28 @@ import { registry, type Kind } from "./registry"
 const SUMMARY =
   "The design system behind Brevy's marketing site and product screens. It is meant to be assembled through Claude rather than by hand: you describe the page you want, and Claude builds it out of these pieces."
 
+/** Everything someone needs before the list means anything.
+ *
+ *  It used to be two sentences, and the rest of the instruction lived inside
+ *  `/llms-full.txt` — 112KB, which is a wall rather than a step for the person
+ *  it was written for. The half that answers "what do I do with this" is here
+ *  now, and the map below is the same map it always was.
+ *
+ *  The import line is taken from the worked example rather than retyped, so
+ *  there is one place where the package is named. */
 const HOW = [
-  "Paste this file to give Claude the shape of the system, or `/llms-full.txt` to give it every page at once. A single page's documentation is on the page itself, behind the Copy for Claude button.",
+  "This is a signpost, not a warehouse. Reuse a block where one fits. Where none does, build the section yourself out of the tokens this file points at — never out of raw values.",
   "Foundations are the tokens everything is built from. Components are the parts. Blocks are whole sections a page is assembled out of, and are usually what you want to ask for by name.",
+  "Two lines not to cross: nothing new is added to this catalog, and nothing in `@brevy/ui` is edited or given a variant of its own. Compose new sections out of what is there.",
+  "The package is `@brevy/ui`, private to its workspace and never installed from npm:",
+]
+
+/** What follows the worked line. Split in two rather than one list with the
+ *  fence inside it, because a fence flat-mapped with the paragraphs gets a
+ *  blank line between every line of code. */
+const THEN = [
+  "Never a raw value: `bg-secondary`, not a hex in a class; `p-6`, not `p-[24px]`. A hard-coded value is invisible to the theme.",
+  "Paste `/llms-full.txt` for every page at once, including the full token tables. A single page's documentation is on the page itself, behind the Copy for Claude button.",
 ]
 
 /** The sections the map is divided into, in the order someone meets them.
@@ -42,6 +62,11 @@ export function llmsMap() {
     `> ${SUMMARY}`,
     "",
     ...HOW.flatMap((paragraph) => [paragraph, ""]),
+    "```tsx",
+    SNIPPET[0] ?? "",
+    "```",
+    "",
+    ...THEN.flatMap((paragraph) => [paragraph, ""]),
     ...SECTIONS.flatMap((section) => [
       `## ${section.title}`,
       "",

@@ -6,6 +6,7 @@ import { describe, expect, test } from "vitest"
 
 import { llmsFull, llmsMap } from "./llms"
 import { registry } from "./registry"
+import { TYPE_GROUPS } from "./typography"
 
 /** Everything a doc claims has to be true of the package.
  *
@@ -773,4 +774,48 @@ describe.each(tables)("$source", ({ subject, rows }) => {
 
     expect(wrong, `${subject}'s table against its own type`).toEqual([])
   })
+})
+
+/** The type scale is written down twice, and this is what keeps the second
+ *  copy honest.
+ *
+ *  The page measures: a specimen reads its own size off the sample beside it,
+ *  so what a reader sees is always what the system ships. The documentation
+ *  cannot do that. `llms-full.txt` is generated on a server, and a server has
+ *  no browser to ask, so the numbers in the type table are declared rather
+ *  than measured — the one place in this catalog where that is true.
+ *
+ *  Declared numbers drift. These are read straight out of the stylesheet they
+ *  claim to describe, so the moment a token moves and the table does not, this
+ *  is what says so. */
+describe("the type table against the stylesheet", () => {
+  const stylesheet = readFileSync(
+    resolve(HERE, "../../../packages/tokens/globals.css"),
+    "utf8",
+  )
+
+  /** A token's value, with the whitespace CSS is allowed to break a `clamp()`
+   *  across collapsed away. Nested parentheses are why this is not a lazy
+   *  match to the first bracket: `h1` holds a `min()` inside its `clamp()`. */
+  function token(name: string) {
+    const found = new RegExp(
+      `--text-${name}:\\s*((?:[^;{}]|\\((?:[^()]|\\([^()]*\\))*\\))*);`,
+    ).exec(stylesheet)
+
+    return found?.[1]?.split(/\s+/).join(" ")
+  }
+
+  for (const group of TYPE_GROUPS) {
+    for (const role of group.roles) {
+      test(`${role.name} is the size and leading the stylesheet sets`, () => {
+        expect(role.size, `${role.name} size`).toBe(token(role.name))
+        expect(role.leading, `${role.name} line height`).toBe(
+          token(`${role.name}--line-height`),
+        )
+        expect(role.tracking, `${role.name} tracking`).toBe(
+          token(`${role.name}--letter-spacing`),
+        )
+      })
+    }
+  }
 })
