@@ -34,10 +34,10 @@ shipped brevy.com does, and where neither does, the decision goes in
 |                   |                                                                                                                                                                                                         |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/tokens` | One stylesheet. Colour ramps, the type scale, spacing, radii, shadows, and the brand's own masks. Everything else reads from here.                                                                      |
-| `packages/ui`     | The components: 18 of them, 15 page blocks and one screen. Not on npm: a project of its own installs it from a tarball built here, and it carries its documentation in `dist/docs`. See its own README. |
+| `packages/ui`     | The components: 18 of them, 16 page blocks and one screen. Not on npm: a project of its own installs it from a tarball built here, and it carries its documentation in `dist/docs`. See its own README. |
 | `apps/catalog`    | The Next.js site that documents the package, and its first consumer, which is deliberate: if the catalog cannot show a component, the component is not finished.                                        |
 
-The catalog's `src/registry.tsx` lists all 41 entries — 13 components, 15
+The catalog's `src/registry.tsx` lists all 42 entries — 13 components, 16
 blocks, 12 foundations, 1 screen — and everything else reads from it: the
 sidebar, `/llms.txt`, `/llms-full.txt`, the docs the package carries in
 `dist/docs`, and the test that checks nobody wrote a page without wiring it in.
@@ -120,7 +120,7 @@ than the dev server. Wait on the condition the sleep was standing in for:
 ### The registry is one file on purpose
 
 `registry.tsx` is the largest file here and it is deliberately not split. It is
-the single source for 41 entries, and a guard checks that every doc written is
+the single source for 42 entries, and a guard checks that every doc written is
 in it and every entry in it is checked. Splitting it into a file per kind would
 reintroduce exactly the drift it exists to prevent: a page written, wired
 nowhere, and nobody noticing.

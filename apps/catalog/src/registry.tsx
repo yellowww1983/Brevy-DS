@@ -1007,6 +1007,18 @@ const BLOCKS: readonly Entry[] = [
     doc: () => import("./card-grid").then((module) => module.cardGridDoc()),
   },
   {
+    slug: "activity-marquee",
+    name: "Activity marquee",
+    kind: "block",
+    href: "/blocks/activity-marquee",
+    icon: "MoveHorizontal",
+    summary: "Three rows of activities sliding past, words or pills.",
+    doc: () =>
+      import("./activity-marquee").then((module) =>
+        module.activityMarqueeDoc(),
+      ),
+  },
+  {
     slug: "logo-cloud",
     name: "Logo cloud",
     kind: "block",

@@ -53,6 +53,13 @@ export type {
 } from "./components/social-proof.js"
 export type { InputProps } from "./components/input.js"
 export { Label } from "./components/label.js"
+export { ActivityMarquee } from "./blocks/activity-marquee.js"
+export type {
+  ActivityMarqueeItem,
+  ActivityMarqueeRow,
+  ActivityMarqueeRows,
+  ActivityMarqueeVariant,
+} from "./blocks/activity-marquee.js"
 export { Banner } from "./blocks/banner.js"
 export { CardGrid } from "./blocks/card-grid.js"
 export type { CardGridBackground, CardGridItem } from "./blocks/card-grid.js"
