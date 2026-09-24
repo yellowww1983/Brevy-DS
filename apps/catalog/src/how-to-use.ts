@@ -70,10 +70,147 @@ export const NO_CODE: readonly {
 export const CODE_INTRO =
   "The system is a package, @brevy/ui. Work in this repo and you import it straight from the workspace; work in a project of your own and you install it, and it brings its documentation with it."
 
-export const INSTALLING = {
+/** A fenced block inside an install step: a command to run or a file to
+ *  write. Kept as lines so the guard can hold each one to the package README,
+ *  which carries the same steps and is the other place they are written. */
+export type InstallCode = {
+  lang: "sh" | "json" | "css"
+  lines: readonly string[]
+}
+
+/** A step is its title and what follows it, prose and code in the order they
+ *  are read. */
+export type InstallStep = {
+  title: string
+  blocks: readonly (string | InstallCode)[]
+}
+
+export const INSTALLING: {
+  id: string
+  title: string
+  body: string
+  untested: string
+  steps: readonly InstallStep[]
+} = {
   id: "installing-it",
   title: "Installing it",
-  body: "`@brevy/ui` is not on npm. Inside this repo the workspace resolves the import to the source, so a change to a component shows up in the catalog without a build step. A project of its own installs the package from a tarball built here, together with `@brevy/tokens`, and sets up Tailwind 4, the token stylesheet and the two typefaces; the package's README walks through each step. The documentation travels inside the package, so Claude in that project reads it from `node_modules` rather than from this catalog.",
+  body: "`@brevy/ui` is not on npm. Inside this repo the workspace resolves the import to the source, so a change to a component shows up in the catalog without a build step. A project of its own installs two tarballs built here — `@brevy/ui`, and `@brevy/tokens`, which carries the stylesheet — in the seven steps below.",
+  untested:
+    "These steps follow from the code and from the packed tarball, and have not yet been through an install in a separate project. Treat them as the expected path rather than a tested one: the token override in step 2 and the `@source` line in step 5 are what the first real install will confirm.",
+  steps: [
+    {
+      title: "Get the two tarballs.",
+      blocks: [
+        "They are built in this repo, by anyone with access to it. Packing builds the package first and checks its documentation against the catalog, so a tarball cannot carry docs older than the code.",
+        {
+          lang: "sh",
+          lines: [
+            "pnpm --filter @brevy/ui pack --pack-destination <dir>",
+            "pnpm --filter @brevy/tokens pack --pack-destination <dir>",
+          ],
+        },
+      ],
+    },
+    {
+      title: "Install them, and pin the tokens.",
+      blocks: [
+        "Copy both into the project, say into `vendor/`, and add them. Then pin `@brevy/tokens` in `package.json`: `@brevy/ui` depends on `@brevy/tokens@0.0.0`, which is on no registry, and without the override the install fails looking for it on npm. With npm the same field is `overrides`, at the top level.",
+        {
+          lang: "sh",
+          lines: [
+            "pnpm add ./vendor/brevy-ui-0.0.0.tgz ./vendor/brevy-tokens-0.0.0.tgz",
+          ],
+        },
+        {
+          lang: "json",
+          lines: [
+            '"pnpm": {',
+            '  "overrides": { "@brevy/tokens": "file:./vendor/brevy-tokens-0.0.0.tgz" }',
+            "}",
+          ],
+        },
+      ],
+    },
+    {
+      title: "The peer dependencies.",
+      blocks: [
+        "The package brings none of these with it. `react-hook-form` is needed even on a page with no form, because the one entry point re-exports `Form`, which imports it. `zod` and `@hookform/resolvers` are declared peers — the form's documentation validates with them.",
+        {
+          lang: "sh",
+          lines: [
+            "pnpm add react@19 react-dom@19 radix-ui lucide-react react-hook-form zod @hookform/resolvers",
+          ],
+        },
+      ],
+    },
+    {
+      title: "Tailwind 4.",
+      blocks: [
+        'The components are Tailwind 4 classes and the package ships no CSS of its own. Add a `postcss.config.mjs` with `plugins: ["@tailwindcss/postcss"]`.',
+        {
+          lang: "sh",
+          lines: ["pnpm add -D tailwindcss@4 @tailwindcss/postcss@4"],
+        },
+      ],
+    },
+    {
+      title: "The global stylesheet.",
+      blocks: [
+        "In this order, because the tokens build on Tailwind's palette. The `@source` line is not optional: Tailwind 4 does not scan `node_modules`, so without it every component renders unstyled. The path is relative to the stylesheet.",
+        {
+          lang: "css",
+          lines: [
+            '@import "tailwindcss";',
+            '@import "@brevy/tokens/globals.css";',
+            '@source "../node_modules/@brevy/ui/dist";',
+          ],
+        },
+        "The tokens set no base styles, so the body takes them itself: `bg-background text-foreground font-sans antialiased`. Light is the default; dark is the class `dark` on `<html>`, with no provider.",
+      ],
+    },
+    {
+      title: "The typefaces.",
+      blocks: [
+        "Rethink Sans for text and Hedvig Letters Serif, weight 400, for headings. Load both with `next/font` as `--font-rethink-sans` and `--font-hedvig`, put the two variables on `<html>`, and point the tokens at them — `next/font` renames the families it loads, so without this the names in the token file never reach them.",
+        {
+          lang: "css",
+          lines: [
+            "@theme inline {",
+            "  --font-sans: var(--font-rethink-sans), ui-sans-serif, system-ui, sans-serif;",
+            "  --font-serif: var(--font-hedvig), ui-serif, Georgia, serif;",
+            "}",
+          ],
+        },
+        "Then render a `Button` to check. If it has no fill, the `@source` path is wrong.",
+      ],
+    },
+    {
+      title: "Tell Claude where the documentation is.",
+      blocks: [
+        "It travels inside the package, in `node_modules/@brevy/ui/dist/docs`: an index, one file per foundation, component, block and screen, and the rules for sections no block covers. Add the contents of `node_modules/@brevy/ui/dist/docs/claude-md-snippet.md` to the project's `CLAUDE.md`. Claude there then reads the index first and opens only what the page needs, rather than this catalog.",
+      ],
+    },
+  ],
+}
+
+/** The steps as markdown, numbered, with each command in its own fence. The
+ *  step's title leads its first paragraph, the way the page sets it. */
+function installSteps() {
+  return INSTALLING.steps.flatMap((step, index) => {
+    const lead = `**${String(index + 1)}. ${step.title}**`
+
+    return step.blocks.flatMap((block, position) =>
+      typeof block === "string"
+        ? [position === 0 ? `${lead} ${block}` : block, ""]
+        : [
+            ...(position === 0 ? [lead, ""] : []),
+            "```" + block.lang,
+            ...block.lines,
+            "```",
+            "",
+          ],
+    )
+  })
 }
 
 export const COMPOSING = {
@@ -175,12 +312,17 @@ export function howToUseDoc() {
     "",
     CODE_INTRO,
     "",
-    ...[INSTALLING, COMPOSING].flatMap((section) => [
-      `### ${section.title}`,
-      "",
-      section.body,
-      "",
-    ]),
+    `### ${INSTALLING.title}`,
+    "",
+    INSTALLING.body,
+    "",
+    `*${INSTALLING.untested}*`,
+    "",
+    ...installSteps(),
+    `### ${COMPOSING.title}`,
+    "",
+    COMPOSING.body,
+    "",
     "```tsx",
     ...SNIPPET,
     "```",
