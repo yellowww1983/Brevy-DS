@@ -76,7 +76,14 @@ const restricted = [
 ]
 
 export default defineConfig(
-  globalIgnores(["**/dist/**", "**/.next/**", "**/next-env.d.ts"]),
+  globalIgnores([
+    "**/dist/**",
+    "**/.next/**",
+    "**/next-env.d.ts",
+    // A project of its own, shipped as a download: it imports the package
+    // from a tarball that only exists inside the ZIP.
+    "starter/**",
+  ]),
   {
     extends: [js.configs.recommended, tseslint.configs.strictTypeChecked],
     languageOptions: {

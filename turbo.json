@@ -14,6 +14,15 @@
       ],
       "outputs": ["dist/**"]
     },
+    "catalog#build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/starter/**"],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "public/brevy-landing-starter.zip"
+      ]
+    },
     "dev": {
       "cache": false,
       "persistent": true

@@ -1,3 +1,4 @@
+import { FolderDown } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -16,8 +17,10 @@ import {
   NO_CODE,
   NO_CODE_INTRO,
   SNIPPET,
+  STARTER,
   WHERE_THE_API_IS,
 } from "@/how-to-use"
+import { STARTER_FILE, STARTER_HREF } from "@/starter"
 
 /** One sentence for both drawings of a path: whichever the page is showing,
  *  it is the same picture of the same thing. */
@@ -105,6 +108,18 @@ export default async function HowToUsePage() {
         If you don&rsquo;t write code
       </h2>
       <p className="mt-4 max-w-3xl leading-relaxed">{NO_CODE_INTRO}</p>
+
+      <div className="mt-6 flex max-w-3xl flex-col items-start gap-4 rounded-xl border border-border p-5">
+        <p className="leading-relaxed">{STARTER}</p>
+        <a
+          href={STARTER_HREF}
+          download={STARTER_FILE}
+          className="inline-flex h-9 items-center gap-2 rounded-md border border-border px-3 text-sm font-medium text-foreground hover:bg-catalog-hover focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+        >
+          <FolderDown className="size-4 icon-stroke" aria-hidden />
+          Download starter project
+        </a>
+      </div>
 
       <Illustration picture={NON_DEV} />
 

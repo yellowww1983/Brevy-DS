@@ -11,6 +11,9 @@ test-results
 playwright-report
 .playwright
 
+# Built with the catalog from starter/ and the packages as they are.
+apps/catalog/public/brevy-landing-starter.zip
+
 # iCloud makes a numbered copy of a file it thinks two machines touched at
 # once. A duplicated module is a duplicated export, so these turn the docs
 # guard red by making it count more docs than the registry has entries. They
