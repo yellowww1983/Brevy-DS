@@ -134,6 +134,38 @@ export default async function HowToUsePage() {
       <p className="mt-3 max-w-3xl leading-relaxed">
         <MarkdownText>{INSTALLING.body}</MarkdownText>
       </p>
+      <p className="mt-3 max-w-3xl leading-relaxed text-muted-foreground italic">
+        <MarkdownText>{INSTALLING.untested}</MarkdownText>
+      </p>
+
+      <ol className="mt-6 max-w-3xl list-decimal space-y-6 pl-6 marker:font-semibold">
+        {INSTALLING.steps.map((step) => (
+          <li key={step.title} className="pl-1">
+            {step.blocks.map((block, position) =>
+              typeof block === "string" ? (
+                <p
+                  key={block}
+                  className={
+                    position === 0 ? "leading-relaxed" : "mt-3 leading-relaxed"
+                  }
+                >
+                  {position === 0 && (
+                    <strong className="font-semibold">{step.title} </strong>
+                  )}
+                  <MarkdownText>{block}</MarkdownText>
+                </p>
+              ) : (
+                <pre
+                  key={block.lines.join("\n")}
+                  className="mt-3 overflow-x-auto rounded-xl border border-border bg-muted/40 p-4 text-sm leading-relaxed"
+                >
+                  <code>{block.lines.join("\n")}</code>
+                </pre>
+              ),
+            )}
+          </li>
+        ))}
+      </ol>
 
       <h3 id={COMPOSING.id} className={SUB}>
         {COMPOSING.title}

@@ -4,6 +4,7 @@ import { fileURLToPath, pathToFileURL } from "node:url"
 import ts from "typescript"
 import { describe, expect, test } from "vitest"
 
+import { INSTALLING } from "./how-to-use"
 import { llmsFull, llmsMap } from "./llms"
 import { registry } from "./registry"
 import { TYPE_GROUPS } from "./typography"
@@ -818,4 +819,41 @@ describe("the type table against the stylesheet", () => {
       })
     }
   }
+})
+
+/** The install steps are written twice, and only one of the two is generated.
+ *
+ *  The How to use page carries them because a developer who has not installed
+ *  the package has no README to read yet. The package README carries them
+ *  because it is what somebody holding the tarball opens. The page is one
+ *  source for itself, Copy for Claude, `llms-full.txt` and the package's own
+ *  docs; the README is written by hand, and a flag changed in one and not the
+ *  other is an install that works from one set of instructions and fails from
+ *  the other.
+ *
+ *  So every line of every command and file the page tells somebody to run or
+ *  write has to appear in the README, verbatim. The prose around them is
+ *  allowed to differ; the things that get pasted are not. */
+describe("the install steps against the package README", () => {
+  const readme = readFileSync(
+    resolve(HERE, "../../../packages/ui/README.md"),
+    "utf8",
+  )
+  const lines = new Set(readme.split("\n").map((line) => line.trimEnd()))
+
+  const pasted = INSTALLING.steps.flatMap((step, index) =>
+    step.blocks.flatMap((block) =>
+      typeof block === "string"
+        ? []
+        : block.lines.map((line) => ({ step: index + 1, line })),
+    ),
+  )
+
+  test("there are commands to hold it to", () => {
+    expect(pasted.length).toBeGreaterThan(0)
+  })
+
+  test.each(pasted)("step $step: $line", ({ line }) => {
+    expect(lines.has(line), "the README does not carry this line").toBe(true)
+  })
 })
