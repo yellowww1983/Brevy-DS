@@ -5,14 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "pnpm run starter:build && next build",
     "start": "next start",
     "typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
     "test:e2e": "playwright test",
     "test": "vitest run",
     "posters": "node scripts/lottie-posters.mjs && node scripts/video-posters.mjs",
     "docs:emit": "tsx --tsconfig scripts/tsconfig.json scripts/emit-package-docs.ts",
-    "docs:check": "tsx --tsconfig scripts/tsconfig.json scripts/emit-package-docs.ts --check"
+    "docs:check": "tsx --tsconfig scripts/tsconfig.json scripts/emit-package-docs.ts --check",
+    "starter:build": "tsx --tsconfig scripts/tsconfig.json scripts/build-starter.ts"
   },
   "dependencies": {
     "@brevy/tokens": "workspace:*",
@@ -33,6 +34,7 @@
     "@types/node": "26.2.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
+    "fflate": "0.8.3",
     "tailwindcss": "4.3.3",
     "tsx": "4.23.13",
     "typescript": "5.9.3",

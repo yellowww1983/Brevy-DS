@@ -1,8 +1,10 @@
 "use client"
 
-import { Check, ChevronDown, Copy, Download } from "lucide-react"
+import { Check, ChevronDown, Copy, Download, FolderDown } from "lucide-react"
 import { DropdownMenu } from "radix-ui"
 import { useState } from "react"
+
+import { STARTER_FILE, STARTER_HREF } from "@/starter"
 
 import { useCopy } from "./use-copy"
 
@@ -10,6 +12,9 @@ import { useCopy } from "./use-copy"
  *  the convention it is served under: `llms-full.txt` means nothing to someone
  *  looking through their downloads. Markdown, because that is what it is. */
 const FILENAME = "brevy-design-system.md"
+
+const ITEM =
+  "flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 outline-none data-[highlighted]:bg-catalog-hover"
 
 const HALF =
   "inline-flex h-full items-center hover:bg-catalog-hover focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
@@ -82,13 +87,22 @@ export function CopySystem() {
             className="z-50 min-w-48 rounded-md border border-border bg-popover p-1 text-xs font-medium text-popover-foreground shadow-md"
           >
             <DropdownMenu.Item asChild>
-              <a
-                href="/llms-full.txt"
-                download={FILENAME}
-                className="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 outline-none data-[highlighted]:bg-catalog-hover"
-              >
+              <a href="/llms-full.txt" download={FILENAME} className={ITEM}>
                 <Download className="size-3.5 icon-stroke" aria-hidden />
                 Download entire system
+              </a>
+            </DropdownMenu.Item>
+
+            {/* A different reader from the two above: they hand the system
+                to Claude, this hands a person a project to build in. */}
+            <DropdownMenu.Separator className="-mx-1 my-1 h-px bg-border" />
+            <DropdownMenu.Label className="px-2 pt-1 pb-0.5 text-xs font-normal text-muted-foreground">
+              Start a new page
+            </DropdownMenu.Label>
+            <DropdownMenu.Item asChild>
+              <a href={STARTER_HREF} download={STARTER_FILE} className={ITEM}>
+                <FolderDown className="size-3.5 icon-stroke" aria-hidden />
+                Download starter project
               </a>
             </DropdownMenu.Item>
           </DropdownMenu.Content>

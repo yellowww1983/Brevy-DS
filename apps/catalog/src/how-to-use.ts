@@ -18,6 +18,12 @@ export const INTRO =
 export const NO_CODE_INTRO =
   "You describe what you want, Claude builds it from the Brevy pieces. No design tools, no code editor. Here is how to get the most out of it."
 
+/** The shortest way in for somebody starting from nothing: a folder that is
+ *  already a project. The page puts the download beside it; the text says what
+ *  it is, so it reads the same wherever this documentation is pasted. */
+export const STARTER =
+  "Starting a page from nothing? Download the starter project from this catalog: a ready project folder with the system already set up. Unzip it, open the folder in Claude Code, and tell Claude what page you want."
+
 /** The five the page has always had, in the order it has always had them.
  *  The second carries two paragraphs, which is how it was written. */
 export const NO_CODE: readonly {
@@ -302,6 +308,8 @@ export function howToUseDoc() {
     "## If you don't write code",
     "",
     NO_CODE_INTRO,
+    "",
+    STARTER,
     "",
     ...NO_CODE.flatMap((section) => [
       `### ${section.title}`,
